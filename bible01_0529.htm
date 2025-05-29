@@ -794,15 +794,7 @@ let isHidden = false;
 let isRandomMode = false;
 let showOnlyFavorites = false;
 
-
-let isPageVisible = true;
-
-document.addEventListener('visibilitychange', () => {
-  isPageVisible = document.visibilityState === 'visible';
-});
-
 function renderVerse() {
-  if (!isPageVisible) return;  // 페이지가 비활성화일 경우 렌더링 중단
   const verse = verses[current];
   if (!verse) return;
   document.getElementById('verseTitle').textContent = verse.title;
@@ -942,42 +934,11 @@ function getFavoriteIds() {
   return originalVerses.filter(v => v.favorite).map(v => v.id);
 }
 
-let lastSwipeTime = 0;
-let swipeCount = 0;
-
 function handleSwipe() {
   const diff = endX - startX;
-  const now = Date.now();
-
-  // 연속 스와이프 여부 판단 (400ms 이내 두 번)
   if (Math.abs(diff) > 50) {
-    if (now - lastSwipeTime < 400) {
-      swipeCount++;
-    } else {
-      swipeCount = 1;
-    }
-
-    lastSwipeTime = now;
-
-    if (swipeCount >= 2) {
-      // 두 번 빠르게 스와이프하면 10칸 점프
-      if (diff > 0) {
-        jumpVerse(-10); // 오른쪽으로 스와이프 = 이전
-      } else {
-        jumpVerse(10); // 왼쪽으로 스와이프 = 다음
-      }
-      swipeCount = 0; // 리셋
-    } else {
-      // 일반 스와이프
-      diff > 0 ? prevVerse() : nextVerse();
-    }
+    diff > 0 ? prevVerse() : nextVerse();
   }
-}
-
-function jumpVerse(step) {
-  applyAnimation(step > 0 ? 'left' : 'right');
-  current = (current + step + verses.length) % verses.length;
-  renderVerse();
 }
 
 // 편집
@@ -1079,7 +1040,7 @@ renderVerse();
     const [titlePart] = line.split('|');
     return {
       title: titlePart.trim(),
-      url: `https://tistory1.daumcdn.net/tistory/7152449/skin/images/${index + 1}.mp3`
+      url: `https://yh7004lee.github.io/mp3/${index + 1}.mp3`
     };
   });
 
@@ -1141,7 +1102,6 @@ function playAudio() {
     }
 
     audio.play();
-     syncVerseWithAudio(); // 재생 시 제목 기반으로 말씀 싱크
     isPlaying = true;
     toggleBtn.textContent = "멈춤";
     document.getElementById("player-bar").style.display = "block";
@@ -1152,24 +1112,6 @@ function playAudio() {
     toggleBtn.textContent = "재생";
   }
 }
-
-function syncVerseWithAudio() {
-  const audioTitleEl = document.querySelector('#player-bar #verse-title');
-  if (!audioTitleEl) return;
-
-  const titleText = audioTitleEl.textContent || '';
-  const numberMatch = titleText.match(/^(\d{1,2})\./); // 앞 숫자+점 매칭
-  if (!numberMatch) return;
-
-  const verseNumber = parseInt(numberMatch[1], 10);
-  const index = verseNumber - 1;
-
-  if (index >= 0 && index < originalVerses.length) {
-    current = index;
-    renderVerse(); // 화면의 말씀 제목/내용 업데이트
-  }
-}
-
 function pauseAudio() {
   audio.pause();
   audio.src = "";
@@ -1274,14 +1216,6 @@ audio.addEventListener('ended', () => {
 });
 
 
-const audioElement = document.getElementById('audio');
-
-audioElement.addEventListener('ended', () => {
-  current = (current + 1) % verses.length; // 다음 말씀으로 이동
-    syncVerseWithAudio(); // 재생 시 제목 기반으로 말씀 싱크
-    audio.play(); // 🔁 곡 재생
-});
-
 
   audio.addEventListener('timeupdate', () => {
     if (audio.duration) {
@@ -1333,7 +1267,6 @@ function showPlayer() {
   playAllLoop = true;
 
   loadAudio(currentTrack); // 첫 번째 트랙 로드
-   syncVerseWithAudio(); // 재생 시 제목 기반으로 말씀 싱크
   audio.play(); // 재생 시작
   const toggleBtn = document.getElementById("togglePlayBtn");
   toggleBtn.textContent = "멈춤";
