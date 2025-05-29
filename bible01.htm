@@ -795,14 +795,10 @@ let isRandomMode = false;
 let showOnlyFavorites = false;
 
 
-let isPageVisible = true;
 
-document.addEventListener('visibilitychange', () => {
-  isPageVisible = document.visibilityState === 'visible';
-});
 
 function renderVerse() {
-  if (!isPageVisible) return;  // 페이지가 비활성화일 경우 렌더링 중단
+
   const verse = verses[current];
   if (!verse) return;
   document.getElementById('verseTitle').textContent = verse.title;
