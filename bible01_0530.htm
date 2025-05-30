@@ -343,8 +343,8 @@ html, body {
 }
 
 .edit-title {
-  font-size: 1.4rem;
-  color: #fff;
+  font-size: 1.5rem;
+  color: #FAF3E0;
  font-weight: normal; /* 굵게 보이지 않도록 설정 */
   margin: 0;
   padding-top: 4px;
@@ -454,79 +454,36 @@ html, body {
 #settingsMenu {
   display: none;
   position: absolute;
-  top: 48px;
+  top: 50px;
   right: 10px;
-  width: 90vw;
-  max-width: 300px;
-  background-color: #1e1e1e;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 14px;
-  padding: 5px 12px;
-box-shadow:
-  /* 네온 광채 - 더 밝고 선명하게 */
-  0 0 4px rgba(0, 255, 255, 0.8),   /* 형광 청록빛 */
-  0 0 8px rgba(0, 255, 255, 0.6),
-  0 0 16px rgba(0, 255, 255, 0.5),
-  0 0 24px rgba(0, 255, 255, 0.3),
-
-  /* 아래로 드리운 어두운 그림자 */
-  0 10px 20px rgba(0, 0, 0, 0.5);
-  
-z-index: 10000;
-  animation: fadeInMenu 0.3s ease-out;
+  width: 90vw; /* 또는 max-width: 320px; */
+  max-width: 320px;
+  background-color: #121212; /* 바깥 박스 어두운 배경 */
+  border: 1px solid rgba(255, 255, 255, 0.2); /* 흰색 계열 테두리 */
+  border-radius: 13px;
+  padding: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.7);
+  z-index: 10;
+  font-family: 'Segoe UI', sans-serif;
+  color: #fff;
+  box-sizing: border-box;
 }
 
-@keyframes fadeInMenu {
-  from {
-    opacity: 0;
-    transform: translateY(-10px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+/* 안쪽 박스 */
+#settingsMenu .inner-container {
+  background-color: #2c2c2e;
+  border-radius: 0;
+  padding: 8px 0; /* 내부 여백을 위아래만 주고 좌우는 각 항목에 맡김 */
+  width: 100%;
+  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.05);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
-
-#settingsMenu h3 {
-  font-size: 1.2rem;
-  color: #ffffff;
-  margin-top: 0;
-  margin-bottom: 10px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid #333;
-}
-
-#settingsMenu ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-#settingsMenu ul li {
-  padding: 10px 14px;
-  margin-bottom: 6px;
-  background-color: #262626;
-  border-radius: 10px;
-  color: #eee;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.25s ease;
-}
-
-#settingsMenu ul li:hover {
-  background-color: #333;
-  color: #03dac6;
-}
-
-#settingsMenu ul li:active {
-  background-color: #444;
-}
-
-
 
 /* 메뉴 항목 */
 .settings-item {
-  padding: 10px 10px;
+  padding: 14px 20px;
   font-size: 1.1rem;
   color: #fff;
   background-color: transparent;
@@ -552,6 +509,7 @@ z-index: 10000;
   margin-top: 6px;
   cursor: pointer;
 }
+
 </style>
 </head>
 <body>
@@ -568,7 +526,6 @@ z-index: 10000;
   <div class="inner-container">
     <div class="settings-item" onclick="handleEditClick()">💗 말씀 편집하기</div>
     <div class="settings-item" onclick="showPlayer()">💗 전체 말씀듣기</div>
-<div class="settings-item" onclick="favoritePlayer()">💗 즐겨찾기 말씀듣기</div>
     <div class="settings-item">
       💗 말씀구절 글자크기
       <input id="titleFontSlider" type="range" min="1" max="6" value="1">
@@ -578,7 +535,6 @@ z-index: 10000;
       <input id="textFontSlider" type="range" min="1" max="6" value="1">
     </div>
     <div class="settings-item" onclick="resetFontSizes()">💗 글자크기 초기화</div>
-    <div class="settings-item" onclick="openHelpPopup()">💗 도움말</div>
     <div class="settings-item" onclick="hideSettingsMenu()">💗 나가기</div>
   </div>
 </div>
@@ -630,7 +586,7 @@ z-index: 10000;
 
 
 <div id="editContainer" class="edit-container" style="display: none;">
-  <h2 class="edit-title">편집 형식 : 말씀구절 | 말씀내용</h2>
+  <h2 class="edit-title">말씀 편집 형식 : 말씀구절 | 말씀내용</h2>
   <textarea id="editTextarea"></textarea>
   <div class="edit-buttons">
     <button onclick="saveEditedVerses()">확인</button>
@@ -787,7 +743,7 @@ const originalVersesStr = `
 33. 로마서 8장 32절| 자기 아들을 아끼지 아니하시고 우리 모든 사람을 위하여 내주신 이가 어찌 그 아들과 함께 모든 것을 우리에게 주시지 아니하겠느냐 
 34. 빌립보서 4장 19절| 나의 하나님이 그리스도 예수 안에서 영광 가운데 그 풍성한 대로 너희 모든 쓸 것을 채우시리라 
 35. 히브리서 2장 18절| 그가 시험을 받아 고난을 당하셨은즉 시험 받는 자들을 능히 도우실 수 있느니라 
-36. 시편 119편 9-11절| 청년이 무엇으로 그의 행실을 깨끗하게 하리이까 주의 말씀만 지킬 따름이니이다 내가 주께 범죄하지 아니하려 하여 주의 말씀을 내 마음에 두었나이다 
+36. 시편 119장 9-11절| 청년이 무엇으로 그의 행실을 깨끗하게 하리이까 주의 말씀만 지킬 따름이니이다 내가 주께 범죄하지 아니하려 하여 주의 말씀을 내 마음에 두었나이다 
 37. 마태복음 6장 33절| 그런즉 너희는 먼저 그의 나라와 그의 의를 구하라 그리하면 이 모든 것을 너희에게 더하시리라 
 38. 누가복음 9장 23절| 또 무리에게 이르시되 아무든지 나를 따라오려거든 자기를 부인하고 날마다 제 십자가를 지고 나를 따를 것이니라 
 39 요한일서 2장 15-16절| 이 세상이나 세상에 있는 것들을 사랑하지 말라 누구든지 세상을 사랑하면 아버지의 사랑이 그 안에 있지 아니하니 이는 세상에 있는 모든 것이 육신의 정욕과 안목의 정욕과 이생의 자랑이니 다 아버지께로부터 온 것이 아니요 세상으로부터 온 것이라 
@@ -1359,36 +1315,6 @@ audio.addEventListener('error', () => {
   }
 });
 
-function checkPlaylistByIds(ids) {
-  const checkboxes = document.querySelectorAll('#playlist-checkboxes input[type="checkbox"]');
-  checkboxes.forEach((checkbox, index) => {
-    checkbox.checked = ids.includes(index);
-  });
-}
-
-function favoritePlayer() {
-  const favIds = getFavoriteIds();
-  if (favIds.length === 0) {
-    alert("즐겨찾기된 말씀이 없습니다.");
-    return;
-  }
- hideSettingsMenu()
-  // 음악 목록 체크박스 열기
-  togglePlaylist();
-
-  // 체크박스 체크
-  setTimeout(() => {
-    checkPlaylistByIds(favIds);
-
-    // 선택 적용 (자동으로 applySelected를 실행할 수도 있음)
-    applySelected();
-hidePlaylist()
-    // 음악 재생
-   syncVerseWithAudio(); // 재생 시 제목 기반으로 말씀 싱크
-  audio.play(); // 재생 시작
-
-  }, 300); // UI 반영 시간 약간 대기
-}
 
 function showPlayer() {
   document.getElementById('player-bar').style.display = 'block';
@@ -1427,142 +1353,26 @@ document.addEventListener('visibilitychange', () => {
 </script>
 
 <script>
-function openHelpPopup() {
-  hideSettingsMenu()
-  if (document.getElementById("helpPopup")) return;
+function hideBottomButtonsIfNeeded() {
+  const bottomButtons = document.querySelector('.bottom-buttons');
+  const isMobile = /Mobi|Android|iPhone/i.test(navigator.userAgent);
+  const isShortHeight = window.innerHeight <= 666;
 
-  const popupOverlay = document.createElement("div");
-  popupOverlay.id = "helpPopup";
-  popupOverlay.className = "help-popup-overlay";
-
-  const popupContent = document.createElement("div");
-  popupContent.className = "help-popup-container";
-
-  popupContent.innerHTML = `
-    <div class="help-title">만든이 : 낭만고양이</div>
-    <div class="help-title">버전 : 성경암송60구절 v1.0</div>
-    <div class="help-title">최종수정일 : 2025.05.30</div>
-  
-    <textarea class="help-textarea" readonly>
-📝성경암송 60구절 설명서
-
-1.숨겨/보여 : 말씀 내용을 숨기거나 보이도록 합니다.
-
-2.랜덤/순차 : 말씀 보이는 순서를 섞어서 랜덤으로 나오게 하거나, 순차적으로 나오게 합니다.
-
-3.즐찾/모두 : 모든 말씀이 나오게 하거나, 즐겨찾기에 추가된 말씀만 나오도록 설정할 수 있습니다.
-
-4.설정/말씀 편집하기 : 말씀을 편집하거나 추가할 수 있습니다. 전문가 모드이므로 자신 있는 분들만 시도해 주세요. 웬만하면 기존 말씀을 삭제하지 마시고, 새로운 말씀을 추가하는 방식으로 사용해 주세요. 말씀을 삭제하면 ‘말씀 듣기’ 기능을 사용할 수 없을 수도 있습니다. 그리고 추가된 말씀은 오디오가 제공되지 않습니다. 참고해 주세요.
-
-5.설정/전체 말씀 듣기 : 60개의 말씀을 순차적으로 반복 재생합니다. 음악 플레이어가 뜨면 목록을 클릭해서 원하는 말씀을 선택한 후 ‘적용’을 누르면, 체크된 말씀만 재생됩니다.
-
-6.설정/즐겨찾기 말씀 듣기 : 즐겨찾기에 추가된 말씀만 순차적으로 반복 재생합니다.
-
-7.유용한 기능 : 손가락으로 좌우로 천천히 넘기면 말씀이 한 단계씩 변합니다. 하지만 빠르게 두 번 연속 넘기면 10개씩 단번에 넘어갑니다.
-    </textarea>
-    <div class="help-button-box">
-      <button class="help-close-btn" onclick="closeHelpPopup()">닫기</button>
-    </div>
-  `;
-
-  popupOverlay.appendChild(popupContent);
-  document.body.appendChild(popupOverlay);
-
-  if (!document.getElementById("helpPopupStyle")) {
-    const style = document.createElement("style");
-    style.id = "helpPopupStyle";
-    style.textContent = `
-/* 팝업 전체 화면 덮기 */
-/* 팝업 전체 화면 덮기 */
-.help-popup-overlay {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background-color: rgba(10, 10, 10, 0.95);
-  display: flex;
-  justify-content: center;
-  align-items: stretch; /* stretch로 변경 */
-  padding: 0; /* 여백 제거 */
-  z-index: 9999;
-  box-sizing: border-box;
-}
-
-/* 팝업 본체 */
-.help-popup-container {
-  background-color: #1c1c1c;
-  border: none;
-  border-radius: 0px;
-  padding: 10px;
-  width: 100%;
-  height: 100vh; /* 전체 높이 사용 */
-  box-shadow: none;
-  box-sizing: border-box;
-  color: #e0e0e0;
-  font-family: 'Segoe UI', sans-serif;
-  font-size: 14px;
-  line-height: 1.4;
-  display: flex;
-  flex-direction: column;
-}
-
-/* 텍스트에어리어 */
-.help-textarea {
-  flex: 1; /* 남는 공간 모두 사용 */
-  width: 100%;
-  resize: none;
-  overflow-y: auto;
-  background-color: #2a2a2a;
-  color: #ffffff;
-  border: 1px solid #555;
-  border-radius: 0px;
-  padding: 12px;
-  font-size: 14px;
-  box-sizing: border-box;
-  line-height: 1.6;
-  margin-top: 5px;
-}
-
-/* 제목 줄 */
-.help-title {
-  margin: 4px 0;
-  font-size: 14px;
-    color: #ffffff;
-padding: 0 0 0 2px;
-}
-
-
-
-/* 닫기 버튼 영역 */
-.help-button-box {
-  text-align: right;
-  margin-top: 10px;
-}
-
-/* 닫기 버튼 */
-.help-close-btn {
-  background-color: #3a3a3a;
-  color: #ffffff;
-  border: none;
-  padding: 6px 16px;
-  border-radius: 5px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.help-close-btn:hover {
-  background-color: #555;
-}
-    `;
-    document.head.appendChild(style);
+  if (isMobile || isShortHeight) {
+    if (bottomButtons) {
+      bottomButtons.style.display = 'none';
+    }
+  } else {
+    if (bottomButtons) {
+      bottomButtons.style.display = 'flex'; // 필요 시 복원
+    }
   }
 }
+// 처음 로드 시 체크
+hideBottomButtonsIfNeeded();
 
-function closeHelpPopup() {
-  const popup = document.getElementById("helpPopup");
-  if (popup) popup.remove();
- location.reload();
-}
+// 리사이즈 시에도 체크
+window.addEventListener('resize', hideBottomButtonsIfNeeded);
 </script>
 
 
