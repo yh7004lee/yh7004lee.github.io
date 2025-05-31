@@ -11,4 +11,3 @@ git commit -m "Update: %TIMESTAMP%"
 :: 푸시
 git push origin main
 
-pause
