@@ -1,5 +1,5 @@
 @echo off
-cd /d "C:\Users\yh700\git\yh7004lee.github.io"
+cd /d "C:\Users\Administrator\Documents\git\yh7004lee.github.io"
 
 :: 변경된 파일 확인 후 추가
 git add .
@@ -10,4 +10,4 @@ git commit -m "Update: %TIMESTAMP%"
 
 :: 푸시
 git push origin main
-
+pause
