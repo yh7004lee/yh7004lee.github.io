@@ -1131,8 +1131,49 @@ location.reload(true);
   }
 </script>
 <script>
-  document.getElementById("game1").addEventListener("click", function () {
-    saveEditedVerses()
+function parseTextareaToJSON2() {
+  const textarea = document.getElementById('editTextarea');
+  if (!textarea) {
+    console.warn('editTextarea 요소를 찾을 수 없습니다.');
+    return;
+  }
+
+  const editedText = textarea.value.trim();
+  const lines = editedText.split('\n').filter(line => line.trim() !== '');
+
+  const isValid = lines.every(line => {
+    const parts = line.split('|');
+    return parts.length === 3 && parts[0].trim() && parts[1].trim();
+  });
+
+  if (!isValid) {
+    console.error('형식이 올바르지 않은 줄이 있습니다.');
+    return;
+  }
+
+  const parsedVerses = lines.map((line, idx) => {
+    const [title, text, textEn] = line.split('|').map(str => str.trim());
+    return {
+      id: idx,
+      title,
+      text,
+      textEn: textEn || '',
+      favorite: false
+    };
+  });
+
+  console.log('변환된 JSON 데이터:', parsedVerses);
+  return parsedVerses;
+}
+
+// 페이지가 로딩된 후 2초 후에 자동 실행
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    parseTextareaToJSON2();
+  }, 2000);
+});
+
+  document.getElementById("game1").addEventListener("click", function () {   
     location.href = "game.htm";
   });
 </script>

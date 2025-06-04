@@ -34,7 +34,7 @@
     p {
      text-align: left;
       margin-bottom: 20px;
-      font-size: 1.1rem;
+      font-size: 1rem;
     }
 
     #verse-container {
@@ -67,9 +67,9 @@
 #bibleMemo,
 #checkBtn {
   display: block;
-  margin: 25px auto 10px auto;
-  padding: 18px 0;     /* 위아래 패딩 크게 */
-  font-size: 1.4rem;   /* 글자도 키움 */
+  margin: 20px auto 10px auto;
+  padding: 10px 0;     /* 위아래 패딩 크게 */
+  font-size: 1.2rem;   /* 글자도 키움 */
   background-color: #444;
   color: #f0f0f0;
   border: none;
@@ -98,22 +98,63 @@
       pointer-events: none;
       z-index: 1000;
     }
+/* 스타일에 추가 (checkBtn과 동일하게 적용) */
+#restartBtn,
+#mainBtn {
+  display: block;
+  margin: 10px auto 0 auto;
+  padding: 10px 0;
+  font-size: 1.2rem;
+  background-color: #444;
+  color: #f0f0f0;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
+}
+#restartBtn:hover,
+#mainBtn:hover {
+  background-color: #666;
+}
 
-    
+  #navButtons .navBtn {
+  flex: 1;
+  padding: 10px 0;
+  font-size: 1rem;
+  background-color: #444;
+  color: #f0f0f0;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
+}
+#navButtons .navBtn:hover {
+  background-color: #666;
+}  
 
   </style>
 </head>
 <body>
-
+  <!-- 상단 네비게이션 버튼 -->
+  <div id="navButtons" style="display:flex; gap:8px; margin-top:10px;">
+    <button class="navBtn" onclick="goToFirst()"> 처음</button>
+    <button class="navBtn" onclick="goToPrev()"> 이전</button>
+    <button class="navBtn" onclick="goToNext()"> 다음</button>
+    <button class="navBtn" onclick="goToLast()"> 마지막</button>
+  </div>
   <h3 id="verseTitle" style=" margin-bottom:10px;">말씀 제목</h3>
-  <p>단어를 올바른 순서로 드래그하여 배열해 보세요</p>
+  <p>단어를 드래그해서 순서대로 정렬하세요</p>
 
   <div id="verse-container"></div>
 
   <button id="checkBtn">✅ 정답 확인</button>
+  <button id="restartBtn" style="display:none; margin-top:20px;">🔄 다시 시작하기</button>
+  <button id="mainBtn">🏠 말씀암송 메인화면</button>
   <div id="result"></div>
 
-  <button id="restartBtn" style="display:none; margin-top:20px;">🔄 다시 시작하기</button>
+
 
   <script>
 const STORAGE_KEY_VERSES = 'savedVerses2';
@@ -287,6 +328,39 @@ window.onload = () => {
     renderStage();
   }
 };
+
+// 메인화면 버튼 클릭 시 이동
+document.getElementById('mainBtn').addEventListener('click', () => {
+  window.location.href = 'bible.htm';
+});
+// 스테이지 네비게이션 함수
+function goToFirst() {
+  if (verses.length > 0) {
+    currentStage = 0;
+    renderStage();
+  }
+}
+
+function goToPrev() {
+  if (currentStage > 0) {
+    currentStage--;
+    renderStage();
+  }
+}
+
+function goToNext() {
+  if (currentStage < verses.length - 1) {
+    currentStage++;
+    renderStage();
+  }
+}
+
+function goToLast() {
+  if (verses.length > 0) {
+    currentStage = verses.length - 1;
+    renderStage();
+  }
+}
 </script>
 
 </body>
