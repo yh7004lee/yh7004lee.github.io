@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>성경 암송 카드</title>
+<style>
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+body {
+  background-color: #121212;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* 상단 버튼 스타일 */
+.top-buttons {
+  display: flex;
+  justify-content: space-between; /* 버튼을 좌우로 최대한 벌림 */
+   align-items: center; /* <-- stretch에서 center로 변경 */
+  background-color: #1e1e1e;
+  padding: 0;
+  z-index: 2;
+}
+
+
+
+
+.top-buttons button {
+  flex: 1; /* 버튼 너비를 균등하게 만듦 */
+  text-align: center; /* 버튼 안의 텍스트 중앙 정렬 */
+  padding: 0 20px;
+  height: 40px;
+  line-height: 40px;
+  vertical-align: middle;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.1rem;
+  cursor: pointer;
+  border-right: 1px solid #333333;
+  border-radius: 0;
+  transition: background-color 1s ease, color 0.3s ease; /* ✅ transition 수정 */
+}
+
+/* 클릭(또는 터치) 시 효과 */
+.top-buttons button:active {
+  background-color: rgba(197, 79, 109, 0.8); /* ✅ 약간의 투명도 (0.7) 추가 */
+  transition: background-color 1s ease; /* ✅ transition 추가 */
+}
+
+
+/* 호버 효과는 그대로 유지 */
+.top-buttons button:hover,
+.top-buttons button:focus {
+  background-color: rgba(197, 79, 109, 0.8);✅ 약간의 투명도 (0.7) 추가 */
+}
+
+
+
+/* 하단 버튼 스타일 */
+.bottom-buttons {
+  display: flex;
+  justify-content: space-around;
+  background-color: #1e1e1e;
+  padding: 10px 0;
+  z-index: 2;
+}
+
+.bottom-buttons button {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border-radius: 8px;
+}
+
+.bottom-buttons button:hover,
+.bottom-buttons button:focus {
+  background-color: #2a2a2a;
+}
+
+.bottom-buttons button:active {
+  background-color: #333333;
+}
+
+.verse-container {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  padding: 14px 0 40px 0;
+  gap: 14px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  touch-action: pan-y;
+  margin: 50 0 0 0;  /* 🔧 상단 마진 50px */
+  box-sizing: border-box;
+}
+
+
+
+
+.verse-box, 
+.favorite-box {
+ /*height: auto; */
+  width: 100%;
+  margin: 0 ;
+  padding: 10px ;
+  box-sizing: border-box;
+
+
+}
+
+
+.verse-box {
+  background: #1e1e1e;
+  /*border-radius: 15px;*/
+  text-align: left;
+  cursor: pointer;
+}
+
+
+.favorite-box {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* 간격 조절 */
+  background: #1e1e1e;
+   /*border-radius: 15px;*/
+  cursor: pointer;
+}
+
+
+
+
+.verse-title {
+  font-size: 1.6rem;
+  /*font-weight: bold;*/
+  color: #FFF; /* 주황빛 노랑 */
+  margin: 0;
+}
+
+.verse-text {
+  font-size: 1.6rem;
+  line-height: 2.4rem;
+   /*font-weight: bold;*/
+  color: #FFF; /* 연녹색 */
+  margin: 0;
+}
+
+
+
+.favorite-label {
+  font-size: 1.6rem;
+  color: #fff; /* 연하늘색 */
+   /*font-weight: bold;*/
+}
+
+
+
+
+/* 체크박스 크기 조정 */
+#favoriteCheckbox {
+  width: 17px;
+  height: 17px;
+  transform: scale(1.5);
+}
+
+
+
+
+/* 말씀 편집 모드 스타일 */
+.edit-container {
+  position: fixed;
+  top: 0; /* 수정: 기존 60px -> 0 */
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #121212;
+  padding: 10px 15px 20px 15px;
+  display: flex;
+  flex-direction: column;
+  z-index: 5;
+  overflow: auto;
+}
+
+.edit-title {
+  font-size: 1.4rem;
+  color: #fff;
+ font-weight: normal; /* 굵게 보이지 않도록 설정 */
+  margin: 0;
+  padding-top: 4px;
+  padding-left: 10px;
+  padding-bottom: 6px;
+}
+
+#editTextarea {
+  flex: 1;
+  width: 100%;
+  resize: none;
+  font-size: 1rem;
+  padding: 10px;
+  background-color: #1e1e1e;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
+.edit-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 15px;
+}
+
+.edit-buttons button {
+  flex: 1;
+  margin: 0 5px;
+  padding: 10px;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 8px;
+  background-color: #2a2a2a;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.edit-buttons button:hover {
+  background-color: #333333;
+}
+
+@media (max-width: 768px) {
+  #editTextarea {
+    font-size: 1rem;
+  }
+
+  .edit-title {
+    font-size: 1.2rem;
+  }
+}
+
+.verse-box.animate-left,
+.favorite-box.animate-left {
+  animation: slideLeft 0.7s ease;
+}
+
+.verse-box.animate-right,
+.favorite-box.animate-right {
+  animation: slideRight 0.7s ease;
+}
+
+@keyframes slideLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideRight {
+  0% {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+
+#settingsMenu {
+  display: none;
+  position: absolute;
+  top: 48px;
+  right: 10px;
+  width: 90vw;
+  max-width: 300px;
+  background-color: #1e1e1e;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 5px 12px;
+box-shadow:
+  /* 네온 광채 - 더 밝고 선명하게 */
+  0 0 4px rgba(0, 255, 255, 0.8),   /* 형광 청록빛 */
+  0 0 8px rgba(0, 255, 255, 0.6),
+  0 0 16px rgba(0, 255, 255, 0.5),
+  0 0 24px rgba(0, 255, 255, 0.3),
+
+  /* 아래로 드리운 어두운 그림자 */
+  0 10px 20px rgba(0, 0, 0, 0.5);
+  
+z-index: 10000;
+  animation: fadeInMenu 0.3s ease-out;
+}
+
+@keyframes fadeInMenu {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+#settingsMenu h3 {
+  font-size: 1.2rem;
+  color: #ffffff;
+  margin-top: 0;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #333;
+}
+
+#settingsMenu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#settingsMenu ul li {
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  background-color: #262626;
+  border-radius: 10px;
+  color: #eee;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+}
+
+#settingsMenu ul li:hover {
+  background-color: #333;
+  color: #03dac6;
+}
+
+#settingsMenu ul li:active {
+  background-color: #444;
+}
+
+
+
+/* 메뉴 항목 */
+.settings-item {
+  padding: 10px 10px;
+  font-size: 1.1rem;
+  color: #fff;
+  background-color: transparent;
+  user-select: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* 마지막 항목은 보더 제거 */
+.settings-item:last-child {
+  border-bottom: none;
+}
+
+/* 호버 효과 */
+.settings-item:hover {
+  background-color: #c54f6d;
+}
+
+/* 슬라이더 */
+.settings-item input[type="range"] {
+  width: 100%;
+  margin-top: 6px;
+  cursor: pointer;
+}
+
+</style>
+</head>
+<body>
+
+<div class="top-buttons">
+  <button id="toggleButton" onclick="toggleVerse()">숨겨</button>
+  <button id="modeToggleButton" onclick="toggleMode()">랜덤</button>
+  <button id="favoriteToggleButton" onclick="toggleFavorites()">즐찾</button>
+<button id="settingsToggleButton" onclick="toggleSettingsMenu()">설정</button>
+</div>
+
+
+<div id="settingsMenu">
+  <div class="inner-container">
+    <div class="settings-item" onclick="handleEditClick()">💗 말씀 편집하기</div>
+
+    <div class="settings-item">
+      💗 말씀구절 글자크기
+      <input id="titleFontSlider" type="range" min="1" max="6" value="1">
+    </div>
+    <div class="settings-item">
+      💗 말씀내용 글자크기
+      <input id="textFontSlider" type="range" min="1" max="6" value="1">
+    </div>
+    <div class="settings-item" onclick="resetFontSizes()">💗 글자크기 초기화</div>
+ <div class="settings-item" id="toggleEnglishVerseBtn" onclick="toggleEnglishVerse()">💗 영어 말씀 숨기기</div>
+ <div class="settings-item"  id="game1" onclick="game()">💗 순서 맞추기 게임</div>   
+<div class="settings-item" onclick="openHelpPopup()">💗 도움말</div>
+    <div class="settings-item" onclick="hideSettingsMenu()">💗 나가기</div>
+  </div>
+</div>
+
+
+
+<div class="verse-container" id="verseContainer">
+  <div class="verse-box">
+    <div class="verse-title" id="verseTitle"></div>
+  </div>
+  <div class="verse-box">
+    <div class="verse-text" id="verseText"></div>
+  </div>
+     <div class="verse-box">
+    <div class="verse-text" id="verseTextEn"></div>
+  </div>
+  <div class="favorite-box" onclick="toggleFavoriteCheckbox()">
+    <span class="favorite-label">즐겨찾기 추가  </span>
+    <input type="checkbox" id="favoriteCheckbox" onclick="event.stopPropagation(); updateFavorite();">
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+<div id="editContainer" class="edit-container" style="display: none;">
+  <h2 class="edit-title">편집 형식 : 말씀구절 | 한글 | 영문</h2>
+  <textarea id="editTextarea"></textarea>
+  <div class="edit-buttons">
+    <button onclick="saveEditedVerses()">확인</button>
+    <button onclick="cancelEdit()">취소</button>
+    <button onclick="resetToOriginal()">초기화</button>
+  </div>
+</div>
+
+
+<script>
+
+
+
+let settingsVisible = false;
+
+function toggleSettingsMenu() {
+  const menu = document.getElementById("settingsMenu");
+  settingsVisible = !settingsVisible;
+  menu.style.display = settingsVisible ? "block" : "none";
+}
+
+document.addEventListener("click", function (event) {
+  const menu = document.getElementById("settingsMenu");
+  const button = document.getElementById("settingsToggleButton");
+  if (!menu.contains(event.target) && event.target !== button) {
+    menu.style.display = "none";
+    settingsVisible = false;
+  }
+});
+
+function handleEditClick() {
+  toggleEditMode();
+  hideSettingsMenu();
+}
+
+function hideSettingsMenu() {
+  document.getElementById("settingsMenu").style.display = "none";
+  settingsVisible = false;
+}
+
+// 글자 크기 조절 슬라이더와 저장 로직
+const titleFontSlider = document.getElementById("titleFontSlider");
+const textFontSlider = document.getElementById("textFontSlider");
+const verseTitle = document.getElementById("verseTitle");
+const verseText = document.getElementById("verseText");
+
+function applyFontSize() {
+  const titleScale = parseInt(titleFontSlider.value);
+  const textScale = parseInt(textFontSlider.value);
+
+  const titleSize = 1.6 + (titleScale - 1) * 0.2;
+  const textSize = 1.6 + (textScale - 1) * 0.2;
+
+  verseTitle.style.fontSize = `${titleSize}rem`;
+  verseTitle.style.lineHeight = `${titleSize * 1.4}rem`; // 줄간격 설정
+  verseText.style.fontSize = `${textSize}rem`;
+  verseText.style.lineHeight = `${textSize * 1.5}rem`; // 줄간격 설정
+  verseTextEn.style.fontSize = `${textSize}rem`;
+  verseTextEn.style.lineHeight = `${textSize * 1.5}rem`; // 줄간격 설정
+  localStorage.setItem("verseTitleSize", titleScale);
+  localStorage.setItem("verseTextSize", textScale);
+}
+
+titleFontSlider.addEventListener("input", applyFontSize);
+textFontSlider.addEventListener("input", applyFontSize);
+
+function resetFontSizes() {
+  titleFontSlider.value = 1;
+  textFontSlider.value = 1;
+  applyFontSize();
+}
+
+window.addEventListener("load", () => {
+  const savedTitleSize = localStorage.getItem("verseTitleSize") || 1;
+  const savedTextSize = localStorage.getItem("verseTextSize") || 1;
+
+  titleFontSlider.value = savedTitleSize;
+  textFontSlider.value = savedTextSize;
+
+  applyFontSize();
+});
+
+document.getElementById("titleFontSlider").addEventListener("input", function () {
+  const scale = parseInt(this.value);
+  const verseTitle = document.getElementById("verseTitle");
+  const fontSize = 1.4 + 0.2 * scale;
+  const lineHeight = fontSize * 1.4; // 줄간격 비율
+  verseTitle.style.fontSize = fontSize + "rem";
+  verseTitle.style.lineHeight = lineHeight + "rem";
+});
+
+document.getElementById("textFontSlider").addEventListener("input", function () {
+  const scale = parseInt(this.value);
+  const verseText = document.getElementById("verseText");
+  const verseTextEn = document.getElementById("verseTextEn");
+  const fontSize = 1.4 + 0.2 * scale;
+  const lineHeight = fontSize * 1.5; // 줄간격 비율
+  verseText.style.fontSize = fontSize + "rem";
+  verseText.style.lineHeight = lineHeight + "rem";
+  verseTextEn.style.fontSize = fontSize + "rem";
+  verseTextEn.style.lineHeight = lineHeight + "rem";
+});
+
+
+// localStorage key
+const STORAGE_KEY_VERSES = 'savedVerses2';
+const STORAGE_KEY_FAVORITES = 'favorites2';
+
+// 로컬스토리지에서 저장된 말씀 불러오기
+function loadSavedVerses() {
+  const saved = localStorage.getItem(STORAGE_KEY_VERSES);
+  if (!saved) return null;
+
+  try {
+    const parsed = JSON.parse(saved);
+    return parsed.map((v, i) => ({
+      ...v,
+      id: i,
+      title: v.title || '',
+      text: v.text || '',
+      textEn: v.textEn || '',
+      favorite: v.favorite || false
+    }));
+  } catch {
+    return null;
+  }
+}
+
+function saveVersesToStorage(verses) {
+  localStorage.setItem(STORAGE_KEY_VERSES, JSON.stringify(verses));
+}
+
+
+// 기본 말씀 구절 문자열
+const originalVersesStr = `
+1. 요한복음 3장 16절| 하나님이 세상을 이처럼 사랑하사 독생자를 주셨으니 이는 저를 믿는 자마다 멸망치 않고 영생을 얻게 하려 하심이니라 [개역한글] | For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life. [KJV]
+2. 요한복음 14장 6절| 예수께서 가라사대 내가 곧 길이요 진리요 생명이니 나로 말미암지 않고는 아버지께로 올 자가 없느니라 [개역한글] | Jesus saith unto him, I am the way, the truth, and the life: no man cometh unto the Father, but by me. [KJV]
+3. 로마서 5장 8절| 우리가 아직 죄인 되었을 때에 그리스도께서 우리를 위하여 죽으심으로 하나님께서 우리에게 대한 자기의 사랑을 확증하셨느니라 [개역한글] | But God commendeth his love toward us, in that, while we were yet sinners, Christ died for us. [KJV]
+4. 히브리서 11장 6절| 믿음이 없이는 기쁘시게 못하나니 하나님께 나아가는 자는 반드시 그가 계신 것과 또한 그가 자기를 찾는 자들에게 상 주시는 이심을 믿어야 할찌니라 [개역한글]| But without faith it is impossible to please him: for he that cometh to God must believe that he is, and that he is a rewarder of them that diligently seek him. [KJV]
+5. 마태복음 6장 33절| 너희는 먼저 그의 나라와 그의 의를 구하라 그리하면 이 모든 것을 너희에게 더하시리라  [개역한글]| But seek ye first the kingdom of God, and his righteousness; and all these things shall be added unto you.  [KJV]
+6. 데살로니가전서 5장 16~18절| 항상 기뻐하라 쉬지 말고 기도하라 범사에 감사하라 이는 그리스도 예수 안에서 너희를 향하신 하나님의 뜻이니라  [개역한글]| Rejoice evermore.Pray without ceasing. In every thing give thanks: for this is the will of God in Christ Jesus concerning you.  [KJV]
+7. 사도행전 1장 8절| 오직 성령이 너희에게 임하시면 너희가 권능을 받고 예루살렘과 온 유대와 사마리아와 땅 끝까지 이르러 내 증인이 되리라 하시니라  [개역한글]| But ye shall receive power, after that the Holy Ghost is come upon you: and ye shall be witnesses unto me both in Jerusalem, and in all Judaea, and in Samaria, and unto the uttermost part of the earth.  [KJV]
+8. 요한복음 15장 5절| 나는 포도나무요 너희는 가지니 저가 내 안에, 내가 저 안에 있으면 이 사람은 과실을 많이 맺나니 나를 떠나서는 너희가 아무것도 할 수 없음이라  [개역한글]| I am the vine, ye are the branches: He that abideth in me, and I in him, the same bringeth forth much fruit: for without me ye can do nothing.  [KJV]
+9. 갈라디아서 2장 20절| 내가 그리스도와 함께 십자가에 못 박혔나니 그런즉 이제는 내가 산 것이 아니요 오직 내 안에 그리스도께서 사신 것이라 이제 내가 육체 가운데 사는 것은 나를 사랑하사 나를 위하여 자기 몸을 버리신 하나님의 아들을 믿는 믿음 안에서 사는 것이라  [개역한글]| I am crucified with Christ: neverthless I live; yet not I, but Christ liveth in me: and the life which I now live in the flesh I live by the faith of the Son of God, who loved me, and gave himself for me.  [KJV]
+10. 이사야 41장 10절| 두려워 말라 내가 너와 함께 함이니라 놀라지 말라 나는 네 하나님이 됨이니라 내가 너를 굳세게 하리라 참으로 너를 도와 주리라 참으로 나의 의로운 오른손으로 너를 붙들리라  [개역한글]| Fear thou not; for I am with thee: be not dismayed; for I am thy God: I will strengthen thee; yea, I will help thee; yea, I will uphold thee with the right hand of my righteousness.  [KJV]
+11. 예레미야 33장 3절| 너는 내게 부르짖으라 내가 네게 응답하겠고 네가 알지 못하는 크고 비밀한 일을 네게 보이리라  [개역한글]| Call unto me, and I will answer thee, and shew thee great and mighty things, which thou knowest not.  [KJV]
+12. 빌립보서 4장 19절| 나의 하나님이 그리스도 예수 안에서 영광 가운데 그 풍성한대로 너희 모든 쓸 것을 채우시리라  [개역한글]| But my God shall supply all your need according to his riches in glory by Christ Jesus.  [KJV]
+13. 요한일서 2장 15~16절 | 이 세상이나 세상에 있는 것들을 사랑치 말라 누구든지 세상을 사랑하면 아버지의 사랑이 그 속에 있지 아니하니 이는 세상에 있는 모든 것이 육신의 정욕과 안목의 정욕과 이생의 자랑이니 다 아버지께로 좇아 온 것이 아니요 세상으로 좇아 온 것이라  [개역한글]| Love not the world, neither the things that are in the world. If any man love the world, the love of the Father is not in him. For all that is in the world, the lust of the flesh, and the lust of the eyes, and the pride of life, is not of the Father, but is of the world.  [KJV]
+14. 빌립보서 2장 3~4절| 아무 일에든지 다툼이나 허영으로 하지 말고 오직 겸손한 마음으로 각각 자기보다 남을 낫게 여기고 각각 자기 일을 돌아볼 뿐더러 또한 각각 다른 사람들의 일을 돌아보아 나의 기쁨을 충만케 하라  [개역한글]| Let nothing be done through strife or vainglory; but in lowliness of mind let each esteem other better than themselves. Look not every man on his own things, but every man also on the things of others.  [KJV]
+15. 요한복음 15장 7절| 너희가 내 안에 거하고 내 말이 너희 안에 거하면 무엇이든지 원하는대로 구하라 그리하면 이루리라  [개역한글]| If ye abide in me, and my words abide in you, ye shall ask what ye will, and it shall be done unto you.  [KJV]
+16. 잠언 4장 8절| 그를 높이라 그리하면 그가 너를 높이 들리라 만일 그를 품으면 그가 너를 영화롭게 하리라  [개역한글]| Exalt her, and she shall promote thee: she shall bring thee to honour, when thou dost embrace her.  [KJV]
+17. 에베소서 4장 29절| 무릇 더러운 말은 너희 입밖에도 내지 말고 오직 덕을 세우는데 소용되는대로 선한 말을 하여 듣는 자들에게 은혜를 끼치게 하라  [개역한글]| Let no corrupt communication proceed out of your mouth, but that which is good to the use of edifying, that it may minister grace unto the hearers.  [KJV]
+18. 요한일서 5장 4절| 대저 하나님께로서 난 자마다 세상을 이기느니라 세상을 이긴 이김은 이것이니 우리의 믿음이니라  [개역한글]| For whatsoever is born of God overcometh the world: and this is the victory that overcometh the world, even our faith.  [KJV]
+19. 마태복음 7장 7절| 구하라 그러면 너희에게 주실 것이요 찾으라 그러면 찾을 것이요 문을 두드리라 그러면 너희에게 열릴 것이니  [개역한글]| Ask, and it shall be given you; seek, and ye shall find; knock, and it shall be opened unto you:  [KJV]
+20. 잠언 16장 20절| 삼가 말씀에 주의하는 자는 좋은 것을 얻나니 여호와를 의지하는 자가 복이 있느니라  [개역한글]| He that handleth a matter wisely shall find good: and whoso trusteth in the LORD, happy is he.ㅋ  [KJV]
+21. 시편 46편 1절| 하나님은 우리의 피난처시요 힘이시니 환난 중에 만날 큰 도움이시라  [개역한글]| God is our refuge and strength, a very present help in trouble.  [KJV]
+22. 로마서 10장 10절| 사람이 마음으로 믿어 의에 이르고 입으로 시인하여 구원에 이르느니라  [개역한글]| For with the heart man believeth unto righteousness; and with the mouth confession is made unto salvation.  [KJV]
+23. 이사야 53장 5절| 그가 찔림은 우리의 허물을 인함이요 그가 상함은 우리의 죄악을 인함이라 그가 징계를 받음으로 우리가 평화를 누리고 그가 채찍에 맞음으로 우리가 나음을 입었도다  [개역한글]| But he was wounded for our transgressions, he was bruised for our iniquities: the chastisement of our peace was upon him; and with his stripes we are healed.  [KJV]
+24. 잠언 16장 9절| 사람이 마음으로 자기의 길을 계획할지라도 그 걸음을 인도하는 자는 여호와시니라  [개역한글]| A man's heart deviseth his way: but the LORD directeth his steps.  [KJV]
+25. 빌립보서 4장 6~7절| 아무 것도 염려하지 말고 오직 모든 일에 기도와 간구로, 너희 구할 것을 감사함으로 하나님께 아뢰라 그리하면 모든 지각에 뛰어난 하나님의 평강이 그리스도 예수 안에서 너희 마음과 생각을 지키시리라  [개역한글]| Be careful for nothing; but in every thing by prayer and supplication with thanksgiving let your requests be made known unto God. And the peace of God, which passeth all understanding, shall keep your hearts and minds through Christ Jesus.  [KJV]
+26. 이사야 40장 31절| 오직 여호와를 앙망하는 자는 새 힘을 얻으리니 독수리의 날개치며 올라감 같을 것이요 달음박질하여도 곤비치 아니하겠고 걸어가도 피곤치 아니하리로다  [개역한글]| But they that wait upon the LORD shall renew their strength; they shall mount up with wings as eagles; they shall run, and not be weary; and they shall walk, and not faint.  [KJV]
+27. 마태복음 11장 28절| 수고하고 무거운 짐진 자들아 다 내게로 오라 내가 너희를 쉬게 하리라  [개역한글]| Come unto me, all ye that labour and are heavy laden, and I will give you rest.  [KJV]
+28. 마태복음 22장 37절| 예수께서 가라사대 네 마음을 다하고 목숨을 다하고 뜻을 다하여 주 너의 하나님을 사랑하라 하셨으니  [개역한글]| Jesus said unto him, Thou shalt love the Lord thy God with all thy heart, and with all thy soul, and with all thy mind.  [KJV]
+29. 요한복음 14장 13절| 너희가 내 이름으로 무엇을 구하든지 내가 시행하리니 이는 아버지로 하여금 아들을 인하여 영광을 얻으시게 하려 함이라  [개역한글]| And whatsoever ye shall ask in my name, that will I do, that the Father may be glorified in the Son.  [KJV]
+30. 빌립보서 4장 13절| 내게 능력 주시는 자 안에서 내가 모든 것을 할 수 있느니라  [개역한글]| I can do all things through Christ which strengtheneth me.  [KJV]
+`;
+
+function parseVerses(str) {
+  return str.trim().split('\n').map((line, i) => {
+    const parts = line.split('|').map(s => s.trim());  
+    return {
+      id: i,
+      title: parts[0] || '',
+      text: parts[1] || '',
+      textEn: parts[2] || '',
+      favorite: false
+     
+    };
+  });
+}
+
+// 초기화
+let originalVerses = loadSavedVerses() || parseVerses(originalVersesStr);
+let favoriteIds = JSON.parse(localStorage.getItem(STORAGE_KEY_FAVORITES) || '[]');
+
+// favorite 상태 복원
+originalVerses = originalVerses.map((v, i) => ({
+  ...v,
+  id: i,
+  favorite: favoriteIds.includes(i)
+}));
+
+let verses = [...originalVerses];
+let current = 0;
+let isHidden = false;
+let isRandomMode = false;
+let showOnlyFavorites = false;
+
+
+
+
+function renderVerse() {
+
+  const verse = verses[current];
+  if (!verse) return;
+  document.getElementById('verseTitle').textContent = verse.title;
+  document.getElementById('verseText').textContent = verse.text;
+  document.getElementById('verseTextEn').textContent = verse.textEn;
+  document.getElementById('favoriteCheckbox').checked = verse.favorite;
+
+}
+
+
+function applyAnimation(direction = 'left') {
+  const verseBoxes = document.querySelectorAll('.verse-box, .favorite-box');
+  verseBoxes.forEach((box) => {
+    box.classList.remove('animate-left', 'animate-right'); // 초기화
+    void box.offsetWidth; // 리플로우 강제 → 연속 클릭 시 애니메이션 재실행됨
+    box.classList.add(direction === 'left' ? 'animate-left' : 'animate-right');
+  });
+}
+
+function prevVerse() {
+applyAnimation('right');
+  current = (current - 1 + verses.length) % verses.length;
+  renderVerse();
+}
+
+function nextVerse() {
+    applyAnimation('left');
+  current = (current + 1) % verses.length;
+  renderVerse();
+}
+
+function toggleVerse() {
+  isHidden = !isHidden;
+  document.getElementById("toggleButton").innerText = isHidden ? "보여" : "숨겨";
+
+  const textElKo = document.getElementById("verseText").parentElement;
+  const textElEn = document.getElementById("verseTextEn").parentElement;
+
+  const englishHidden = localStorage.getItem("englishVerseHidden") === "true";
+
+  if (isHidden) {
+    textElKo.style.display = "none";
+    textElEn.style.display = "none";
+  } else {
+    textElKo.style.display = "block";
+
+    // 영어 말씀이 숨김 상태로 저장되어 있다면 block 하지 않음
+    if (!englishHidden) {
+      textElEn.style.display = "block";
+    }
+  }
+
+  renderVerse();
+}
+
+function toggleMode() {
+  const modeButton = document.getElementById('modeToggleButton');
+
+  if (!isRandomMode) {
+    let shuffled;
+    let attempts = 0;
+    do {
+      shuffled = [...verses];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      attempts++;
+    } while (arraysAreEqual(shuffled, verses) && attempts < 10);
+
+    verses = shuffled;
+    isRandomMode = true;
+    modeButton.textContent = "순차";
+  } else {
+    verses = showOnlyFavorites ? originalVerses.filter(v => v.favorite) : [...originalVerses];
+    isRandomMode = false;
+    modeButton.textContent = "랜덤";
+  }
+
+  current = 0;
+  renderVerse();
+}
+
+// 🔧 배열 비교 함수 (같은 순서인지 확인)
+function arraysAreEqual(arr1, arr2) {
+  if (arr1.length !== arr2.length) return false;
+  for (let i = 0; i < arr1.length; i++) {
+    if (arr1[i] !== arr2[i]) return false;
+  }
+  return true;
+}
+
+
+function updateFavorite() {
+  const verse = verses[current];
+  verse.favorite = document.getElementById('favoriteCheckbox').checked;
+
+  const original = originalVerses.find(v => v.id === verse.id);
+  if (original) original.favorite = verse.favorite;
+
+  const newFavorites = originalVerses.filter(v => v.favorite).map(v => v.id);
+  localStorage.setItem(STORAGE_KEY_FAVORITES, JSON.stringify(newFavorites));
+}
+
+function toggleFavoriteCheckbox() {
+  const checkbox = document.getElementById('favoriteCheckbox');
+  checkbox.checked = !checkbox.checked;
+  updateFavorite();
+}
+
+function toggleFavorites() {
+  const button = document.getElementById("favoriteToggleButton");
+  showOnlyFavorites = !showOnlyFavorites;
+
+  if (showOnlyFavorites) {
+    const favoritesOnly = originalVerses.filter(v => v.favorite);
+
+    if (favoritesOnly.length === 0) {
+      alert("즐겨찾기 추가한 말씀이 하나도 없습니다.");
+      showOnlyFavorites = false; // 상태를 다시 원래대로 되돌림
+      return; // 아래 코드 실행 중단
+    }
+
+    verses = favoritesOnly;
+    button.textContent = "모두";
+  } else {
+    verses = [...originalVerses];
+    button.textContent = "즐찾";
+  }
+
+  current = 0;
+  renderVerse();
+
+  // 즐겨찾기 id 배열 반환 및 콘솔 출력
+  const favIds = getFavoriteIds();
+  console.log(favIds);
+  return favIds;
+}
+
+
+// 스와이프 감지
+let startX = 0;
+let endX = 0;
+const verseContainer = document.getElementById('verseContainer');
+// 화면 전체에 이벤트 적용
+document.addEventListener('touchstart', e => {
+  if (e.target.type === 'checkbox') return;
+  startX = e.touches[0].clientX;
+});
+
+document.addEventListener('touchend', e => {
+  if (e.target.type === 'checkbox') return;
+  endX = e.changedTouches[0].clientX;
+  handleSwipe();
+});
+
+document.addEventListener('mousedown', e => {
+  if (e.target.type === 'checkbox') return;
+  startX = e.clientX;
+});
+
+document.addEventListener('mouseup', e => {
+  if (e.target.type === 'checkbox') return;
+  endX = e.clientX;
+  handleSwipe();
+});
+
+
+// 즐겨찾기 추가된 번호(id) 배열 반환 함수
+function getFavoriteIds() {
+  return originalVerses.filter(v => v.favorite).map(v => v.id);
+}
+
+let lastSwipeTime = 0;
+let swipeCount = 0;
+
+function handleSwipe() {
+  const diff = endX - startX;
+  const now = Date.now();
+
+  // 연속 스와이프 여부 판단 (400ms 이내 두 번)
+  if (Math.abs(diff) > 50) {
+    if (now - lastSwipeTime < 400) {
+      swipeCount++;
+    } else {
+      swipeCount = 1;
+    }
+
+    lastSwipeTime = now;
+
+    if (swipeCount >= 2) {
+      // 두 번 빠르게 스와이프하면 10칸 점프
+      if (diff > 0) {
+        jumpVerse(-10); // 오른쪽으로 스와이프 = 이전
+      } else {
+        jumpVerse(10); // 왼쪽으로 스와이프 = 다음
+      }
+      swipeCount = 0; // 리셋
+    } else {
+      // 일반 스와이프
+      diff > 0 ? prevVerse() : nextVerse();
+    }
+  }
+}
+
+function jumpVerse(step) {
+  applyAnimation(step > 0 ? 'left' : 'right');
+  current = (current + step + verses.length) % verses.length;
+  renderVerse();
+}
+
+// 편집
+let isEditing = false;
+
+function toggleEditMode() {
+  const editContainer = document.getElementById('editContainer');
+  const textarea = document.getElementById('editTextarea');
+  isEditing = !isEditing;
+
+  if (isEditing) {
+    const str = originalVerses.map(v => `${v.title}| ${v.text}| ${v.textEn || ''}`).join('\n');
+    textarea.value = str;
+    editContainer.style.display = 'flex';
+  } else {
+    editContainer.style.display = 'none';
+  }
+}
+
+function saveEditedVerses() {
+  const editedText = document.getElementById('editTextarea').value.trim();
+  const lines = editedText.split('\n').filter(line => line.trim() !== '');
+  const isValid = lines.every(line => {
+    const parts = line.split('|');
+    return parts.length === 3 && parts[0].trim() && parts[1].trim();
+  });
+
+  if (!isValid) {
+    showFormatError();
+    return;
+  }
+
+  const newVerses = lines.map((line, idx) => {
+const [title, text, textEn] = line.split('|').map(str => str.trim());
+return { id: idx, title, text, textEn: textEn || '', favorite: false };
+  });
+
+  for (let v of newVerses) {
+    const existing = originalVerses.find(o => o.title === v.title && o.text === v.text);
+    if (existing) v.favorite = existing.favorite;
+  }
+
+  originalVerses = [...newVerses];
+  verses = showOnlyFavorites ? originalVerses.filter(v => v.favorite) : [...originalVerses];
+
+  // 저장
+  saveVersesToStorage(originalVerses);
+  localStorage.setItem(STORAGE_KEY_FAVORITES, JSON.stringify(originalVerses.filter(v => v.favorite).map(v => v.id)));
+
+  current = 0;
+  toggleEditMode();
+  renderVerse();
+}
+
+function cancelEdit() {
+  toggleEditMode();
+}
+
+function resetToOriginal() {
+  const textarea = document.getElementById('editTextarea');
+  textarea.value = originalVersesStr.trim();
+}
+
+function showFormatError() {
+  if (!document.getElementById('formatErrorBox')) {
+    const errorBox = document.createElement('div');
+    errorBox.id = 'formatErrorBox';
+    errorBox.style.position = 'fixed';
+    errorBox.style.top = '50%';
+    errorBox.style.left = '50%';
+    errorBox.style.transform = 'translate(-50%, -50%)';
+    errorBox.style.backgroundColor = '#2a2a2a';
+    errorBox.style.color = '#fff';
+    errorBox.style.padding = '20px';
+    errorBox.style.borderRadius = '10px';
+    errorBox.style.zIndex = '10';
+    errorBox.style.textAlign = 'center';
+    errorBox.innerHTML = `
+      <p>편집 형식에 <br>어긋나게 편집하셨네요.<br>죄송하지만 창을 닫습니다.</p>
+      <button id="formatErrorOkButton" style="margin-top:15px; padding:8px 20px; border:none; border-radius:5px; background:#FFD95A; color:#121212; font-weight:bold; cursor:pointer;">확인</button>
+    `;
+    document.body.appendChild(errorBox);
+    document.getElementById('formatErrorOkButton').onclick = () => {
+      errorBox.remove();
+      toggleEditMode();
+    };
+  }
+}
+
+// 최초 렌더링
+renderVerse();
+
+</script>
+
+<script>
+function openHelpPopup() {
+  hideSettingsMenu()
+  if (document.getElementById("helpPopup")) return;
+
+  const popupOverlay = document.createElement("div");
+  popupOverlay.id = "helpPopup";
+  popupOverlay.className = "help-popup-overlay";
+
+  const popupContent = document.createElement("div");
+  popupContent.className = "help-popup-container";
+
+  popupContent.innerHTML = `
+
+    <div class="help-title">최종수정일 : 2025.06.01</div>
+  
+    <textarea class="help-textarea" readonly>
+📝 힘이되는 성경암송 30구절 설명서
+
+1.숨겨/보여 : 말씀 내용을 숨기거나 보이도록 합니다.
+
+2.랜덤/순차 : 말씀 보이는 순서를 섞어서 랜덤으로 나오게 하거나, 순차적으로 나오게 합니다.
+
+3.즐찾/모두 : 모든 말씀이 나오게 하거나, 즐겨찾기에 추가된 말씀만 나오도록 설정할 수 있습니다.
+
+4.설정/말씀 편집하기 : 말씀을 편집하거나 추가할 수 있습니다. 전문가모드 이므로 자신 있는 분들만 시도해 주세요. 전체를 복사해서 카톡이나 구글드라이브로 내용을 백업한 다음 pc 에서 편집 작업을 완료한후 다시 핸드폰으로 글을 가져오면 편리합니다. 초기화 버튼이 있어서 내용이 꼬이거나 실수를 하더라도 다시 원상복구가 가능합니다.
+
+5.유용한 기능 : 손가락으로 좌우로 천천히 넘기면 말씀이 한 단계씩 변합니다. 하지만 빠르게 두 번 연속 넘기면 10개씩 단번에 넘어갑니다.
+
+6.저작권 : 저작권이 완료된 개역한글, KJV(영문) 성경말씀을 사용했습니다. 개역개정, NIV(영문) 성경말씀을 사용하고싶었으나 저작권법에 걸리기 때문에 사용하지 못했음을 알려드리니 필요하시면 직접 편집해서 사용하시면 됩니다. 추천드리는 조합은 네비게이토 암송말씀 60구절 개역개정, NIV(영문) 조합을 추천합니다.
+    </textarea>
+    <div class="help-button-box">
+      <button class="help-close-btn" onclick="closeHelpPopup()">닫기</button>
+    </div>
+  `;
+
+  popupOverlay.appendChild(popupContent);
+  document.body.appendChild(popupOverlay);
+
+  if (!document.getElementById("helpPopupStyle")) {
+    const style = document.createElement("style");
+    style.id = "helpPopupStyle";
+    style.textContent = `
+/* 팝업 전체 화면 덮기 */
+.help-popup-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(10, 10, 10, 0.95);
+  display: flex;
+  justify-content: center;
+  align-items: center; /* stretch → center로 변경해서 중앙 정렬 */
+  padding: 5px; /* 가장자리 여백 추가 */
+  z-index: 9999;
+  box-sizing: border-box;
+  overflow: auto; /* 혹시 넘칠 때 스크롤 */
+}
+
+/* 팝업 본체 */
+.help-popup-container {
+  background-color: #1c1c1c;
+  border-radius: 8px; /* 살짝 둥글게 */
+  padding: 5px 0 10px 0;
+  width: 100%;
+  height: 100%; 
+
+  box-sizing: border-box;
+  color: #e0e0e0;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 제목 줄 */
+.help-title {
+  margin: 2px 0 2px 0;
+   font-size: 1rem;
+  color: #ffffff;
+  padding-left: 4px;
+   line-height: 1.2;
+
+}
+
+.help-textarea {
+  flex: 1;
+  width: 100%;
+  resize: none;
+  overflow-y: auto;
+  background-color: #2a2a2a;
+  color: #ffffff;
+  border: 1px solid #555;
+  border-radius: 4px;
+  padding: 12px;
+   font-size: 1rem;
+  box-sizing: border-box;
+  line-height: 1.4;
+  margin-top: 10px;
+  min-height: 200px; /* 기본값, 화면에 따라 커짐 */
+  max-height: none;  /* 최대 높이 제한 해제 */
+}
+
+/* 닫기 버튼 영역 */
+.help-button-box {
+  text-align: right;
+  margin: 15px 10px 0 0;
+}
+
+/* 닫기 버튼 */
+.help-close-btn {
+  background-color: #3a3a3a;
+  color: #ffffff;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.help-close-btn:hover {
+  background-color: #555;
+}
+`;
+    document.head.appendChild(style);
+  }
+}
+
+function closeHelpPopup() {
+  const popup = document.getElementById("helpPopup");
+  if (popup) popup.remove();
+
+location.reload(true);
+}
+
+</script>
+<script>
+  // 초기 상태를 로컬스토리지에서 불러오기
+  document.addEventListener("DOMContentLoaded", () => {
+    const textElEn = document.getElementById("verseTextEn")?.parentElement;
+    const btn = document.getElementById("toggleEnglishVerseBtn");
+    const savedState = localStorage.getItem("englishVerseHidden");
+
+    if (!textElEn || !btn) return;
+
+    if (savedState === "true") {
+      textElEn.style.display = "none";
+      btn.innerText = "💗 영어 말씀 보이기";
+    } else {
+      textElEn.style.display = "";
+      btn.innerText = "💗 영어 말씀 숨기기";
+    }
+  });
+
+  function toggleEnglishVerse() {
+    const textElEn = document.getElementById("verseTextEn")?.parentElement;
+    const btn = document.getElementById("toggleEnglishVerseBtn");
+
+    if (!textElEn || !btn) return;
+
+    const isHidden = textElEn.style.display === "none";
+
+    if (isHidden) {
+      textElEn.style.display = "";
+      btn.innerText = "💗 영어 말씀 숨기기";
+      localStorage.setItem("englishVerseHidden", "false");
+    } else {
+      textElEn.style.display = "none";
+      btn.innerText = "💗 영어 말씀 보이기";
+      localStorage.setItem("englishVerseHidden", "true");
+    }
+  }
+</script>
+<script>
+  document.getElementById("game1").addEventListener("click", function () {
+    location.href = "game.htm";
+  });
+</script>
+</body>
+</html>
