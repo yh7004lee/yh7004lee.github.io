@@ -120,11 +120,10 @@
    const canvas = document.getElementById("fireworks");
     const ctx = canvas.getContext("2d");
     let fireworks = [];
-canvas.width = 800;
-canvas.height = 600;
+    canvas.width = 800;
+    canvas.height = 600;
+    window.addEventListener('resize', resizeCanvas);
 
-window.addEventListener('resize', resizeCanvas);
-    const STORAGE_KEY_VERSES = 'savedVerses2'; // 실제 키값 맞춰서 사용
     let verses = [];
     let currentStage = 0;
     let score = 0;
