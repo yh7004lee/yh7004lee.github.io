@@ -1,0 +1,330 @@
+<!-- game2.htm -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>말씀 빈칸 채우기 게임</title>
+  <style>
+    body {
+      font-family: '맑은 고딕', sans-serif;
+      background-color: #121212;
+      color: #f0f0f0;
+      margin: 0;
+      padding: 5px 20px;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      margin-top: 20px;
+    }
+
+#verseText {
+  margin:10px 0 30px 0;              /* 상하 마진 더 줌 */
+  padding: 15px;               /* 안쪽 여백 추가 */
+  font-size: 1.1rem;
+  line-height: 3;              /* 줄간격 넉넉하게 */
+      border: 2px dashed #888;
+  border-radius: 12px;         /* 둥근 모서리 */
+  background-color: #1a1a1a;   /* 약간 다른 배경색 */
+}
+    input.blank {
+      width: 80px;
+      font-size: 1rem;
+      padding: 6px;
+      border: 1px solid #888;
+      border-radius: 6px;
+      background-color: #1e1e1e;
+      color: #f0f0f0;
+      text-align: center;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      margin: 15px 0;
+      padding: 10px;
+      font-size: 1.1rem;
+      background-color: #444;
+      color: #f0f0f0;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #666;
+    }
+
+    #result {
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+  /* 네비게이션 버튼 */
+  /* 네비게이션 버튼 */
+#verseTitle {
+  margin: 10px 0 10px 0;
+}
+#navButtons {
+  display: flex;
+  gap: 6px; /* 버튼 사이 간격 약간 축소 */
+  margin-top: 6px; /* 상단 여백 축소 */
+}
+#navButtons .navBtn {
+  flex: 1;
+  padding: 6px 0;           /* 세로 패딩 축소 */
+  font-size: 0.95rem;       /* 글자 크기 축소 */
+  background-color: #444;
+  color: #f0f0f0;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.3s ease;
+  margin: 0;                /* 불필요한 마진 제거 */
+}
+
+    .navBtn.active {
+      background-color: #03dac6 !important;
+      color: #000 !important;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="navButtons" style="margin-top: 10px;">
+    <button class="navBtn" onclick="goToPrev()">이전</button>
+    <button id="allVersesBtn" class="navBtn active">모두</button>
+    <button id="favVersesBtn" class="navBtn">즐찾</button>
+    <button class="navBtn" onclick="goToNext()">다음</button>
+  </div>
+
+  <h3 id="verseTitle">말씀 제목</h3>
+  <div id="verseText">여기에 말씀이 표시됩니다.</div>
+
+  <button id="checkBtn">✅ 정답 확인</button>
+  <button id="restartBtn" style="display:none;">🔄 다시 시작하기</button>
+  <button id="mainBtn">🏰 말씀암송 메인화면</button>
+
+  <div id="result"></div>
+
+  <script>
+  const STORAGE_KEY_VERSES = 'savedVerses2';
+  let allVerses = [];
+  let verses = [];
+  let currentStage = 0;
+  let score = 0;
+  let answerWords = [];
+  let wrongAttempts = 0; // 👈 총 틀린 횟수 누적용
+
+  const verseTitle = document.getElementById('verseTitle');
+  const verseText = document.getElementById('verseText');
+  const checkBtn = document.getElementById('checkBtn');
+  const restartBtn = document.getElementById('restartBtn');
+  const result = document.getElementById('result');
+  const allVersesBtn = document.getElementById('allVersesBtn');
+  const favVersesBtn = document.getElementById('favVersesBtn');
+
+  function loadVerses() {
+    const saved = localStorage.getItem(STORAGE_KEY_VERSES);
+    if (!saved) return null;
+    try {
+      const parsed = JSON.parse(saved);
+      return parsed.map((v, i) => ({
+        ...v,
+        id: i,
+        title: v.title || '',
+        text: v.text || '',
+        textEn: v.textEn || '',
+        favorite: v.favorite || false
+      }));
+    } catch {
+      return null;
+    }
+  }
+
+  function renderStage() {
+    if (currentStage >= verses.length) {
+      const inputs = verseText.querySelectorAll('input.blank');
+      inputs.forEach(input => {
+        input.style.border = '';
+      });
+
+      verseTitle.textContent = '🎉 모든 스테이지 완료!';
+      verseText.innerHTML = '';
+      checkBtn.style.display = 'none';
+      result.textContent = `수고하셨습니다!! `;
+      restartBtn.style.display = 'block';
+      return;
+    }
+
+    const verse = verses[currentStage];
+    verseTitle.textContent = verse.title || `스테이지 ${currentStage + 1}`;
+    let words = verse.text.replace('[개역한글]', '').trim().split(/\s+/);
+    const indexes = [];
+
+    while (indexes.length < 4) {
+      const idx = Math.floor(Math.random() * words.length);
+      if (!indexes.includes(idx) && !/^\[.*\]$/.test(words[idx])) indexes.push(idx);
+    }
+
+    answerWords = [];
+    let html = words.map((w, i) => {
+      if (indexes.includes(i)) {
+        answerWords.push(w);
+        return `<input type="text" class="blank" data-idx="${i}" />`;
+      }
+      return w;
+    }).join(' ');
+
+    verseText.innerHTML = html;
+    result.textContent = '';
+    checkBtn.style.display = 'block';
+    restartBtn.style.display = 'none';
+  }
+
+  checkBtn.addEventListener('click', () => {
+    const inputs = [...verseText.querySelectorAll('input.blank')];
+    const userAnswers = inputs.map(input => input.value.trim());
+
+    let correct = true;
+    inputs.forEach((input, idx) => {
+      if (userAnswers[idx] === answerWords[idx]) {
+        input.style.border = '';
+      } else {
+        input.style.border = '2px dashed #ff5c5c';
+        input.style.borderRadius = '6px';
+        correct = false;
+        wrongAttempts++;
+      }
+    });
+
+    // 폭죽시작
+    if (correct) {
+      score++;
+
+      const rect = verseText.getBoundingClientRect();
+      const fireworkX = rect.left + rect.width / 2;
+      const fireworkY = rect.top + rect.height / 2;
+      createFirework(fireworkX, fireworkY, true);
+
+      if (currentStage < verses.length - 1) {
+        result.textContent = '🎉 정답입니다! 다음 스테이지로 넘어갑니다.';
+        result.style.color = 'lightgreen';
+        currentStage++;
+        setTimeout(renderStage, 1500);
+      } else {
+        result.textContent = '🎉 마지막 스테이지 정답입니다!';
+        result.style.color = 'lightgreen';
+        currentStage++;
+        setTimeout(renderStage, 1500);
+      }
+    }
+  });
+
+  function createFirework(x, y, fromTop = false) {
+    const firework = document.createElement('div');
+    firework.style.position = 'absolute';
+    firework.style.left = `${x}px`;
+    firework.style.top = `${y}px`;
+    firework.style.pointerEvents = 'none';
+    firework.style.width = '0px';
+    firework.style.height = '0px';
+
+    const colors = ['#ff5252', '#03dac6', '#ffeb3b', '#ff9800', '#ffffff'];
+
+    for (let i = 0; i < 60; i++) {
+      const particle = document.createElement('div');
+      const angle = Math.random() * 2 * Math.PI;
+      const radius = Math.random() * 250 + 150;
+
+      const px = Math.cos(angle) * radius;
+      const py = Math.sin(angle) * radius;
+
+      particle.style.position = 'absolute';
+      particle.style.width = '10px';
+      particle.style.height = '10px';
+      particle.style.borderRadius = '50%';
+      particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      particle.style.transform = 'translate(0, 0)';
+      particle.style.opacity = '1';
+      particle.style.transition = 'transform 2s ease-out, opacity 2s';
+
+      setTimeout(() => {
+        particle.style.transform = `translate(${px}px, ${fromTop ? py + 100 : py}px)`;
+        particle.style.opacity = '0';
+      }, 10);
+
+      firework.appendChild(particle);
+    }
+
+    document.body.appendChild(firework);
+    setTimeout(() => firework.remove(), 2500);
+  }
+
+  restartBtn.addEventListener('click', () => {
+    currentStage = 0;
+    score = 0;
+    renderStage();
+  });
+
+  document.getElementById('mainBtn').addEventListener('click', () => {
+    window.location.href = 'bible.htm';
+  });
+
+  function goToPrev() {
+    if (currentStage > 0) {
+      currentStage--;
+      renderStage();
+    }
+  }
+
+  function goToNext() {
+    if (currentStage < verses.length - 1) {
+      currentStage++;
+      renderStage();
+    }
+  }
+
+  function setMode(isFavoriteOnly) {
+    allVerses = loadVerses() || [];
+
+    if (isFavoriteOnly) {
+      const favList = allVerses.filter(v => v.favorite);
+      if (favList.length === 0) {
+        alert('즐겨찾기된 말씀이 없습니다.');
+        return;
+      }
+      favVersesBtn.classList.add('active');
+      allVersesBtn.classList.remove('active');
+      verses = favList;
+    } else {
+      allVersesBtn.classList.add('active');
+      favVersesBtn.classList.remove('active');
+      verses = allVerses;
+    }
+
+    currentStage = 0;
+    score = 0;
+    renderStage();
+  }
+
+  allVersesBtn.addEventListener('click', () => setMode(false));
+  favVersesBtn.addEventListener('click', () => setMode(true));
+
+  window.onload = () => {
+    allVerses = loadVerses();
+    if (!allVerses || allVerses.length === 0) {
+      verseTitle.textContent = '데이터가 없습니다. bible.htm에서 먼저 저장해주세요.';
+      checkBtn.style.display = 'none';
+    } else {
+      setMode(false);
+    }
+  };
+</script>
+
+</body>
+</html>
