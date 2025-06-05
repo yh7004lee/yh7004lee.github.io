@@ -193,7 +193,7 @@
 
     const verse = verses[currentStage];
     verseTitle.textContent = verse.title || `스테이지 ${currentStage + 1}`;
-    let words = verse.text.replace('[개역한글]', '').trim().split(/\s+/);
+    let words = verse.text.replace(/\[[^\]]*\]/g, '').trim().split(/\s+/);
     const indexes = [];
 
     while (indexes.length < 4) {

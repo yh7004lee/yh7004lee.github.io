@@ -334,33 +334,26 @@ font-weight: bold;
     restartBtn.style.display = 'none';
   }
 
-  checkBtn.addEventListener('click', () => {
-const currentWords = [...verseContainer.querySelectorAll('.word')].map(el => el.textContent);
-const correctWords = verses[currentStage].text.trim()
-  .split(/\s+/)
-  .filter(word => !/^\[.*\]$/.test(word));
-const isCorrect = JSON.stringify(currentWords) === JSON.stringify(correctWords);
+checkBtn.addEventListener('click', () => {
+  const currentWords = [...verseContainer.querySelectorAll('.word')].map(el => el.textContent);
+  const correctWords = verses[currentStage].text.trim()
+    .split(/\s+/)
+    .filter(word => !/^\[.*\]$/.test(word));
+  const isCorrect = JSON.stringify(currentWords) === JSON.stringify(correctWords);
 
-    if (isCorrect) {
-  result.textContent = '🎉 정답입니다! 다음 문제로 넘어갑니다.';
-  checkBtn.style.display = 'none';
-  restartBtn.style.display = 'inline-block';
-  showFireworks();
-
-  // 2초 후 다음 문제로 자동 전환
-  setTimeout(() => {
-    result.textContent = '';
-    restartBtn.style.display = 'none';
-    if (currentStage < verses.length - 1) {
-      renderVerse(currentStage + 1);
-    } else {
-      result.textContent = '축하합니다! 모든 문제를 완료하셨습니다!';
-    }
-  }, 2000);
-} else {
-  result.textContent = '❌ 순서가 맞지 않습니다. 다시 시도해 보세요.';
-}
-  });
+  if (isCorrect) {
+    result.textContent = '🎉 정답입니다! 다음 문제로 넘어갑니다.';
+    showFireworks()
+    checkBtn.style.display = 'none';
+    
+      setTimeout(() => {
+      currentStage++;
+      renderStage();
+    }, 1000); // 2초 후 다음 스테이지로 넘어감
+  } else {
+    result.textContent = '❌ 틀렸습니다. 순서를 다시 확인해보세요.';
+  }
+});
 
   restartBtn.addEventListener('click', () => {
     currentStage = 0;
