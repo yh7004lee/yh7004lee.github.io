@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>말씀 순서 맞추기 게임</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: '맑은 고딕', sans-serif;
+      background-color: #121212;
+      color: #f0f0f0;
+      margin: 0;
+      padding: 5px 20px;
+      overflow-x: hidden;
+    }
+
+    h2 {
+      font-size: 1.6rem;
+      text-align: left;
+      color: #ffffff;
+    }
+
+    h3 {
+      font-size: 1.2rem;
+      text-align: left;
+      color: #ffffff;
+    }
+
+    p {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 1rem;
+    }
+
+    #verse-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px;
+      background-color: #1e1e1e;
+      border: 2px dashed #888;
+      border-radius: 12px;
+      min-height: 100px;
+    }
+
+    .word {
+      font-size: 1rem;
+      padding: 8px 12px;
+      background-color: #2c2c2c;
+      border: 2px solid #444;
+      border-radius: 8px;
+      cursor: grab;
+      user-select: none;
+      color: #f0f0f0;
+      touch-action: none;
+    }
+
+    .word.dragging {
+      opacity: 0.5;
+    }
+
+    #bibleMemo,
+    #checkBtn {
+      display: block;
+      margin: 20px auto 10px auto;
+      padding: 10px 0;
+      font-size: 1.2rem;
+      background-color: #444;
+      color: #f0f0f0;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    #bibleMemo:hover,
+    #checkBtn:hover {
+      background-color: #666;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    /* 체크 버튼과 동일한 스타일 */
+    #game1,
+    #game2,
+    #game3,
+    #restartBtn,
+    #mainBtn {
+      display: block;
+      margin: 10px auto 0 auto;
+      padding: 10px 0;
+      font-size: 1.2rem;
+      background-color: #444;
+      color: #f0f0f0;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+
+    #game1:hover,
+    #game2:hover,
+    #game3:hover,
+    #restartBtn:hover,
+    #restartBtn:hover,
+    #mainBtn:hover {
+      background-color: #666;
+    }
+
+#verseTitle {
+  margin: 10px 0 10px 0;
+}
+#navButtons {
+  display: flex;
+  gap: 6px; /* 버튼 사이 간격 약간 축소 */
+  margin-top: 6px; /* 상단 여백 축소 */
+}
+#navButtons .navBtn {
+  flex: 1;
+  padding: 6px 0;           /* 세로 패딩 축소 */
+  font-size: 0.95rem;       /* 글자 크기 축소 */
+  background-color: #444;
+  color: #f0f0f0;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.3s ease;
+  margin: 0;                /* 불필요한 마진 제거 */
+}
+    #navButtons .navBtn:hover {
+      background-color: #666;
+    }  
+ .navBtn.active {
+  background-color: #03dac6 !important;
+  color: #000000 !important;
+font-weight: bold;
+}
+   
+  </style>
+</head>
+<body>
+  <!-- 모드 전환 버튼 (전체 말씀 / 즐겨찾기 말씀) -->
+  <div id="modeToggle">
+    
+
+  </div>
+  <!-- 상단 네비게이션 버튼 -->
+  <div id="navButtons" style="display:flex; gap:8px; margin-top:10px;">
+
+    <button class="navBtn" onclick="goToPrev()"> 이전</button>
+<button id="allVersesBtn" class="navBtn active">모두</button>
+<button id="favVersesBtn" class="navBtn">즐찾</button>
+    <button class="navBtn" onclick="goToNext()"> 다음</button>
+   
+  </div>
+
+
+  <h3 id="verseTitle" style=" margin-bottom:10px;">말씀 제목</h3>
+
+
+  <div id="verse-container"></div>
+  <p>단어를 드래그해서 순서대로 정렬하세요</p>
+  <button id="checkBtn">✅ 정답 확인</button>
+  <button id="restartBtn" style="display:none; margin-top:20px;">🔄 다시 시작하기</button>
+  <button id="mainBtn">말씀암송 메인화면</button>
+ <button id="game1">블럭 옮기기 게임</button>
+ <button id="game2">빈칸 입력 게임</button>
+ <button id="game3">순서대로 터치 게임</button>
+  <div id="result"></div>
+
+  <script>
+  const STORAGE_KEY_VERSES = 'savedVerses2';
+  let allVerses = [];
+  let verses = [];
+  let currentStage = 0;
+  let score = 0;
+
+  const verseTitle = document.getElementById('verseTitle');
+  const verseContainer = document.getElementById('verse-container');
+  const checkBtn = document.getElementById('checkBtn');
+  const result = document.getElementById('result');
+  const restartBtn = document.getElementById('restartBtn');
+  const allVersesBtn = document.getElementById('allVersesBtn');
+  const favVersesBtn = document.getElementById('favVersesBtn');
+
+  let draggedEl = null;
+  let offsetX = 0;
+  let offsetY = 0;
+
+ function loadVerses() {
+    const saved = localStorage.getItem(STORAGE_KEY_VERSES);
+    if (!saved) return null;
+
+    try {
+      const parsed = JSON.parse(saved);
+      return parsed.map((v, i) => ({
+        ...v,
+        id: i,
+        title: v.title || '',
+        text: v.text || '',
+        textEn: v.textEn || '',
+        favorite: v.favorite || false
+      }));
+    } catch {
+      return null;
+    }
+  }
+
+  function createWordDiv(word) {
+    const div = document.createElement('div');
+    div.className = 'word';
+    div.textContent = word;
+    enableCustomDrag(div);
+    return div;
+  }
+
+  function enableCustomDrag(el) {
+    el.addEventListener('mousedown', dragStart);
+    el.addEventListener('touchstart', dragStart, { passive: false });
+  }
+
+  function dragStart(e) {
+    e.preventDefault();
+    draggedEl = e.target;
+    draggedEl.classList.add('dragging');
+
+    const rect = draggedEl.getBoundingClientRect();
+    const startX = e.touches ? e.touches[0].clientX : e.clientX;
+    const startY = e.touches ? e.touches[0].clientY : e.clientY;
+
+    offsetX = startX - rect.left;
+    offsetY = startY - rect.top;
+
+    document.addEventListener('mousemove', dragMove);
+    document.addEventListener('touchmove', dragMove, { passive: false });
+    document.addEventListener('mouseup', dragEnd);
+    document.addEventListener('touchend', dragEnd);
+  }
+
+  function dragMove(e) {
+    e.preventDefault();
+    if (!draggedEl) return;
+
+    const x = e.touches ? e.touches[0].clientX : e.clientX;
+    const y = e.touches ? e.touches[0].clientY : e.clientY;
+
+    draggedEl.style.position = 'fixed';
+    draggedEl.style.left = `${x - offsetX}px`;
+    draggedEl.style.top = `${y - offsetY}px`;
+    draggedEl.style.zIndex = 1000;
+    draggedEl.style.pointerEvents = 'none';
+  }
+
+  function dragEnd(e) {
+    if (!draggedEl) return;
+
+    const dropX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+    const dropY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+
+    const container = verseContainer;
+    const allWords = [...container.querySelectorAll('.word:not(.dragging)')];
+
+    let inserted = false;
+    for (let word of allWords) {
+      const rect = word.getBoundingClientRect();
+      if (dropY < rect.bottom && dropX < rect.right) {
+        container.insertBefore(draggedEl, word);
+        inserted = true;
+        break;
+      }
+    }
+
+    if (!inserted) {
+      container.appendChild(draggedEl);
+    }
+
+    draggedEl.classList.remove('dragging');
+    draggedEl.style.position = '';
+    draggedEl.style.left = '';
+    draggedEl.style.top = '';
+    draggedEl.style.zIndex = '';
+    draggedEl.style.pointerEvents = '';
+    draggedEl = null;
+
+    document.removeEventListener('mousemove', dragMove);
+    document.removeEventListener('touchmove', dragMove);
+    document.removeEventListener('mouseup', dragEnd);
+    document.removeEventListener('touchend', dragEnd);
+  }
+
+ 
+
+  function renderStage() {
+    if (currentStage >= verses.length) {
+      verseTitle.textContent = '🎉 모든 스테이지 완료!';
+      verseContainer.innerHTML = '';
+      checkBtn.style.display = 'none';
+      result.textContent = `당신의 점수: ${score} / ${verses.length}`;
+      restartBtn.style.display = 'block';
+      return;
+    }
+
+    const verse = verses[currentStage];
+    verseTitle.textContent = verse.title || `스테이지 ${currentStage + 1}`;
+    const words = verse.text.trim().split(/\s+/).filter(word => !/^\[.*\]$/.test(word));
+    const shuffled = words.sort(() => Math.random() - 0.5);
+
+    verseContainer.innerHTML = '';
+    shuffled.forEach(word => verseContainer.appendChild(createWordDiv(word)));
+
+    result.textContent = '';
+    checkBtn.style.display = 'block';
+    restartBtn.style.display = 'none';
+  }
+
+checkBtn.addEventListener('click', () => {
+  const currentWords = [...verseContainer.querySelectorAll('.word')].map(el => el.textContent);
+  const correctWords = verses[currentStage].text.trim()
+    .split(/\s+/)
+    .filter(word => !/^\[.*\]$/.test(word));
+  const isCorrect = JSON.stringify(currentWords) === JSON.stringify(correctWords);
+
+  if (isCorrect) {
+    result.textContent = '🎉 정답입니다! 다음 문제로 넘어갑니다.';
+    showFireworks()
+    checkBtn.style.display = 'none';
+    
+      setTimeout(() => {
+      currentStage++;
+      renderStage();
+    }, 1000); // 2초 후 다음 스테이지로 넘어감
+  } else {
+    result.textContent = '❌ 틀렸습니다. 순서를 다시 확인해보세요.';
+  }
+});
+
+  restartBtn.addEventListener('click', () => {
+    currentStage = 0;
+    score = 0;
+    renderStage();
+  });
+
+  document.getElementById('mainBtn').addEventListener('click', () => {
+    window.location.href = 'bible.htm';
+  });
+  document.getElementById('game1').addEventListener('click', () => {
+    window.location.href = 'game1.htm';
+  });
+  document.getElementById('game2').addEventListener('click', () => {
+    window.location.href = 'game2.htm';
+  });
+  document.getElementById('game3').addEventListener('click', () => {
+    window.location.href = 'game3.htm';
+  });
+
+function showFireworks() {
+  const canvas = document.createElement('canvas');
+  document.body.appendChild(canvas);
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  canvas.style.position = 'fixed';
+  canvas.style.top = '0';
+  canvas.style.left = '0';
+  canvas.style.pointerEvents = 'none';
+  canvas.style.zIndex = 1000;
+
+  const ctx = canvas.getContext('2d');
+  const particles = [];
+  const colors = ['#ff3f3f', '#ff943f', '#fff33f', '#3fff8f', '#3f8fff', '#d43fff', '#ff3fb6'];
+
+  function random(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
+  function createParticles(x, y) {
+    for (let i = 0; i < 300; i++) {
+      particles.push({
+        x,
+        y,
+        radius: random(3, 7),
+        color: colors[Math.floor(random(0, colors.length))],
+        speedX: random(-5, 5),
+        speedY: random(-5, 5),
+        alpha: 1,
+        decay: random(0.01, 0.03),
+      });
+    }
+  }
+
+  createParticles(canvas.width / 2, canvas.height / 3);
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach((p, i) => {
+      p.x += p.speedX;
+      p.y += p.speedY;
+      p.alpha -= p.decay;
+      if (p.alpha <= 0) {
+        particles.splice(i, 1);
+      } else {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${hexToRgb(p.color)},${p.alpha})`;
+        ctx.fill();
+      }
+    });
+
+    if (particles.length > 0) {
+      requestAnimationFrame(animate);
+    } else {
+      canvas.remove();
+    }
+  }
+
+  function hexToRgb(hex) {
+    const bigint = parseInt(hex.slice(1), 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    return `${r},${g},${b}`;
+  }
+
+  animate();
+}
+
+  function goToFirst() {
+    if (verses.length > 0) {
+      currentStage = 0;
+      renderStage();
+    }
+  }
+
+  function goToPrev() {
+    if (currentStage > 0) {
+      currentStage--;
+      renderStage();
+    }
+  }
+
+  function goToNext() {
+    if (currentStage < verses.length - 1) {
+      currentStage++;
+      renderStage();
+    }
+  }
+
+  function goToLast() {
+    if (verses.length > 0) {
+      currentStage = verses.length - 1;
+      renderStage();
+    }
+  }
+
+  function setMode(isFavoriteOnly) {
+    allVerses = loadVerses() || [];
+
+    if (isFavoriteOnly) {
+      const favList = allVerses.filter(v => v.favorite);
+      if (favList.length === 0) {
+        alert('즐겨찾기된 말씀이 없습니다.');
+        return;
+      }
+      favVersesBtn.classList.add('active');
+      allVersesBtn.classList.remove('active');
+      verses = favList;
+    } else {
+      allVersesBtn.classList.add('active');
+      favVersesBtn.classList.remove('active');
+      verses = allVerses;
+    }
+
+    currentStage = 0;
+    score = 0;
+    renderStage();
+  }
+
+  allVersesBtn.addEventListener('click', () => setMode(false));
+  favVersesBtn.addEventListener('click', () => setMode(true));
+
+  window.onload = () => {
+    allVerses = loadVerses();
+    if (!allVerses || allVerses.length === 0) {
+      verseTitle.textContent = '데이터가 없습니다. bible.htm에서 먼저 저장해주세요.';
+      checkBtn.style.display = 'none';
+    } else {
+      setMode(false); // 기본은 전체모드
+    }
+  };
+
+//스와이프
+ let startX = 0;
+  let startY = 0;
+  let isMouseDown = false;
+  const swipeThreshold = 50; // 최소 이동 거리
+
+  // verse-container 제외한 영역인지 확인
+  function isOutsideVerseContainer(target) {
+    return !document.getElementById('verse-container').contains(target);
+  }
+
+  // 터치 시작
+  document.addEventListener('touchstart', (e) => {
+    if (!isOutsideVerseContainer(e.target)) return;
+    const touch = e.touches[0];
+    startX = touch.clientX;
+    startY = touch.clientY;
+  }, { passive: true });
+
+  // 터치 종료
+  document.addEventListener('touchend', (e) => {
+    if (!isOutsideVerseContainer(e.target)) return;
+    const touch = e.changedTouches[0];
+    const dx = touch.clientX - startX;
+    const dy = touch.clientY - startY;
+
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > swipeThreshold) {
+      if (dx < 0) {
+        goToNext();
+      } else {
+        goToPrev();
+      }
+    }
+  });
+
+  // 마우스 드래그 시작
+  document.addEventListener('mousedown', (e) => {
+    if (!isOutsideVerseContainer(e.target)) return;
+    isMouseDown = true;
+    startX = e.clientX;
+    startY = e.clientY;
+  });
+
+  // 마우스 드래그 종료
+  document.addEventListener('mouseup', (e) => {
+    if (!isMouseDown || !isOutsideVerseContainer(e.target)) return;
+    isMouseDown = false;
+
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > swipeThreshold) {
+      if (dx < 0) {
+        goToNext();
+      } else {
+        goToPrev();
+      }
+    }
+  });
+
+
+</script>
+
+</body>
+</html>
