@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>말씀 속도게임 모드</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: '맑은 고딕', sans-serif;
+      background-color: #121212;
+      color: #f0f0f0;
+      margin: 0;
+      padding: 5px 20px;
+      overflow-x: hidden;
+    }
+
+    h2, h3 {
+      font-size: 1.2rem;
+      text-align: left;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+
+    p {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 1rem;
+    }
+
+    #word-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px;
+      background-color: #1e1e1e;
+      border: 2px dashed #888;
+      border-radius: 12px;
+      min-height: 60px;
+     margin-bottom: 20px;
+    }
+
+    .word {
+      font-size: 1.1rem;
+      padding: 8px 10px;
+      background-color: #2c2c2c;
+      border: 2px solid #444;
+      border-radius: 8px;
+      cursor: pointer;
+      user-select: none;
+      color: #f0f0f0;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      touch-action: manipulation;
+      min-width: 50px;
+      text-align: center;
+    }
+
+    .word.correct {
+      background-color: #03dac6;
+      color: #000;
+      border-color: #03dac6;
+      cursor: default;
+    }
+
+    .word.incorrect {
+      animation: shake 0.3s;
+      background-color: #ff5252;
+      color: #fff;
+      border-color: #ff5252;
+    }
+
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      20% { transform: translateX(-6px); }
+      40% { transform: translateX(6px); }
+      60% { transform: translateX(-6px); }
+      80% { transform: translateX(6px); }
+      100% { transform: translateX(0); }
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 1.3rem;
+      font-weight: bold;
+      text-align: center;
+      min-height: 30px;
+    }
+
+    /* 버튼 공통 스타일 */
+    button {
+      display: block;
+      margin: 10px auto 0 auto;
+      padding: 10px 0;
+      font-size: 1.2rem;
+      background-color: #444;
+      color: #f0f0f0;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      width: 100%;
+      box-sizing: border-box;
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+    button:hover:not(:disabled) {
+      background-color: #666;
+    }
+    button:disabled {
+      background-color: #222;
+      cursor: default;
+    }
+
+  /* 네비게이션 버튼 */
+#navButtons {
+  display: flex;
+  gap: 6px; /* 버튼 사이 간격 약간 축소 */
+  margin-top: 6px; /* 상단 여백 축소 */
+}
+#navButtons .navBtn {
+  flex: 1;
+  padding: 6px 0;           /* 세로 패딩 축소 */
+  font-size: 0.95rem;       /* 글자 크기 축소 */
+  background-color: #444;
+  color: #f0f0f0;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.3s ease;
+  margin: 0;                /* 불필요한 마진 제거 */
+}
+    #navButtons .navBtn:hover {
+      background-color: #666;
+    }
+    .navBtn.active {
+      background-color: #03dac6 !important;
+      color: #000000 !important;
+      font-weight: bold;
+    }
+#verseTitle {
+  margin: 10px 0 10px 0;
+}
+
+   #game1,
+    #game2,
+    #game3,
+    #restartBtn,
+    #mainBtn {
+      display: block;
+      margin: 10px auto 0 auto;
+      padding: 10px 0;
+      font-size: 1.2rem;
+      background-color: #444;
+      color: #f0f0f0;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+
+    #game1:hover,
+    #game2:hover,
+    #game3:hover,
+    #restartBtn:hover,
+    #restartBtn:hover,
+    #mainBtn:hover {
+      background-color: #666;
+    }
+
+  </style>
+</head>
+<body>
+  <!-- 상단 네비게이션 버튼 -->
+  <div id="navButtons">
+    <button class="navBtn" onclick="goToPrev()">이전</button>
+    <button id="allVersesBtn" class="navBtn active">모두</button>
+    <button id="favVersesBtn" class="navBtn">즐찾</button>
+    <button class="navBtn" onclick="goToNext()">다음</button>
+  </div>
+
+  <h3 id="verseTitle">말씀 제목</h3>
+
+
+  <div id="word-container"></div>
+  <p>한 단어씩 순서대로 빠르게 눌러보세요!</p>
+
+  <button id="restartBtn" style="display:none;">🔄 다시 시작하기</button>
+  <button id="mainBtn">말씀암송 메인화면</button>
+ <button id="game1">블럭 옮기기 게임</button>
+ <button id="game2">빈칸 입력 게임</button>
+ <button id="game3">순서대로 터치 게임</button>
+  <div id="result"></div>
+
+<script>
+  const STORAGE_KEY_VERSES = 'savedVerses2';
+  let allVerses = [];
+  let verses = [];
+  let currentStage = 0;
+  let score = 0;
+
+  const verseTitle = document.getElementById('verseTitle');
+  const wordContainer = document.getElementById('word-container');
+  const restartBtn = document.getElementById('restartBtn');
+  const mainBtn = document.getElementById('mainBtn');
+  const result = document.getElementById('result');
+  const allVersesBtn = document.getElementById('allVersesBtn');
+  const favVersesBtn = document.getElementById('favVersesBtn');
+
+  let currentIndex = 0;  // 현재 눌러야 할 단어 인덱스
+  let currentWords = [];
+
+  function loadVerses() {
+    const saved = localStorage.getItem(STORAGE_KEY_VERSES);
+    if (!saved) return [];
+
+    try {
+      const parsed = JSON.parse(saved);
+      return parsed.map((v, i) => ({
+        ...v,
+        id: i,
+        title: v.title || '',
+        text: v.text || '',
+        favorite: v.favorite || false
+      }));
+    } catch {
+      return [];
+    }
+  }
+
+  function shuffleArray(arr) {
+    // Fisher–Yates shuffle
+    for (let i = arr.length -1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i +1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function renderStage() {
+    if (currentStage >= verses.length) {
+      verseTitle.textContent = '🎉 모든 스테이지 완료!';
+      wordContainer.innerHTML = '';
+      restartBtn.style.display = 'block';
+      result.textContent = `모든 스테이지를 완료했습니다. 처음부터 다시 시작해보세요`;
+      return;
+    }
+
+    const verse = verses[currentStage];
+    verseTitle.textContent = verse.title || `스테이지 ${currentStage + 1}`;
+
+    // 정답 단어 배열
+    const words = verse.text.trim().split(/\s+/).filter(word => !/^\[.*\]$/.test(word));
+    currentWords = words;
+    currentIndex = 0;
+    result.textContent = '';
+    restartBtn.style.display = 'none';
+
+    // 단어들 섞기
+    // 헷갈리도록 다른 랜덤 단어 몇 개 추가 (여기선 2개 추가)
+const allWordsPool = allVerses.flatMap(v => v.text.trim().split(/\s+/));
+const additionalWords = [];
+
+while (additionalWords.length < 4) {
+  const candidate = allWordsPool[Math.floor(Math.random() * allWordsPool.length)];
+  if (!words.includes(candidate) && !additionalWords.includes(candidate) && !/^\[.*\]$/.test(candidate)) {
+    additionalWords.push(candidate);
+  }
+}
+
+const mixedWords = words.concat(additionalWords);
+const shuffled = mixedWords.sort(() => Math.random() - 0.5);
+
+    // 단어 컨테이너 초기화
+    wordContainer.innerHTML = '';
+    shuffled.forEach(word => {
+      const div = document.createElement('div');
+      div.className = 'word';
+      div.textContent = word;
+      div.addEventListener('click', () => onWordClick(div, word));
+      wordContainer.appendChild(div);
+    });
+  }
+
+ // 폭죽 이펙트 추가
+function createFirework(x, y, fromTop = false) {
+  const firework = document.createElement('div');
+  firework.style.position = 'absolute';
+  firework.style.left = `${x}px`;
+  firework.style.top = `${y}px`;
+  firework.style.pointerEvents = 'none';
+  firework.style.width = '0px';
+  firework.style.height = '0px';
+
+  const colors = ['#ff5252', '#03dac6', '#ffeb3b', '#ff9800', '#ffffff'];
+
+  for (let i = 0; i < 50; i++) {
+    const particle = document.createElement('div');
+    const angle = Math.random() * 2 * Math.PI;
+    const radius = Math.random() * 200 + 150;
+    const px = Math.cos(angle) * radius;
+    const py = Math.sin(angle) * radius;
+
+    particle.style.position = 'absolute';
+    particle.style.width = '9px';
+    particle.style.height = '9px';
+    particle.style.borderRadius = '50%';
+    particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+    particle.style.transform = 'translate(0, 0)';
+    particle.style.opacity = '1';
+    particle.style.transition = 'transform 1.5s ease-out, opacity 1.5s';
+
+    setTimeout(() => {
+      particle.style.transform = `translate(${px}px, ${fromTop ? py + 100 : py}px)`;
+      particle.style.opacity = '0';
+    }, 10);
+
+    firework.appendChild(particle);
+  }
+
+  document.body.appendChild(firework);
+
+  setTimeout(() => firework.remove(), 2500);
+}
+
+function onWordClick(div, word) {
+  if (div.classList.contains('correct')) return;
+
+  if (word === currentWords[currentIndex]) {
+    div.classList.add('correct');
+    div.style.cursor = 'default';
+    currentIndex++;
+    result.textContent = `좋아요! 다음 단어를 눌러보세요. (${currentIndex} / ${currentWords.length})`;
+    result.style.color = '#03dac6';
+
+    // 정답 폭죽 효과
+    const rect = div.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+    createFirework(x, y);
+
+    if (currentIndex === currentWords.length) {
+      score++;
+      result.textContent = '🎉 모든 단어를 맞췄습니다! 다음 스테이지로 넘어갑니다...';
+
+      // 화면 상단 중앙에서 위에서 아래로 내리는 폭죽
+      const screenWidth = window.innerWidth / 2;
+      createFirework(screenWidth, 100, true);
+      createFirework(screenWidth - 100, 80, true);
+      createFirework(screenWidth + 100, 80, true);
+
+      setTimeout(() => {
+        currentStage++;
+        renderStage();
+      }, 2000);
+    }
+  } else {
+    div.classList.add('incorrect');
+    result.textContent = '❌ 틀렸어요. 다시 시도하세요!';
+    result.style.color = '#ff5252';
+
+    if (navigator.vibrate) navigator.vibrate(100);
+    setTimeout(() => div.classList.remove('incorrect'), 500);
+  }
+}
+
+  restartBtn.addEventListener('click', () => {
+    currentStage = 0;
+    score = 0;
+    renderStage();
+  });
+
+  mainBtn.addEventListener('click', () => {
+    location.href = 'bible.htm'; // 메인 화면 URL 맞게 변경하세요
+  });
+  document.getElementById('game1').addEventListener('click', () => {
+    window.location.href = 'game1.htm';
+  });
+  document.getElementById('game2').addEventListener('click', () => {
+    window.location.href = 'game2.htm';
+  });
+  document.getElementById('game3').addEventListener('click', () => {
+    window.location.href = 'game3.htm';
+  });
+
+  function goToPrev() {
+    if (currentStage > 0) {
+      currentStage--;
+      renderStage();
+    }
+  }
+
+  function goToNext() {
+    if (currentStage < verses.length - 1) {
+      currentStage++;
+      renderStage();
+    }
+  }
+
+  allVersesBtn.addEventListener('click', () => {
+    allVersesBtn.classList.add('active');
+    favVersesBtn.classList.remove('active');
+    verses = allVerses.slice();
+    currentStage = 0;
+    score = 0;
+    renderStage();
+  });
+
+  favVersesBtn.addEventListener('click', () => {
+    favVersesBtn.classList.add('active');
+    allVersesBtn.classList.remove('active');
+    verses = allVerses.filter(v => v.favorite);
+    if (verses.length === 0) {
+      wordContainer.innerHTML = '';
+      verseTitle.textContent = '즐겨찾기된 말씀이 없습니다.';
+      result.textContent = '';
+      restartBtn.style.display = 'none';
+      return;
+    }
+    currentStage = 0;
+    score = 0;
+    renderStage();
+  });
+
+  // 초기 로딩
+  allVerses = loadVerses();
+  verses = allVerses.slice();
+  renderStage();
+
+//슬라이드
+
+// 스와이프 감지 로직
+let touchStartX = 0;
+let touchEndX = 0;
+
+function isInsideWordContainer(touchEvent) {
+  const wordBox = document.getElementById('word-container');
+  const rect = wordBox.getBoundingClientRect();
+  const touch = touchEvent.changedTouches[0];
+  const x = touch.clientX;
+  const y = touch.clientY;
+
+  return (
+    x >= rect.left &&
+    x <= rect.right &&
+    y >= rect.top &&
+    y <= rect.bottom
+  );
+}
+
+document.addEventListener('touchstart', function (e) {
+  if (isInsideWordContainer(e)) return; // 스와이프 감지 제외
+  touchStartX = e.changedTouches[0].screenX;
+});
+
+document.addEventListener('touchend', function (e) {
+  if (isInsideWordContainer(e)) return; // 스와이프 감지 제외
+  touchEndX = e.changedTouches[0].screenX;
+  handleSwipeGesture();
+});
+
+function handleSwipeGesture() {
+  const threshold = 50; // 최소 스와이프 거리 (픽셀)
+  const deltaX = touchEndX - touchStartX;
+
+  if (Math.abs(deltaX) > threshold) {
+    if (deltaX > 0) {
+      goToPrev(); // 오른쪽으로 스와이프 → 이전
+    } else {
+      goToNext(); // 왼쪽으로 스와이프 → 다음
+    }
+  }
+}
+
+//스와이프
+ let startX = 0;
+  let startY = 0;
+  let isMouseDown = false;
+  const swipeThreshold = 50; // 최소 이동 거리
+
+  // verse-container 제외한 영역인지 확인
+  function isOutsideVerseContainer(target) {
+    return !document.getElementById('word-container').contains(target);
+  }
+
+  // 터치 시작
+  document.addEventListener('touchstart', (e) => {
+    if (!isOutsideVerseContainer(e.target)) return;
+    const touch = e.touches[0];
+    startX = touch.clientX;
+    startY = touch.clientY;
+  }, { passive: true });
+
+  // 터치 종료
+  document.addEventListener('touchend', (e) => {
+    if (!isOutsideVerseContainer(e.target)) return;
+    const touch = e.changedTouches[0];
+    const dx = touch.clientX - startX;
+    const dy = touch.clientY - startY;
+
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > swipeThreshold) {
+      if (dx < 0) {
+        goToNext();
+      } else {
+        goToPrev();
+      }
+    }
+  });
+
+  // 마우스 드래그 시작
+  document.addEventListener('mousedown', (e) => {
+    if (!isOutsideVerseContainer(e.target)) return;
+    isMouseDown = true;
+    startX = e.clientX;
+    startY = e.clientY;
+  });
+
+  // 마우스 드래그 종료
+  document.addEventListener('mouseup', (e) => {
+    if (!isMouseDown || !isOutsideVerseContainer(e.target)) return;
+    isMouseDown = false;
+
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > swipeThreshold) {
+      if (dx < 0) {
+        goToNext();
+      } else {
+        goToPrev();
+      }
+    }
+  });
+</script>
+
+
+</body>
+</html>
