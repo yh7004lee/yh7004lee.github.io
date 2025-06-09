@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>말씀 스네이크 게임</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Arial', sans-serif; background: #f0f8ff; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+    h1 { margin-bottom: 10px; color: #2c3e50; }
+    canvas { background: #ffffff; border: 3px solid #2980b9; margin-top: 10px; touch-action: none; }
+    .controls, .speed-select {
+      margin-top: 15px; 
+      display: flex; 
+      gap: 10px; 
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    button {
+      padding: 10px 15px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background: #3498db;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover { background: #2980b9; }
+    .speed-select button { background: #2ecc71; }
+    .speed-select button:hover { background: #27ae60; }
+    #verse {
+      margin-top: 20px;
+      font-size: 18px;
+      text-align: center;
+      width: 90%;
+      color: #34495e;
+    }
+  </style>
+</head>
+<body>
+  <h1>📖 말씀 스네이크</h1>
+
+  <div class="speed-select">
+    <button onclick="setSpeed(400)">초보</button>
+    <button onclick="setSpeed(250)">중수</button>
+    <button onclick="setSpeed(150)">고수</button>
+    <button onclick="setSpeed(80)">초인</button>
+  </div>
+
+  <canvas id="game" width="300" height="300"></canvas>
+
+  <div class="controls">
+    <button onclick="setDirection('up')">⬆️</button>
+    <button onclick="setDirection('left')">⬅️</button>
+    <button onclick="setDirection('down')">⬇️</button>
+    <button onclick="setDirection('right')">➡️</button>
+  </div>
+
+  <div id="verse"></div>
+
+  <script>
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+    const gridSize = 10;
+    let snake = [{ x: 5, y: 5 }];
+    let dir = { x: 0, y: 0 };
+    let food = null;
+    let verseWords = ["하나님이", "세상을", "이처럼", "사랑하사", "독생자를", "주셨으니"];
+    let wordIndex = 0;
+    let collectedWords = [];
+    let intervalId = null;
+    let currentSpeed = 200;
+
+    function setSpeed(speed) {
+      currentSpeed = speed;
+      if (intervalId) clearInterval(intervalId);
+      intervalId = setInterval(update, currentSpeed);
+    }
+
+    function setDirection(d) {
+      if (d === 'up' && dir.y !== 1) dir = { x: 0, y: -1 };
+      if (d === 'down' && dir.y !== -1) dir = { x: 0, y: 1 };
+      if (d === 'left' && dir.x !== 1) dir = { x: -1, y: 0 };
+      if (d === 'right' && dir.x !== -1) dir = { x: 1, y: 0 };
+    }
+
+    function placeFood() {
+      let x, y;
+      do {
+        x = Math.floor(Math.random() * (canvas.width / gridSize));
+        y = Math.floor(Math.random() * (canvas.height / gridSize));
+      } while (snake.some(s => s.x === x && s.y === y));
+      food = { x, y, word: verseWords[wordIndex] };
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'green';
+      for (let s of snake) {
+        ctx.fillRect(s.x * gridSize, s.y * gridSize, gridSize, gridSize);
+      }
+      if (food) {
+        ctx.fillStyle = 'blue';
+        ctx.font = '10px Arial';
+        ctx.fillText(food.word, food.x * gridSize, food.y * gridSize + 9);
+      }
+    }
+
+    function update() {
+      if (dir.x === 0 && dir.y === 0) return; // 방향 없으면 대기
+      const head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
+
+      if (head.x < 0 || head.y < 0 || head.x >= canvas.width / gridSize || head.y >= canvas.height / gridSize || snake.some(s => s.x === head.x && s.y === head.y)) {
+        alert('게임 오버!');
+        reset();
+        return;
+      }
+
+      snake.unshift(head);
+      if (food && head.x === food.x && head.y === food.y) {
+        collectedWords.push(food.word);
+        wordIndex++;
+        if (wordIndex >= verseWords.length) {
+          document.getElementById('verse').innerText = '🎉 완성된 말씀: ' + collectedWords.join(' ');
+          alert('축하합니다! 말씀을 완성했습니다.');
+          reset();
+          return;
+        }
+        placeFood();
+      } else {
+        snake.pop();
+      }
+      draw();
+    }
+
+    function reset() {
+      snake = [{ x: 5, y: 5 }];
+      dir = { x: 0, y: 0 };
+      wordIndex = 0;
+      collectedWords = [];
+      document.getElementById('verse').innerText = '';
+      placeFood();
+    }
+
+    // 터치 스와이프 처리
+    let startX, startY;
+    canvas.addEventListener('touchstart', e => {
+      const touch = e.touches[0];
+      startX = touch.clientX;
+      startY = touch.clientY;
+    });
+
+    canvas.addEventListener('touchend', e => {
+      const touch = e.changedTouches[0];
+      const dx = touch.clientX - startX;
+      const dy = touch.clientY - startY;
+      if (Math.abs(dx) > Math.abs(dy)) {
+        if (dx > 0) setDirection('right');
+        else setDirection('left');
+      } else {
+        if (dy > 0) setDirection('down');
+        else setDirection('up');
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      reset();
+      setSpeed(currentSpeed); // 기본 속도 설정 및 시작
+    });
+  </script>
+</body>
+</html>
