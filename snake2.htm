@@ -5,64 +5,99 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>말씀 스네이크 게임</title>
   <style>
-    /* 기존 스타일 유지 */
-    body {
-      font-family: 'Arial', sans-serif;
-      background: #121212;
-      color: #ecf0f1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
-    }
-    canvas {
-      background: #1e1e1e;
-      border: 3px solid #f39c12;
-      margin-top: 10px;
-      width: calc(100vw - 20px);
-      height: calc(100vw - 20px);
-      max-width: 500px;
-      max-height: 500px;
-    }
-    h1, #verseTitle, #modeDisplay {
-      color: #f1c40f;
-      margin: 5px 0;
-    }
-    button {
-      padding: 10px 15px;
-      margin: 5px;
-      border: none;
-      border-radius: 8px;
-      background: #34495e;
-      color: white;
-      cursor: pointer;
-    }
-    button:hover { background: #2c3e50; }
-    .controls, .speed-select {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-top: 10px;
-    }
-    #verse {
-      margin-top: 10px;
-      font-size: 20px;
-      text-align: center;
-      max-width: 90vw;
-    }
-  </style>
+  body {
+    font-family: 'Segoe UI', 'Arial', sans-serif;
+    background: #1a1d24; /* 어둡지만 블루그레이 기운 */
+    color: #e0f7fa;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+
+  canvas {
+    background: #21262e;
+    border: 3px solid #f39c12;
+    margin-top: 10px;
+    width: calc(100vw - 20px);
+    height: calc(100vw - 20px);
+    max-width: 500px;
+    max-height: 500px;
+    border-radius: 0px;
+  }
+
+  h1 {
+    color: #00e0d3;
+    margin: 5px 0;
+    font-size: 24px;
+  }
+
+  #verseTitle {
+    color: #00e0d3;
+    font-size: 20px;
+    margin-bottom: 5px;
+  }
+
+  #modeDisplay {
+    color: #00e0d3;
+    font-size: 16px;
+    margin: 5px 0;
+  }
+
+  button {
+    padding: 10px 14px;
+    margin: 5px;
+    border: none;
+    border-radius: 10px;
+    background: #2a2f3a;
+    color: #e0f7fa;
+    font-weight: 500;
+    cursor: pointer;
+    flex: 1;
+    transition: background 0.2s, transform 0.1s;
+  }
+
+  button:hover {
+    background: #39414f;
+    transform: scale(1.03);
+  }
+
+  button.selected {
+    background-color: #00e0d3;
+    color: #1a1d24;
+    font-weight: bold;
+  }
+
+  .controls, .speed-select {
+    display: flex;
+    gap: 10px;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    margin-top: 10px;
+    width: 100%;
+    max-width: 500px;
+  }
+
+  #verse {
+    margin-top: 10px;
+    font-size: 18px;
+    text-align: center;
+    max-width: 90vw;
+    color: #b2ebf2;
+  }
+</style>
+
 </head>
 <body>
-  <h1>📖 말씀 스네이크</h1>
+
   <div id="verseTitle"></div>
-  <div class="speed-select">
-    <button onclick="setSpeed(400, '초보')">초보</button>
-    <button onclick="setSpeed(250, '중수')">중수</button>
-    <button onclick="setSpeed(150, '고수')">고수</button>
-    <button onclick="setSpeed(80, '초인')">초인</button>
-  </div>
-  <div id="modeDisplay">현재 모드: 초보 모드입니다.</div>
+<div class="speed-select">
+  <button id="btn-beginner" onclick="setSpeed(400, '초보', this)">초보</button>
+  <button id="btn-intermediate" onclick="setSpeed(250, '중수', this)">중수</button>
+  <button id="btn-advanced" onclick="setSpeed(150, '고수', this)">고수</button>
+  <button id="btn-master" onclick="setSpeed(80, '초인', this)">초인</button>
+</div>
+  <div id="modeDisplay" style="display: none;">현재 모드: 초보 모드입니다.</div>
 
   <canvas id="game" width="300" height="300"></canvas>
 
@@ -93,12 +128,21 @@
     let dir = { x: 0, y: 0 };
     let food = null;
 
-    function setSpeed(speed, label) {
-      currentSpeed = speed;
-      document.getElementById('modeDisplay').innerText = `현재 모드: ${label} 모드입니다.`;
-      if (intervalId) clearInterval(intervalId);
-      intervalId = setInterval(update, currentSpeed);
-    }
+function setSpeed(speed, label, btnElement = null) {
+  currentSpeed = speed;
+  document.getElementById('modeDisplay').innerText = `현재 모드: ${label} 모드입니다.`;
+  if (intervalId) clearInterval(intervalId);
+  intervalId = setInterval(update, currentSpeed);
+
+  // 버튼 강조 표시 초기화
+  const buttons = document.querySelectorAll('.speed-select button');
+  buttons.forEach(btn => btn.classList.remove('selected'));
+
+  // 클릭된 버튼 강조
+  if (btnElement) {
+    btnElement.classList.add('selected');
+  }
+}
 
     function setDirection(d) {
       if (d === 'up' && dir.y !== 1) dir = { x: 0, y: -1 };
@@ -116,7 +160,7 @@
         return;
       }
       const verse = verses[currentStage];
-      document.getElementById('verseTitle').innerText = `📘 ${verse.title}`;
+      document.getElementById('verseTitle').innerText = ` ${verse.title}`;
       
       // 대괄호 및 내용 제거 후 단어 배열 생성 (순서 유지)
       const cleanedText = verse.text.replace(/\[.*?\]/g, '').trim();
@@ -152,7 +196,7 @@
       }
       if (food) {
         ctx.fillStyle = '#e74c3c';
-        ctx.font = 'bold 14px Arial';
+        ctx.font = 'bold 12px Arial';
 
         let textWidth = ctx.measureText(food.word).width;
         const padding = 5;
@@ -193,16 +237,19 @@
       draw();
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      const saved = localStorage.getItem(STORAGE_KEY_VERSES);
-      if (!saved) {
-        alert('말씀 데이터가 없습니다. localStorage에 말씀을 저장해주세요.');
-        return;
-      }
-      verses = JSON.parse(saved);
-      setSpeed(400, '초보');
-      loadStage();
-    });
+document.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY_VERSES);
+  if (!saved) {
+    alert('말씀 데이터가 없습니다. localStorage에 말씀을 저장해주세요.');
+    return;
+  }
+  verses = JSON.parse(saved);
+
+  // 초기 모드 설정 + 버튼 강조
+  const beginnerButton = document.getElementById('btn-beginner');
+  setSpeed(400, '초보', beginnerButton);
+  loadStage();
+});
 
     // 터치 컨트롤
     let startX, startY;
