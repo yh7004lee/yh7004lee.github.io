@@ -159,6 +159,11 @@ box-shadow: 0 0 10px #00e0d3, 0 0 20px #00e0d3;
 
   <div id="verse"></div>
 
+
+
+
+
+
   <script>
   const STORAGE_KEY_VERSES = 'savedVerses2';
   const canvas = document.getElementById('game');
@@ -209,7 +214,7 @@ box-shadow: 0 0 10px #00e0d3, 0 0 20px #00e0d3;
 
   function loadStage() {
     if (currentStage >= verses.length) {
-      alert('👏 모든 말씀을 완료했습니다!');
+      showCustomAlert('👏 모든 말씀을 완료했습니다!');
       document.getElementById('verseTitle').innerText = '';
       document.getElementById('verse').innerText = '';
       if (intervalId) clearInterval(intervalId);
@@ -219,7 +224,7 @@ box-shadow: 0 0 10px #00e0d3, 0 0 20px #00e0d3;
     document.getElementById('verseTitle').innerText = ` ${verse.title}`;
     const cleanedText = verse.text.replace(/\[.*?\]/g, '').trim();
     verseWords = cleanedText.split(/\s+/);
-
+    showCustomAlert(`✨ ${currentStage + 1}번째 게임이 로딩되었습니다.\n실력에 따라 초보 중수 고수 초인 중에 한가지 선택하세요. 스네이크를 움직여서 말씀 단어를 순서대로 먹어보세요. 상하좌우 버튼을 누르시거나 화면을 상하좌우로 스와이프 하면 스네이크가 움직이면서 게임이 시작됩니다.`);
     wordIndex = 0;
     collectedWords = [];
     resetSnake();
@@ -303,15 +308,28 @@ box-shadow: 0 0 10px #00e0d3, 0 0 20px #00e0d3;
     ctx.fillStyle = '#e74c3c';
     ctx.font = 'bold 12px Arial';
 
-    const padding = 5;
-    for (let f of foods) {
-      let textWidth = ctx.measureText(f.word).width;
-      let wordX = f.x * gridSize + padding;
-      if (wordX + textWidth > canvas.width - padding) {
-        wordX = canvas.width - textWidth - padding;
-      }
-      ctx.fillText(f.word, wordX, f.y * gridSize + 10);
-    }
+   const padding = 5;
+for (let f of foods) {
+  let textWidth = ctx.measureText(f.word).width;
+  let wordX = f.x * gridSize;
+  let wordY = f.y * gridSize + 10;
+
+  // 좌우 경계 보정
+  if (wordX < padding) {
+    wordX = padding;
+  } else if (wordX + textWidth > canvas.width - padding) {
+    wordX = canvas.width - textWidth - padding;
+  }
+
+  // 상하 경계 보정
+  if (wordY < 10 + padding) {
+    wordY = 10 + padding;
+  } else if (wordY > canvas.height - padding) {
+    wordY = canvas.height - padding;
+  }
+
+  ctx.fillText(f.word, wordX, wordY);
+}
   }
 
   function update() {
@@ -325,7 +343,7 @@ box-shadow: 0 0 10px #00e0d3, 0 0 20px #00e0d3;
       head.y >= canvas.height / gridSize ||
       snake.some(s => s.x === head.x && s.y === head.y)
     ) {
-      alert('게임 오버!');
+      showCustomAlert('게임 오버!');
       loadStage();
       return;
     }
@@ -339,7 +357,7 @@ box-shadow: 0 0 10px #00e0d3, 0 0 20px #00e0d3;
 
       const isCorrect = eaten.correct && (target.startsWith(eaten.word) || target.includes(eaten.word));
       if (!isCorrect) {
-        alert('틀린 단어를 먹었습니다! 게임 종료!');
+        showCustomAlert('틀린 단어를 먹었습니다! 게임 종료!');
         loadStage();
         return;
       } else {
@@ -347,7 +365,7 @@ box-shadow: 0 0 10px #00e0d3, 0 0 20px #00e0d3;
         wordIndex++;
         if (wordIndex >= verseWords.length) {
           document.getElementById('verse').innerText = '🎉 완성된 말씀: ' + collectedWords.join(' ');
-          alert('말씀을 완성했습니다!');
+          showCustomAlert('말씀을 완성했습니다!');
           currentStage++;
           loadStage();
           return;
@@ -363,9 +381,10 @@ box-shadow: 0 0 10px #00e0d3, 0 0 20px #00e0d3;
   document.addEventListener('DOMContentLoaded', () => {
     const saved = localStorage.getItem(STORAGE_KEY_VERSES);
     if (!saved) {
-      alert('말씀 데이터가 없습니다. localStorage에 말씀을 저장해주세요.');
+      showCustomAlert('말씀 데이터가 없습니다. localStorage에 말씀을 저장해주세요.');
       return;
     }
+     showCustomAlert('게임이 시작됩니다!\n스네이크를 움직여서 말씀 단어를 순서대로 먹어보세요.\n상하좌우 버튼을 누르거나 스와이프하면 시작됩니다.')
     verses = JSON.parse(saved);
     const beginnerButton = document.getElementById('btn-beginner');
     setSpeed(400, '초보', beginnerButton);
@@ -447,6 +466,122 @@ box-shadow: 0 0 10px #00e0d3, 0 0 20px #00e0d3;
       loadStage();
     }
   }
+
+//메세지창
+ // 맥스타일 메세지창 (확인 버튼 개선)
+(function () {
+  const style = document.createElement('style');
+  style.textContent = `
+    #customModal {
+      display: none;
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(5px);
+      justify-content: center; align-items: center;
+      z-index: 9999;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+    #customModal.show {
+      display: flex;
+    }
+    #customModal > div {
+      background: #1e1e1e;
+      color: #f0f0f0;
+      padding: 0;
+      border-radius: 12px;
+      max-width: 420px;
+      margin: 0 15px;
+      width: 100%;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+    }
+    .mac-header {
+      background: #2c2c2c;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+    }
+    .mac-buttons {
+      display: flex;
+      gap: 8px;
+    }
+    .mac-button {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .mac-button.red {
+      background: #ff605c;
+    }
+    .mac-button.yellow {
+      background: #ffbd44;
+    }
+    .mac-button.green {
+      background: #00ca4e;
+    }
+    #modalContent {
+      padding: 25px 30px 30px;
+      text-align: center;
+    }
+    #modalMessage {
+      font-size: 17px;
+      text-align: center;
+      line-height: 1.5;
+      margin: 20px 0;
+      white-space: pre-wrap;
+    }
+    #modalConfirmBtn {
+      background: #007aff;
+      border: none;
+      padding: 10px 24px;
+      font-size: 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      display: inline-block;
+      margin-top: 10px;
+    }
+    #modalConfirmBtn:hover {
+      background: #005bb5;
+    }
+  `;
+  document.head.appendChild(style);
+
+  const modalHTML = `
+    <div id="customModal">
+      <div>
+        <div class="mac-header">
+          <div class="mac-buttons">
+            <span class="mac-button red"></span>
+            <span class="mac-button yellow"></span>
+            <span class="mac-button green"></span>
+          </div>
+        </div>
+        <div id="modalContent">
+          <div id="modalMessage"></div>
+          <button id="modalConfirmBtn">확인</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+  const modal = document.getElementById('customModal');
+  const msgElem = document.getElementById('modalMessage');
+  const btn = document.getElementById('modalConfirmBtn');
+
+  btn.addEventListener('click', () => {
+    modal.classList.remove('show');
+  });
+
+  window.showCustomAlert = function (message) {
+    if (!message) return;
+    msgElem.textContent = message;
+    modal.classList.add('show');
+  };
+})();
 </script>
 
 
