@@ -175,9 +175,8 @@ box-shadow: 0 0 10px #00e0d3, 0 0 20px #00e0d3;
 
   let snake = [{ x: 5, y: 5 }];
   let dir = { x: 0, y: 0 };
-  let foods = []; // 여러 단어(food)를 담는 배열
+  let foods = [];
 
-  // 모드별 나오는 단어 개수
   const modeWordCounts = {
     '초보': 2,
     '중수': 3,
@@ -185,9 +184,8 @@ box-shadow: 0 0 10px #00e0d3, 0 0 20px #00e0d3;
     '초인': 5
   };
 
-  let currentMode = '초보'; // 초기 모드
+  let currentMode = '초보';
 
-  // 모드별 속도 설정 함수 (기존 유지 + 단어 개수 반영)
   function setSpeed(speed, label, btnElement = null) {
     currentSpeed = speed;
     currentMode = label;
@@ -195,15 +193,11 @@ box-shadow: 0 0 10px #00e0d3, 0 0 20px #00e0d3;
     if (intervalId) clearInterval(intervalId);
     intervalId = setInterval(update, currentSpeed);
 
-    // 버튼 강조 표시 초기화
     const buttons = document.querySelectorAll('.speed-select button');
     buttons.forEach(btn => btn.classList.remove('selected'));
+    if (btnElement) btnElement.classList.add('selected');
 
-    // 클릭된 버튼 강조
-    if (btnElement) {
-      btnElement.classList.add('selected');
-    }
-    loadStage(); // 모드 변경시 스테이지 재로드하여 단어 배치 반영
+    loadStage();
   }
 
   function setDirection(d) {
@@ -223,8 +217,6 @@ box-shadow: 0 0 10px #00e0d3, 0 0 20px #00e0d3;
     }
     const verse = verses[currentStage];
     document.getElementById('verseTitle').innerText = ` ${verse.title}`;
-
-    // 대괄호 및 내용 제거 후 단어 배열 생성 (순서 유지)
     const cleanedText = verse.text.replace(/\[.*?\]/g, '').trim();
     verseWords = cleanedText.split(/\s+/);
 
@@ -241,54 +233,59 @@ box-shadow: 0 0 10px #00e0d3, 0 0 20px #00e0d3;
     foods = [];
   }
 
-  // 단어 여러개를 배치하는 함수
+  function checkOverlap(newFood, existingFoods) {
+    const padding = 2;
+    const textWidth = ctx.measureText(newFood.word).width;
+    const newX = newFood.x * gridSize;
+    const newY = newFood.y * gridSize;
+
+    return existingFoods.some(f => {
+      const fx = f.x * gridSize;
+      const fy = f.y * gridSize;
+      const fw = ctx.measureText(f.word).width;
+      return !(newX + textWidth + padding < fx || newX > fx + fw + padding || newY !== fy);
+    });
+  }
+
   function placeFoods() {
     foods = [];
-    const wordCount = modeWordCounts[currentMode] || 2; // 기본 2개
+    const wordCount = modeWordCounts[currentMode] || 2;
 
-    // 정답 단어 인덱스는 항상 0번 단어 (wordIndex 기준)
-    // 다른 단어들은 verseWords에서 랜덤으로 뽑되 정답 단어와 중복X
-    // 단어 선택 배열 만들기
     let wordsToShow = [];
-    // 정답 단어 넣기
     if (wordIndex < verseWords.length) {
       wordsToShow.push({ word: verseWords[wordIndex], correct: true });
     } else {
-      // 예외: 모든 단어 다 먹었을 때 빈 배열
       return;
     }
 
-    // 틀린 단어 후보 배열 (정답 단어 제외)
     let wrongCandidates = verseWords.filter((w, i) => i !== wordIndex);
-
-    // 틀린 단어 랜덤으로 wordCount-1개 뽑기 (없으면 가능한만)
     while (wordsToShow.length < wordCount && wrongCandidates.length > 0) {
       const idx = Math.floor(Math.random() * wrongCandidates.length);
       wordsToShow.push({ word: wrongCandidates[idx], correct: false });
       wrongCandidates.splice(idx, 1);
     }
 
-    // 단어 배열 셔플
     wordsToShow = shuffleArray(wordsToShow);
 
-    // 단어 위치 중복 없이 배치
-    foods = [];
     for (let i = 0; i < wordsToShow.length; i++) {
       let pos;
+      let attempts = 0;
       do {
         pos = {
           x: Math.floor(Math.random() * (canvas.width / gridSize)),
           y: Math.floor(Math.random() * (canvas.height / gridSize))
         };
+        attempts++;
+        if (attempts > 100) break; // 무한 루프 방지
       } while (
         snake.some(s => s.x === pos.x && s.y === pos.y) ||
-        foods.some(f => f.x === pos.x && f.y === pos.y)
+        foods.some(f => f.x === pos.x && f.y === pos.y) ||
+        checkOverlap({ ...pos, word: wordsToShow[i].word }, foods)
       );
       foods.push({ ...pos, word: wordsToShow[i].word, correct: wordsToShow[i].correct });
     }
   }
 
-  // 배열 셔플 함수 (Fisher-Yates)
   function shuffleArray(arr) {
     for (let i = arr.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -335,11 +332,13 @@ box-shadow: 0 0 10px #00e0d3, 0 0 20px #00e0d3;
 
     snake.unshift(head);
 
-    // 음식(단어) 먹었는지 확인
     const foodIndex = foods.findIndex(f => f.x === head.x && f.y === head.y);
     if (foodIndex !== -1) {
       const eaten = foods[foodIndex];
-      if (!eaten.correct) {
+      const target = verseWords[wordIndex];
+
+      const isCorrect = eaten.correct && (target.startsWith(eaten.word) || target.includes(eaten.word));
+      if (!isCorrect) {
         alert('틀린 단어를 먹었습니다! 게임 종료!');
         loadStage();
         return;
@@ -368,14 +367,11 @@ box-shadow: 0 0 10px #00e0d3, 0 0 20px #00e0d3;
       return;
     }
     verses = JSON.parse(saved);
-
-    // 초기 모드 설정 + 버튼 강조
     const beginnerButton = document.getElementById('btn-beginner');
     setSpeed(400, '초보', beginnerButton);
     loadStage();
   });
 
-  // 터치 컨트롤
   let startX, startY;
   canvas.addEventListener('touchstart', e => {
     const touch = e.touches[0];
@@ -432,7 +428,7 @@ box-shadow: 0 0 10px #00e0d3, 0 0 20px #00e0d3;
     const saved = localStorage.getItem(STORAGE_KEY_VERSES);
     if (saved) {
       const all = JSON.parse(saved);
-      verses = all.filter(v => v.favorite); // 즐겨찾기된 항목만 필터링
+      verses = all.filter(v => v.favorite);
       currentStage = 0;
       loadStage();
     }
@@ -452,6 +448,7 @@ box-shadow: 0 0 10px #00e0d3, 0 0 20px #00e0d3;
     }
   }
 </script>
+
 
 </body>
 </html>
