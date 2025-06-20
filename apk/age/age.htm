@@ -1,0 +1,195 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>만 나이 계산기</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style id="themeStyle">
+    :root {
+      --bg: #ffffff;
+      --fg: #333333;
+      --accent: #2a6bc4;
+      --box: #f1f1f1;
+      --input-bg: #ffffff;
+      --button-text: white;
+    }
+    [data-theme="dark"] {
+      --bg: #1a1a1a;
+      --fg: #f1f1f1;
+      --accent: #4a90e2;
+      --box: #2a2a2a;
+      --input-bg: #2c2c2c;
+      --button-text: white;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 20px;
+      transition: background 0.3s, color 0.3s;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: var(--box);
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: var(--accent);
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      font-size: 16px;
+      border: 1px solid #aaa;
+      border-radius: 10px;
+      box-sizing: border-box;
+    }
+    input {
+      background-color: var(--input-bg);
+      color: var(--fg);
+    }
+    button {
+      background: var(--accent);
+      color: var(--button-text);
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #1f57a1;
+    }
+    .result {
+      margin-top: 25px;
+      line-height: 1.8;
+      font-size: 16px;
+    }
+    .highlight {
+      font-weight: bold;
+      color: var(--accent);
+    }
+    .theme-toggle {
+      margin-top: 10px;
+      text-align: center;
+    }
+    .ad-box {
+      display: none; /* 광고 박스 숨김 처리 */
+      margin-top: 20px;
+      padding: 15px;
+      background: #ddd;
+      text-align: center;
+      border-radius: 10px;
+      font-size: 14px;
+      color: #666;
+    }
+  </style>
+</head>
+<body data-theme="light">
+
+<div class="container">
+  <h1>📅 만 나이 계산기</h1>
+
+  <label>생년월일 입력 또는 선택:</label>
+  <input type="date" id="dateInput">
+
+  <button onclick="calculate()">만나이 확인하기</button>
+
+  <div class="result" id="resultBox"></div>
+
+  <button onclick="copyResult()">결과 복사하기 📋</button>
+
+  <div class="theme-toggle">
+    <button onclick="toggleTheme()">🌙 / ☀️ 테마 전환</button>
+  </div>
+
+  <div class="ad-box" id="adBox">
+    [광고 영역] 여기에 광고 코드 삽입 예정
+  </div>
+</div>
+
+<script>
+  function calculate() {
+    const dateInput = document.getElementById("dateInput").value;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dateInput)) {
+      alert("날짜를 선택하거나 입력해주세요.");
+      return;
+    }
+
+    const birthStr = dateInput.replace(/-/g, '');
+    const year = parseInt(birthStr.substr(0, 4));
+    const month = parseInt(birthStr.substr(4, 2)) - 1;
+    const day = parseInt(birthStr.substr(6, 2));
+    const birthDate = new Date(year, month, day);
+    const today = new Date();
+
+    let age = today.getFullYear() - year;
+    if (
+      today.getMonth() < month ||
+      (today.getMonth() === month && today.getDate() < day)
+    ) {
+      age--;
+    }
+
+    const diffMs = today - birthDate;
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const diffMonths = (today.getFullYear() - year) * 12 + today.getMonth() - month;
+    const diffYears = Math.floor(diffMonths / 12);
+
+    const birthstones = [
+      "가넷", "자수정", "아쿠아마린", "다이아몬드", "에메랄드", "진주",
+      "루비", "페리도트", "사파이어", "오팔", "토파즈", "터키석"
+    ];
+    const birthstone = birthstones[month];
+
+    const zodiacSigns = [
+      { sign: "염소자리", from: "01-01", to: "01-19" },
+      { sign: "물병자리", from: "01-20", to: "02-18" },
+      { sign: "물고기자리", from: "02-19", to: "03-20" },
+      { sign: "양자리", from: "03-21", to: "04-19" },
+      { sign: "황소자리", from: "04-20", to: "05-20" },
+      { sign: "쌍둥이자리", from: "05-21", to: "06-21" },
+      { sign: "게자리", from: "06-22", to: "07-22" },
+      { sign: "사자자리", from: "07-23", to: "08-22" },
+      { sign: "처녀자리", from: "08-23", to: "09-22" },
+      { sign: "천칭자리", from: "09-23", to: "10-23" },
+      { sign: "전갈자리", from: "10-24", to: "11-22" },
+      { sign: "사수자리", from: "11-23", to: "12-21" },
+      { sign: "염소자리", from: "12-22", to: "12-31" }
+    ];
+    const mmdd = ("0" + (month + 1)).slice(-2) + "-" + ("0" + day).slice(-2);
+    const zodiac = zodiacSigns.find(z => mmdd >= z.from && mmdd <= z.to)?.sign || "알 수 없음";
+
+    const chineseZodiac = ["원숭이", "닭", "개", "돼지", "쥐", "소", "호랑이", "토끼", "용", "뱀", "말", "양"];
+    const zodiacAnimal = chineseZodiac[year % 12];
+
+    document.getElementById("resultBox").innerHTML = `
+      <p><span class="highlight">🎂 만 나이:</span> ${age}세</p>
+      <p><span class="highlight">📆 생후:</span> ${diffYears}년 (${diffMonths}개월 / ${diffDays}일)</p>
+      <p><span class="highlight">💎 탄생석:</span> ${birthstone}</p>
+      <p><span class="highlight">🔮 별자리:</span> ${zodiac}</p>
+      <p><span class="highlight">🐲 띠:</span> ${zodiacAnimal}띠</p>
+    `;
+  }
+
+  function copyResult() {
+    const resultBox = document.getElementById("resultBox").innerText;
+    navigator.clipboard.writeText(resultBox).then(() => {
+      alert("결과가 복사되었습니다!");
+    });
+  }
+
+  function toggleTheme() {
+    const currentTheme = document.body.getAttribute("data-theme");
+    document.body.setAttribute("data-theme", currentTheme === "light" ? "dark" : "light");
+  }
+</script>
+
+</body>
+</html>
