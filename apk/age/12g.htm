@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>띠별 정보</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+
+.go-main-button {
+  display: block;
+  margin: 40px auto 0;
+  padding: 14px 24px;
+  background-color: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: background 0.3s;
+  text-align: center;
+  max-width: 240px;
+}
+
+.go-main-button:hover {
+  background-color: #4a148c;
+}
+
+    :root {
+      --bg: #f4f4f9;
+      --fg: #222;
+      --accent: #ec6f66;
+      --card-bg: #fff;
+      --card-shadow: rgba(0, 0, 0, 0.1);
+    }
+
+    [data-theme="dark"] {
+      --bg: #121212;
+      --fg: #eeeeee;
+      --accent: #ffab91;
+      --card-bg: #1e1e1e;
+      --card-shadow: rgba(255, 255, 255, 0.05);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 20px;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+
+    .toggle-theme {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .toggle-theme button {
+      background: none;
+      border: 2px solid var(--accent);
+      color: var(--accent);
+      padding: 10px 16px;
+      font-weight: bold;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .toggle-theme button:hover {
+      background: var(--accent);
+      color: white;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 10px var(--card-shadow);
+      transition: transform 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .zodiac {
+      font-size: 24px;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: var(--accent);
+    }
+
+    .emoji {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .desc {
+      font-size: 15px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body data-theme="light">
+  <h1>🐲 12지 띠별 정보</h1>
+
+  <div class="toggle-theme">
+    <button onclick="toggleTheme()">🌙 / ☀️ 테마 전환</button>
+  </div>
+
+  <div class="grid" id="zodiacGrid"></div>
+<a href="age.htm" class="go-main-button">🏠 메인으로 이동</a>
+
+  <script>
+    const zodiacs = [
+      { name: "쥐띠", emoji: "🐭", desc: "지혜롭고 순발력이 뛰어나며 계획적인 성향이 강합니다." },
+      { name: "소띠", emoji: "🐮", desc: "성실하고 근면하며 신뢰를 중시하는 특징이 있습니다." },
+      { name: "호랑이띠", emoji: "🐯", desc: "용감하고 리더십이 강하며 도전적인 성격입니다." },
+      { name: "토끼띠", emoji: "🐰", desc: "온화하고 다정하며 예의 바르고 감수성이 풍부합니다." },
+      { name: "용띠", emoji: "🐲", desc: "자신감이 넘치고 야망이 있으며 추진력이 강합니다." },
+      { name: "뱀띠", emoji: "🐍", desc: "지혜롭고 신중하며 직감이 뛰어나며 조용한 성격입니다." },
+      { name: "말띠", emoji: "🐴", desc: "자유롭고 활발하며 독립심이 강한 성향이 있습니다." },
+      { name: "양띠", emoji: "🐑", desc: "온화하고 배려심이 깊으며 평화를 추구하는 성격입니다." },
+      { name: "원숭이띠", emoji: "🐵", desc: "재치 있고 유머 감각이 뛰어나며 창의적인 기질이 있습니다." },
+      { name: "닭띠", emoji: "🐔", desc: "시간 관념이 철저하고 꼼꼼하며 책임감이 강합니다." },
+      { name: "개띠", emoji: "🐶", desc: "정직하고 의리가 있으며 충성심이 강한 성격입니다." },
+      { name: "돼지띠", emoji: "🐷", desc: "넉넉하고 온화하며 관대하고 따뜻한 마음을 가졌습니다." }
+    ];
+
+    const grid = document.getElementById("zodiacGrid");
+
+    zodiacs.forEach(z => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <div class="emoji">${z.emoji}</div>
+        <div class="zodiac">${z.name}</div>
+        <div class="desc">${z.desc}</div>
+      `;
+      grid.appendChild(card);
+    });
+
+    function toggleTheme() {
+      const body = document.body;
+      const current = body.getAttribute("data-theme");
+      const next = current === "light" ? "dark" : "light";
+      body.setAttribute("data-theme", next);
+      localStorage.setItem("theme", next);
+    }
+
+    // 초기 테마 적용
+    window.addEventListener("DOMContentLoaded", () => {
+      const saved = localStorage.getItem("theme");
+      if (saved) document.body.setAttribute("data-theme", saved);
+    });
+  </script>
+</body>
+</html>

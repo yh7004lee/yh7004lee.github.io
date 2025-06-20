@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>탄생석 정보</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --bg: #f4f4f9;
+      --fg: #222;
+      --accent: #5c6bc0;
+      --card-bg: #fff;
+      --card-shadow: rgba(0, 0, 0, 0.1);
+    }
+
+    [data-theme="dark"] {
+      --bg: #121212;
+      --fg: #eeeeee;
+      --accent: #90caf9;
+      --card-bg: #1e1e1e;
+      --card-shadow: rgba(255, 255, 255, 0.05);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 20px;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+
+    .toggle-theme {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .toggle-theme button {
+      background: none;
+      border: 2px solid var(--accent);
+      color: var(--accent);
+      padding: 10px 16px;
+      font-weight: bold;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .toggle-theme button:hover {
+      background: var(--accent);
+      color: white;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 10px var(--card-shadow);
+      transition: transform 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .month {
+      font-weight: bold;
+      font-size: 18px;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .gem {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .desc {
+      font-size: 15px;
+      line-height: 1.6;
+    }
+.go-main-button {
+  display: block;
+  margin: 40px auto 0;
+  padding: 14px 24px;
+  background-color: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: background 0.3s;
+  text-align: center;
+  max-width: 240px;
+}
+
+.go-main-button:hover {
+  background-color: #4a148c;
+}
+
+  </style>
+</head>
+<body data-theme="light">
+  <h1>💎 탄생석 정보</h1>
+
+  <div class="toggle-theme">
+    <button onclick="toggleTheme()">🌙 / ☀️ 테마 전환</button>
+  </div>
+
+  <div class="grid" id="gemGrid"></div>
+<a href="age.htm" class="go-main-button">🏠 메인으로 이동</a>
+
+  <script>
+    const birthstones = [
+      { month: "1월", gem: "가넷", desc: "진실과 우정을 상징하며, 정열과 에너지를 불어넣는 보석입니다." },
+      { month: "2월", gem: "자수정", desc: "지혜와 평화를 상징하며, 마음의 안정을 주는 보석입니다." },
+      { month: "3월", gem: "아쿠아마린", desc: "용기와 행복을 상징하며, 바다의 평온함을 담은 보석입니다." },
+      { month: "4월", gem: "다이아몬드", desc: "영원한 사랑과 순수함을 상징하는 최고의 보석입니다." },
+      { month: "5월", gem: "에메랄드", desc: "행운과 사랑을 상징하며, 아름다운 초록빛의 보석입니다." },
+      { month: "6월", gem: "진주", desc: "순결과 순수를 상징하며, 고요하고 품위있는 보석입니다." },
+      { month: "7월", gem: "루비", desc: "열정과 용기를 상징하는 붉은색의 강렬한 보석입니다." },
+      { month: "8월", gem: "페리도트", desc: "희망과 부를 상징하며, 밝은 녹색의 독특한 보석입니다." },
+      { month: "9월", gem: "사파이어", desc: "성실과 진실을 상징하며, 깊은 푸른빛이 인상적인 보석입니다." },
+      { month: "10월", gem: "오팔", desc: "희망과 창의성을 상징하며, 다양한 색이 반짝이는 보석입니다." },
+      { month: "11월", gem: "토파즈", desc: "건강과 우정을 상징하며, 따뜻한 색감의 보석입니다." },
+      { month: "12월", gem: "터키석", desc: "행복과 성공을 상징하며, 하늘색의 희귀한 보석입니다." },
+    ];
+
+    const grid = document.getElementById("gemGrid");
+
+    birthstones.forEach(stone => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <div class="month">${stone.month}</div>
+        <div class="gem">💠 ${stone.gem}</div>
+        <div class="desc">${stone.desc}</div>
+      `;
+      grid.appendChild(card);
+    });
+
+    function toggleTheme() {
+      const body = document.body;
+      const current = body.getAttribute("data-theme");
+      const next = current === "light" ? "dark" : "light";
+      body.setAttribute("data-theme", next);
+      localStorage.setItem("theme", next);
+    }
+
+    // 초기 테마 적용
+    window.addEventListener("DOMContentLoaded", () => {
+      const saved = localStorage.getItem("theme");
+      if (saved) document.body.setAttribute("data-theme", saved);
+    });
+  </script>
+</body>
+</html>
