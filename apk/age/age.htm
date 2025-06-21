@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>만 나이 계산기</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+:root {
+  --bg: #f4f4f9;
+  --fg: #1f1f1f;
+  --accent: #8e44ad;
+  --accent-hover: #732d91;
+  --box: #ffffff;
+  --input-bg: #ffffff;
+  --button-text: #ffffff;
+}
+
+[data-theme="dark"] {
+  --bg: #181818;
+  --fg: #f5f5f5;
+  --accent: #bb86fc;
+  --accent-hover: #9a67ea;
+  --box: #242424;
+  --input-bg: #333333;
+  --button-text: #1e1e1e;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 0px;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.container {
+  max-width: 600px;
+  margin: auto;
+  background: var(--box);
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  transition: background 0.3s ease;
+}
+
+h1 {
+  text-align: center;
+  color: var(--accent);
+  font-size: 28px;
+  margin-top: 0px;      /* 추가 */
+  margin-bottom: 25px;
+}
+
+label {
+  display: block;
+  margin-top: 16px;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.input-wrapper {
+  position: relative;
+  margin-top: 8px;
+}
+
+.input-wrapper input[type="text"] {
+  width: 100%;
+  padding: 12px 44px 12px 12px;
+  font-size: 16px;
+  background-color: var(--input-bg);
+  color: var(--fg);
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-sizing: border-box;
+  transition: background 0.3s, color 0.3s;
+}
+
+.calendar-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.hidden-calendar {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  width: 30px;
+  height: 30px;
+  z-index: 10;
+  cursor: pointer;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 30px;
+}
+
+.button-group button {
+  width: 100%;
+  padding: 13px;
+  font-size: 16px;
+  background: var(--accent);
+  color: var(--button-text);
+  border: none;
+  border-radius: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.button-group button:hover {
+  background: var(--accent-hover);
+  transform: translateY(-2px);
+}
+
+.result {
+  margin-top: 28px;
+  line-height: 1.8;
+  font-size: 16px;
+}
+
+.highlight {
+  font-weight: bold;
+  color: var(--accent);
+}
+
+.theme-toggle {
+  margin-top: 25px;
+  text-align: center;
+}
+
+.theme-toggle button {
+  background: none;
+  border: 2px solid var(--accent);
+  color: var(--accent);
+  padding: 10px 18px;
+  font-size: 15px;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
+
+.theme-toggle button:hover {
+  background: var(--accent);
+  color: var(--button-text);
+}
+
+.ad-box {
+  display: none;
+  margin-top: 20px;
+  padding: 15px;
+  background: #dddddd;
+  text-align: center;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #444;
+}
+
+/* 관련 정보 카드 영역 */
+a[href$=".htm"] {
+  flex: 1 1 120px;
+  max-width: 180px;
+  text-decoration: none;
+  background: var(--box);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  text-align: center;
+  color: var(--fg);
+  transition: transform 0.2s, box-shadow 0.3s;
+}
+
+a[href$=".htm"]:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+}
+.result {
+  display: none; /* 초기엔 숨김 */
+  margin-top: 28px;
+  line-height: 1.8;
+  font-size: 16px;
+  border: 2px dashed var(--accent); /* 점선에서 다시선으로 변경 */
+  padding: 16px;
+  border-radius: 12px;
+  background-color: var(--box);
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* 관련 정보 전체 박스 */
+.related-info-wrapper {
+  margin-top: 30px;
+  border: 2px dashed var(--accent);
+  border-radius: 10px;
+  padding:20px 20px 30px 20px;
+  max-width: 100%;
+  box-sizing: border-box;
+  background: var(--box);
+}
+
+/* 내부 링크 카드 정렬 */
+.related-info-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+
+
+
+  </style>
+</head>
+<body data-theme="light">
+  <div class="container">
+   <h1 class="fancy-title">🎂 만 나이 계산기</h1>
+<!-- 생년월일 입력 -->
+<label>생년월일 입력 (예: 19781027)</label>
+<div class="input-wrapper">
+  <input type="text" id="dateInput" >
+  <span class="calendar-icon" data-target="hiddenDate">📅</span>
+  <input type="date" id="hiddenDate" class="hidden-calendar" onchange="syncDateInput(this)">
+</div>
+
+<!-- 기준일 입력 -->
+<label style="margin-top:20px; display:block;">기준일 : 오늘 (기본)</label>
+<div class="input-wrapper">
+  <input type="text" id="baseDateInput" placeholder="예) 20250620">
+  <span class="calendar-icon" data-target="hiddenBaseDate">📅</span>
+  <input type="date" id="hiddenBaseDate" class="hidden-calendar" onchange="syncBaseDateInput(this)">
+</div>
+
+
+    <div class="button-group">
+      <button onclick="calculate()">만나이 확인하기</button>
+      <button onclick="copyResult()">결과 복사하기 📋</button>
+      <button onclick="toggleTheme()">🌙 / ☀️ 테마 전환</button>
+    </div>
+<div class="result" id="resultBox"></div>
+
+<div class="related-info-wrapper">
+  <h2 style="text-align:center; color: var(--accent); margin-bottom: 20px;">📌 관련 정보 보기</h2>
+  <div class="related-info-list">
+    <a href="stone.htm">
+      💎<br><strong>탄생석 정보</strong><br><span style="font-size:14px;">월별 보석 의미</span>
+    </a>
+    <a href="12g.htm">
+      🐉<br><strong>띠 정보</strong><br><span style="font-size:14px;">12띠 성격과 특징</span>
+    </a>
+    <a href="star.htm">
+      🔮<br><strong>별자리 정보</strong><br><span style="font-size:14px;">성격과 날짜 확인</span>
+    </a>
+  </div>
+</div>
+
+
+    <div class="ad-box" id="adBox">[광고 영역] 여기에 광고 코드 삽입 예정</div>
+  </div>
+</body>
+
+<script>
+
+// 페이지 로드시 테마 설정
+window.addEventListener("DOMContentLoaded", () => {
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme) {
+    document.body.setAttribute("data-theme", savedTheme);
+  }
+
+  // 기준일 초기화도 같이 실행
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = ("0" + (today.getMonth() + 1)).slice(-2);
+  const dd = ("0" + today.getDate()).slice(-2);
+  const todayStr = `${yyyy}${mm}${dd}`;
+
+  document.getElementById("baseDateInput").value = todayStr;
+  document.getElementById("hiddenBaseDate").value = `${yyyy}-${mm}-${dd}`;
+});
+  // 테마 전환
+function toggleTheme() {
+  const current = document.body.getAttribute("data-theme");
+  const newTheme = current === "light" ? "dark" : "light";
+  document.body.setAttribute("data-theme", newTheme);
+  localStorage.setItem("theme", newTheme); // 저장
+}
+
+// 모든 calendar-icon 클릭시 해당 data-target에 showPicker
+document.querySelectorAll(".calendar-icon").forEach(icon => {
+  icon.addEventListener("click", () => {
+    const targetId = icon.getAttribute("data-target");
+    const targetInput = document.getElementById(targetId);
+    targetInput.showPicker?.();
+    targetInput.focus();
+  });
+});
+
+// 생년월일 입력 동기화
+function syncDateInput(dateEl) {
+  if (dateEl.value) {
+    document.getElementById("dateInput").value = dateEl.value.replace(/-/g, "");
+  }
+}
+
+// 기준일 달력 연동
+function syncBaseDateInput(dateEl) {
+  if (dateEl.value) {
+    document.getElementById("baseDateInput").value = dateEl.value.replace(/-/g, "");
+  }
+}
+
+// 페이지 로드시 기준일을 오늘로 설정
+window.addEventListener("DOMContentLoaded", () => {
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = ("0" + (today.getMonth() + 1)).slice(-2);
+  const dd = ("0" + today.getDate()).slice(-2);
+  const todayStr = `${yyyy}${mm}${dd}`;
+
+  document.getElementById("baseDateInput").value = todayStr;
+  document.getElementById("hiddenBaseDate").value = `${yyyy}-${mm}-${dd}`;
+});
+
+// 만나이 계산 함수
+// 입춘일 예외 처리 정보 (key: 연도, value: 입춘일)
+const ipchunMap = {
+  1985: "02-03",
+  1989: "02-05",
+  1992: "02-04",
+  1996: "02-04",
+  2000: "02-04",
+  2004: "02-04",
+  2008: "02-04",
+  2012: "02-04",
+  2016: "02-04",
+  2021: "02-03",
+  2025: "02-03",
+  2029: "02-03",
+  2033: "02-03",
+  2037: "02-03",
+  2041: "02-03",
+  2045: "02-03",
+  // 필요 시 추가 가능
+};
+
+function getChineseZodiac(year, month, day) {
+  // 기본 입춘일은 2월 4일
+  let ipchunStr = ipchunMap[year] || "02-04";
+
+  const ipMonth = parseInt(ipchunStr.split("-")[0], 10);
+  const ipDay = parseInt(ipchunStr.split("-")[1], 10);
+
+  // 출생일이 입춘 이전이면 전년도 띠 사용
+  const isBeforeIpchun = (month < ipMonth) || (month === ipMonth && day < ipDay);
+  const zodiacYear = isBeforeIpchun ? year - 1 : year;
+
+  const chineseZodiac = ["원숭이", "닭", "개", "돼지", "쥐", "소", "호랑이", "토끼", "용", "뱀", "말", "양"];
+  return chineseZodiac[zodiacYear % 12];
+}
+
+
+function calculate() {
+  const input = document.getElementById("dateInput").value.trim();
+  const baseInput = document.getElementById("baseDateInput").value.trim();
+
+  if (!/^\d{8}$/.test(input)) {
+    alert("생년월일을 8자리 숫자로 입력해주세요. 예) 19781027");
+    return;
+  }
+  document.getElementById("resultBox").style.display = "block";
+  const year = parseInt(input.substr(0, 4));
+  const month = parseInt(input.substr(4, 2)) - 1;
+  const day = parseInt(input.substr(6, 2));
+  const birthDate = new Date(year, month, day);
+
+  let zodiacYear = year;
+  const ipchun = new Date(year, 1, 4); // 2월 4일 입춘 기준
+  if (birthDate < ipchun) {
+    zodiacYear -= 1;
+  }
+  const chineseZodiac = ["원숭이", "닭", "개", "돼지", "쥐", "소", "호랑이", "토끼", "용", "뱀", "말", "양"];
+  const zodiacAnimal = getChineseZodiac(year, month + 1, day);
+
+  const baseYear = parseInt(baseInput.substr(0, 4));
+  const baseMonth = parseInt(baseInput.substr(4, 2)) - 1;
+  const baseDay = parseInt(baseInput.substr(6, 2));
+  const baseDate = new Date(baseYear, baseMonth, baseDay);
+
+  let age = baseDate.getFullYear() - year;
+  if (baseDate.getMonth() < month || (baseDate.getMonth() === month && baseDate.getDate() < day)) {
+    age--;
+  }
+
+  const diffMs = baseDate - birthDate;
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const diffMonths = (baseDate.getFullYear() - year) * 12 + baseDate.getMonth() - month;
+  const diffYears = Math.floor(diffMonths / 12);
+
+  const birthstones = ["가넷", "자수정", "아쿠아마린", "다이아몬드", "에메랄드", "진주", "루비", "페리도트", "사파이어", "오팔", "토파즈", "터키석"];
+  const birthstone = birthstones[month];
+
+  const zodiacSigns = [
+    { sign: "염소자리", from: "01-01", to: "01-19" },
+    { sign: "물병자리", from: "01-20", to: "02-18" },
+    { sign: "물고기자리", from: "02-19", to: "03-20" },
+    { sign: "양자리", from: "03-21", to: "04-19" },
+    { sign: "황소자리", from: "04-20", to: "05-20" },
+    { sign: "쌍둥이자리", from: "05-21", to: "06-21" },
+    { sign: "게자리", from: "06-22", to: "07-22" },
+    { sign: "사자자리", from: "07-23", to: "08-22" },
+    { sign: "처녀자리", from: "08-23", to: "09-22" },
+    { sign: "천칭자리", from: "09-23", to: "10-23" },
+    { sign: "전갈자리", from: "10-24", to: "11-22" },
+    { sign: "사수자리", from: "11-23", to: "12-21" },
+    { sign: "염소자리", from: "12-22", to: "12-31" }
+  ];
+  const mmdd = ("0" + (month + 1)).slice(-2) + "-" + ("0" + day).slice(-2);
+  const zodiac = zodiacSigns.find(z => mmdd >= z.from && mmdd <= z.to)?.sign || "알 수 없음";
+
+  document.getElementById("resultBox").innerHTML = `
+    <p><span class="highlight">🎂 만 나이:</span> ${age}세</p>
+    <p><span class="highlight">📆 생후:</span> ${diffYears}년 (${diffMonths}개월 / ${diffDays}일)</p>
+    <p><span class="highlight">💎 탄생석:</span> ${birthstone}</p>
+    <p><span class="highlight">🔮 별자리:</span> ${zodiac}</p>
+    <p><span class="highlight">🐲 띠:</span> ${zodiacAnimal}띠</p>
+  `;
+}
+
+// 결과 복사
+function copyResult() {
+  const text = document.getElementById("resultBox").innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    alert("결과가 복사되었습니다!");
+  });
+}
+
+</script>
+</body>
+</html>
