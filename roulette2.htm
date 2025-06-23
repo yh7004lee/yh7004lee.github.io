@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>룰렛 돌리기</title>
+<style>
+  /* Reset & 기본 스타일 */
+  * {
+    box-sizing: border-box;
+  }
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #121212;
+  color: #ddd;
+  font-family: "Arial", "Helvetica", sans-serif; /* ✅ 간결한 기본 폰트로 변경 */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+  h1 {
+    margin: 20px 15px 40px 15px;
+    font-weight: 400;
+    font-size: 1.6rem;
+    text-align: center;
+  }
+  #app {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 0 15px 40px 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    user-select: none;
+  }
+  /* 룰렛 영역 */
+  #roulette-container {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    aspect-ratio: 1 / 1;
+    margin: 50px 0 0px;
+  }
+  /* 역삼각형 표시 (룰렛 상단 중앙) */
+  #pointer {
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%) rotate(180deg);
+    width: 0; 
+    height: 0; 
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 25px solid #ff4757;
+    filter: drop-shadow(0 0 1px #ff6b81);
+    z-index: 100;
+  }
+  /* 룰렛 원판 */
+  #roulette {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 4px solid #444;
+    box-shadow: inset 0 0 30px #222, 0 0 20px #333;
+    overflow: hidden;
+    position: relative;
+    background: #1e1e1e;
+  }
+
+  /* 룰렛 텍스트 각 조각 */
+  .segment {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    top: 50%;
+    left: 50%;
+    transform-origin: 0% 0%;
+    color: #eee;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-shadow: 0 0 2px #000;
+    user-select: none;
+    white-space: nowrap;
+  }
+
+  /* 룰렛 중심 스타트 버튼 */
+
+
+
+#start-button {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #264653;
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1px;
+}
+
+#start-button span {
+  display: inline-block;
+}
+
+@keyframes bounce {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+
+  /* 하단 버튼들 */
+  .bottom-button {
+    width: 100%;
+    max-width: 480px;
+    padding: 14px 0;
+    margin: 12px 0;
+    background-color: #333;
+    border: none;
+    border-radius: 6px;
+    color: #eee;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: inset 0 -3px 8px #222;
+    user-select: none;
+    transition: background-color 0.3s ease;
+  }
+  .bottom-button:hover {
+    background-color: #555;
+  }
+
+  /* 당첨 결과 표시 */
+  #result-label {
+    margin-top: 12px;
+    min-height: 28px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #ff6b81;
+    text-align: center;
+    user-select: text;
+  }
+
+  /* 맥 스타일 팝업 배경 */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0; top: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .modal-overlay.active {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  /* 팝업창 본체 */
+  .modal {
+    background-color: #222;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 420px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.8);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  /* 팝업 상단 헤더 (맥 스타일 3개 원 + 닫기 버튼) */
+  .modal-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px 10px 15px;
+    background-color: #1a1a1a; /* 차이 있는 어두운 배경 */
+    user-select: none;
+  }
+  /* 맥 스타일 원 3개 */
+  .mac-dots {
+    display: flex;
+    gap: 8px;
+  }
+  .mac-dot {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+  }
+  .mac-dot.red {
+    background: #ff5f56;
+  }
+  .mac-dot.yellow {
+    background: #ffbd2e;
+  }
+  .mac-dot.green {
+    background: #27c93f;
+  }
+  /* 팝업 제목 */
+  .modal-title {
+    flex-grow: 1;
+    text-align: center;
+    color: #eee;
+    font-weight: 600;
+    font-size: 1.2rem;
+    user-select: none;
+  }
+  /* 닫기 버튼 */
+  .modal-close-btn {
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 1.6rem;
+    font-weight: 700;
+    cursor: pointer;
+    user-select: none;
+    padding: 0 6px 0 6px;
+    transition: color 0.3s ease;
+  }
+  .modal-close-btn:hover {
+    color: #ff6b81;
+  }
+
+  /* 팝업 본문 */
+  .modal-body {
+    background-color: #292929; /* 본문 배경 차이 */
+    padding: 15px 20px;
+    color: #ddd;
+    max-height: 65vh;
+    overflow-y: auto;
+  }
+
+  /* 편집 리스트 항목 */
+  .edit-list-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .edit-list-item input[type="text"] {
+    flex-grow: 1;
+    background: #1e1e1e;
+    border: 1px solid #444;
+    border-radius: 6px;
+    color: #eee;
+    font-size: 1rem;
+    padding: 6px 10px;
+  }
+ .edit-list-item button {
+  margin-left: 8px;
+  background: #3a3a3a;
+  border: 1px solid #555;
+  border-radius: 6px;
+  color: #ff6b81;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 10px;
+  user-select: none;
+  transition: all 0.3s ease;
+}
+.edit-list-item button:hover {
+  background-color: #555;
+  color: #fff;
+  border-color: #777;
+}
+
+  /* 인풋 추가 영역 */
+#add-item-container {
+  display: flex;
+  gap: 10px; /* ✅ 인풋과 버튼 사이 간격 */
+  margin-top: 12px;
+  flex-wrap: wrap; /* 모바일 대응용 */
+}
+
+#add-item-container input[type="text"] {
+  flex: 1; /* ✅ 너비 자동조절 */
+  background: #1e1e1e;
+  border: 1px solid #444;
+  border-radius: 6px;
+  color: #eee;
+  font-size: 1rem;
+  padding: 10px 12px; /* ✅ 높이 늘림 */
+  height: 44px; /* ✅ 고정 높이로 일관성 */
+  box-sizing: border-box;
+}
+
+#add-item-container button {
+  background: #27c93f;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0 20px;
+  height: 44px; /* ✅ 인풋과 높이 통일 */
+  font-size: 1rem;
+  white-space: nowrap;
+  transition: background-color 0.3s ease;
+}
+
+#add-item-container button:hover {
+  background-color: #1da426;
+}
+
+  /* 하단 3개 버튼 각각 한줄씩 */
+  .modal-footer-button {
+    width: 100%;
+    padding: 12px 0;
+    margin: 10px 0 0 0;
+    background-color: #333;
+    border: none;
+    border-radius: 6px;
+    color: #eee;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: inset 0 -3px 8px #222;
+    user-select: none;
+    transition: background-color 0.3s ease;
+  }
+  .modal-footer-button:hover {
+    background-color: #555;
+  }
+
+  /* 저장 목록이 없을 때 메시지 */
+  .no-saves-message {
+    font-style: italic;
+    color: #888;
+    margin: 10px 0;
+    text-align: center;
+  }
+
+  /* 스크롤바 스타일 */
+  .modal-body::-webkit-scrollbar {
+    width: 6px;
+  }
+  .modal-body::-webkit-scrollbar-track {
+    background: #1a1a1a;
+  }
+  .modal-body::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 3px;
+  }
+
+
+.modal-footer-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0px 20px 20px 20px;
+  flex-wrap: wrap; /* 화면 좁을 때 줄바꿈 */
+}
+
+.modal-footer-button {
+  flex: 1;
+  text-align: center;
+  background-color: #333;
+  border: none;
+  border-radius: 6px;
+  color: #eee;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 12px 0;
+  user-select: none;
+  transition: background-color 0.3s ease;
+  box-shadow: inset 0 -3px 8px #222;
+}
+
+.modal-footer-button:hover {
+  background-color: #555;
+}
+#edit-list-container {
+  max-height: 290px; /* 대략 5개 아이템 높이에 맞춤 */
+  overflow-y: auto;
+  padding-right: 4px; /* 스크롤바 가림 방지 */
+}
+</style>
+</head>
+<body>
+
+
+
+<div id="app">
+  <div id="roulette-container">
+    <div id="pointer" aria-label="룰렛 당첨 방향 지시"></div>
+    <canvas id="roulette" width="400" height="400" aria-label="룰렛 메뉴"></canvas>
+    <button id="start-button">
+  <span>S</span><span>T</span><span>A</span><span>R</span><span>T</span>
+</button>
+  </div>
+
+  <div id="result-label" aria-live="polite" role="alert"></div>
+
+  <button id="edit-list-btn" class="bottom-button">리스트 편집하기</button>
+  <button id="save-config-btn" class="bottom-button">현재 구성 저장하기</button>
+  <button id="load-config-btn" class="bottom-button">저장 목록 불러오기</button>
+</div>
+
+<!-- 리스트 편집 모달 -->
+<div class="modal-overlay" id="edit-modal" role="dialog" aria-modal="true" aria-labelledby="edit-modal-title">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="mac-dots" aria-hidden="true">
+        <div class="mac-dot red"></div>
+        <div class="mac-dot yellow"></div>
+        <div class="mac-dot green"></div>
+      </div>
+      <div class="modal-title" id="edit-modal-title">리스트 편집하기</div>
+      <button class="modal-close-btn" aria-label="닫기" id="edit-modal-close">&times;</button>
+    </div>
+    <div class="modal-body" id="edit-list-container" tabindex="0">
+      <!-- 편집 리스트 아이템들 여기에 동적 추가 -->
+    </div>
+    <div id="add-item-container" style="padding:10px 20px 20px 20px;">
+      <input type="text" id="new-item-input" placeholder="메뉴를 입력하세요" aria-label="새 메뉴 입력" />
+      <button id="add-item-btn" aria-label="메뉴 추가">추가하기</button>
+    </div>
+<div class="modal-footer-buttons">
+  <button class="modal-footer-button" id="edit-modal-apply">적용</button>
+  <button class="modal-footer-button" id="edit-modal-clear">모두삭제</button>
+  <button class="modal-footer-button" id="edit-modal-close-bottom">닫기</button>
+</div>
+  </div>
+</div>
+
+<!-- 저장하기 모달 -->
+<div class="modal-overlay" id="save-modal" role="dialog" aria-modal="true" aria-labelledby="save-modal-title">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="mac-dots" aria-hidden="true">
+        <div class="mac-dot red"></div>
+        <div class="mac-dot yellow"></div>
+        <div class="mac-dot green"></div>
+      </div>
+      <div class="modal-title" id="save-modal-title">현재 구성 저장하기</div>
+      <button class="modal-close-btn" aria-label="닫기" id="save-modal-close">&times;</button>
+    </div>
+    <div class="modal-body" style="padding: 20px;">
+      <label for="save-title-input" style="display:block; margin-bottom:8px; font-weight:600; color:#ccc;">제목을 입력하세요</label>
+      <input type="text" id="save-title-input" aria-label="저장 제목 입력" style="width:100%; padding:8px; font-size:1rem; border-radius:6px; border:1px solid #444; background:#1e1e1e; color:#eee;" />
+      <button class="modal-footer-button" id="save-modal-save-btn" style="margin-top:16px;">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 불러오기 모달 -->
+<div class="modal-overlay" id="load-modal" role="dialog" aria-modal="true" aria-labelledby="load-modal-title">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="mac-dots" aria-hidden="true">
+        <div class="mac-dot red"></div>
+        <div class="mac-dot yellow"></div>
+        <div class="mac-dot green"></div>
+      </div>
+      <div class="modal-title" id="load-modal-title">저장 목록 불러오기</div>
+      <button class="modal-close-btn" aria-label="닫기" id="load-modal-close">&times;</button>
+    </div>
+    <div class="modal-body" id="load-list-container" tabindex="0" style="padding: 10px 20px;">
+      <!-- 저장 목록 리스트 -->
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  // 기본 메뉴
+  const defaultMenu = ["김치찌개", "제육볶음", "짜장면", "짬뽕", "돈까스", "초밥", "비빔밥", "햄버거", "김밥", "샌드위치", "닭갈비", "피자", "치킨"];
+  let menuList = [...defaultMenu];
+
+  // DOM 요소
+  const canvas = document.getElementById("roulette");
+  const ctx = canvas.getContext("2d");
+  const startBtn = document.getElementById("start-button");
+  const resultLabel = document.getElementById("result-label");
+  const editBtn = document.getElementById("edit-list-btn");
+  const saveBtn = document.getElementById("save-config-btn");
+  const loadBtn = document.getElementById("load-config-btn");
+
+  // 모달들
+  const editModal = document.getElementById("edit-modal");
+  const editModalCloseTop = document.getElementById("edit-modal-close");
+  const editModalCloseBottom = document.getElementById("edit-modal-close-bottom");
+  const editModalApply = document.getElementById("edit-modal-apply");
+  const editModalClear = document.getElementById("edit-modal-clear");
+  const editListContainer = document.getElementById("edit-list-container");
+  const addItemInput = document.getElementById("new-item-input");
+  const addItemBtn = document.getElementById("add-item-btn");
+
+  const saveModal = document.getElementById("save-modal");
+  const saveModalClose = document.getElementById("save-modal-close");
+  const saveModalSaveBtn = document.getElementById("save-modal-save-btn");
+  const saveTitleInput = document.getElementById("save-title-input");
+
+  const loadModal = document.getElementById("load-modal");
+  const loadModalClose = document.getElementById("load-modal-close");
+  const loadListContainer = document.getElementById("load-list-container");
+
+  // 룰렛 변수
+  let startAngle = 0; // 현재 회전각
+  let arc; // 각 메뉴별 회전 각도
+  let spinTimeout = null;
+  let spinAngleStart = 0;
+  let spinTime = 0;
+  let spinTimeTotal = 0;
+  let isSpinning = false;
+
+  // 모바일 대응 캔버스 크기 조정
+  function resizeCanvas(){
+    const container = document.getElementById("roulette-container");
+    const w = container.clientWidth;
+    canvas.width = w;
+    canvas.height = w;
+  }
+
+  window.addEventListener("resize", () => {
+    resizeCanvas();
+    drawRoulette();
+  });
+
+  // 룰렛 그리기 함수
+  function drawRoulette(){
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    arc = 2 * Math.PI / menuList.length;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // 각 메뉴별 색상 (다크모드 어울리는 톤으로 랜덤 색)
+ function getColor(i, total) {
+  const hue = (i * 360 / total) % 360;
+  return `hsl(${hue}, 60%, 75%)`;  // 채도 60%, 밝기 75%
+}
+
+    ctx.save();
+    ctx.translate(centerX, centerY);
+    ctx.rotate(startAngle);
+
+    for(let i=0; i<menuList.length; i++){
+      // 조각 그리기
+      ctx.beginPath();
+      ctx.fillStyle = getColor(i, menuList.length);
+      ctx.strokeStyle = "#222";
+      ctx.lineWidth = 2;
+      ctx.moveTo(0,0);
+      ctx.arc(0,0, centerX - 1, i*arc, (i+1)*arc, false);
+      ctx.lineTo(0,0);
+      ctx.fill();
+      ctx.stroke();
+
+      // 텍스트 그리기
+      ctx.save();
+      ctx.fillStyle = "#000";
+      ctx.font = `${Math.min(20, centerX/10)}px 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif`;
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+      // 텍스트 위치 각도
+      const angle = i*arc + arc/2;
+ctx.rotate(angle); // 이 각도로 현재 조각에 맞춰 회전
+ctx.translate(centerX - 30, 0); // 바깥으로 이동
+ctx.fillText(menuList[i], 0, 0); // 그대로 텍스트 출력 (중심과 나란하게)
+      ctx.restore();
+    }
+
+    ctx.restore();
+  }
+
+  // 룰렛 회전 애니메이션 함수
+  function rotateWheel(){
+    spinTime += 30;
+    if(spinTime >= spinTimeTotal){
+      stopRotateWheel();
+      return;
+    }
+    // ease out : 점점 속도 줄이기
+    const spinAngle = spinAngleStart - easeOut(spinTime, 0, spinAngleStart, spinTimeTotal);
+    startAngle += (spinAngle * Math.PI / 180);
+    drawRoulette();
+    spinTimeout = setTimeout(rotateWheel, 30);
+  }
+  function easeOut(t, b, c, d){
+    const ts = (t/=d)*t;
+    const tc = ts*t;
+    return b+c*(tc + -3*ts + 3*t);
+  }
+  function stopRotateWheel(){
+    clearTimeout(spinTimeout);
+    isSpinning = false;
+    // 당첨 메뉴 계산
+    const degrees = startAngle * 180 / Math.PI + 90; // 역삼각형 위치가 90도
+    const arcd = arc * 180 / Math.PI;
+    let index = Math.floor((360 - (degrees % 360)) / arcd);
+    if(index < 0) index += menuList.length;
+    const selected = menuList[index];
+    resultLabel.textContent = `당첨: ${selected}`;
+  }
+
+  // 룰렛 시작
+  function startSpin(){
+    if(isSpinning || menuList.length === 0) return;
+    resultLabel.textContent = "";
+    spinAngleStart = Math.floor(Math.random() * 360) + 720; // 최소 2바퀴 이상 돌게
+    spinTime = 0;
+    spinTimeTotal = 4000 + Math.floor(Math.random() * 2000); // 4~6초 회전
+    isSpinning = true;
+    rotateWheel();
+  }
+
+  // 메뉴 리스트 편집 모달 관련
+  function openEditModal(){
+    editModal.classList.add("active");
+    populateEditList();
+    addItemInput.value = "";
+    addItemInput.focus();
+  }
+  function closeEditModal(){
+    editModal.classList.remove("active");
+  }
+  // 편집 리스트 UI 생성
+  function populateEditList(){
+    editListContainer.innerHTML = "";
+    if(menuList.length === 0){
+      const noItem = document.createElement("div");
+      noItem.textContent = "메뉴가 없습니다.";
+      noItem.style.textAlign = "center";
+      noItem.style.color = "#888";
+      editListContainer.appendChild(noItem);
+      return;
+    }
+    menuList.forEach((item, idx) => {
+      const div = document.createElement("div");
+      div.className = "edit-list-item";
+
+      const input = document.createElement("input");
+      input.type = "text";
+      input.value = item;
+      input.setAttribute("aria-label", `메뉴 항목 ${idx+1} 편집`);
+      input.addEventListener("input", e => {
+        menuList[idx] = e.target.value.trim();
+      });
+
+      const delBtn = document.createElement("button");
+      delBtn.textContent = "삭제";
+      delBtn.setAttribute("aria-label", `메뉴 항목 ${idx+1} 삭제`);
+      delBtn.onclick = () => {
+        menuList.splice(idx, 1);
+        populateEditList();
+      };
+
+      div.appendChild(input);
+      div.appendChild(delBtn);
+      editListContainer.appendChild(div);
+    });
+  }
+  // 새 항목 추가
+  function addNewItem(){
+    const val = addItemInput.value.trim();
+    if(val === "") return;
+    menuList.push(val);
+    addItemInput.value = "";
+    populateEditList();
+    addItemInput.focus();
+  }
+  // 모두삭제
+  function clearAllItems(){
+    if(confirm("모든 메뉴를 삭제하시겠습니까?")) {
+      menuList = [];
+      populateEditList();
+    }
+  }
+  // 편집창 적용 (닫기 전 실행)
+  function applyEdit(){
+    // 빈 항목 제거
+    menuList = menuList.filter(i => i.length > 0);
+    drawRoulette();
+    closeEditModal();
+  }
+
+  // 저장하기 모달 열기
+  function openSaveModal(){
+    if(menuList.length === 0){
+      alert("저장할 메뉴가 없습니다.");
+      return;
+    }
+    saveTitleInput.value = "";
+    saveModal.classList.add("active");
+    saveTitleInput.focus();
+  }
+  function closeSaveModal(){
+    saveModal.classList.remove("active");
+  }
+  // 저장
+  function saveCurrentConfig(){
+    const title = saveTitleInput.value.trim();
+    if(title.length === 0){
+      alert("제목을 입력해주세요.");
+      saveTitleInput.focus();
+      return;
+    }
+    // 저장형태 : {title: string, menu: array}
+    const saveObj = {title: title, menu: menuList};
+    // 로컬스토리지에 저장
+    let savedConfigs = JSON.parse(localStorage.getItem("roulette_saves") || "[]");
+    savedConfigs.push(saveObj);
+    localStorage.setItem("roulette_saves", JSON.stringify(savedConfigs));
+    alert("저장되었습니다.");
+    closeSaveModal();
+  }
+
+  // 불러오기 모달 열기
+  function openLoadModal(){
+    loadModal.classList.add("active");
+    populateLoadList();
+  }
+  function closeLoadModal(){
+    loadModal.classList.remove("active");
+  }
+  // 저장 목록 리스트 출력
+ function populateLoadList(){
+  loadListContainer.innerHTML = "";
+  let savedConfigs = JSON.parse(localStorage.getItem("roulette_saves") || "[]");
+  if(savedConfigs.length === 0){
+    const msg = document.createElement("div");
+    msg.textContent = "저장된 목록이 없습니다.";
+    msg.className = "no-saves-message";
+    loadListContainer.appendChild(msg);
+    return;
+  }
+
+  savedConfigs.forEach((item, idx) => {
+    const itemBox = document.createElement("div");
+    itemBox.style.display = "flex";
+    itemBox.style.alignItems = "center";
+    itemBox.style.justifyContent = "space-between";
+    itemBox.style.marginTop = "8px";
+    itemBox.style.backgroundColor = "#333";
+    itemBox.style.borderRadius = "6px";
+    itemBox.style.padding = "12px 14px";
+    itemBox.style.color = "#eee";
+    itemBox.style.fontSize = "1rem";
+    itemBox.style.fontWeight = "600";
+    itemBox.style.cursor = "pointer";
+    itemBox.style.userSelect = "none";
+
+    const titleSpan = document.createElement("span");
+    titleSpan.textContent = item.title;
+    titleSpan.style.flex = "1";
+    titleSpan.style.textAlign = "left";
+    titleSpan.onclick = () => {
+      menuList = [...item.menu];
+      drawRoulette();
+      resultLabel.textContent = "";
+      closeLoadModal();
+    };
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.innerHTML = "&times;";
+    deleteBtn.setAttribute("aria-label", `${item.title} 삭제`);
+    deleteBtn.style.border = "none";
+    deleteBtn.style.background = "transparent";
+    deleteBtn.style.color = "#ff6b81";
+    deleteBtn.style.fontSize = "1.3rem";
+    deleteBtn.style.fontWeight = "bold";
+    deleteBtn.style.cursor = "pointer";
+    deleteBtn.style.marginLeft = "10px";
+    deleteBtn.style.lineHeight = "1";
+    deleteBtn.style.padding = "0";
+    deleteBtn.onmouseover = () => { deleteBtn.style.color = "#fff"; };
+    deleteBtn.onmouseout = () => { deleteBtn.style.color = "#ff6b81"; };
+    deleteBtn.onclick = (e) => {
+      e.stopPropagation(); // 삭제 클릭 시 부모 클릭 안되게
+      if (confirm(`"${item.title}" 저장 목록을 삭제하시겠습니까?`)) {
+        savedConfigs.splice(idx, 1);
+        localStorage.setItem("roulette_saves", JSON.stringify(savedConfigs));
+        populateLoadList(); // 새로고침
+      }
+    };
+
+    itemBox.appendChild(titleSpan);
+    itemBox.appendChild(deleteBtn);
+    loadListContainer.appendChild(itemBox);
+  });
+}
+  
+  // 이벤트 연결
+  startBtn.onclick = startSpin;
+  editBtn.onclick = openEditModal;
+  editModalCloseTop.onclick = closeEditModal;
+  editModalCloseBottom.onclick = closeEditModal;
+  editModalApply.onclick = applyEdit;
+  editModalClear.onclick = clearAllItems;
+  addItemBtn.onclick = addNewItem;
+  addItemInput.addEventListener("keypress", e => {
+    if(e.key === "Enter") addNewItem();
+  });
+
+  saveBtn.onclick = openSaveModal;
+  saveModalClose.onclick = closeSaveModal;
+  saveModalSaveBtn.onclick = saveCurrentConfig;
+
+  loadBtn.onclick = openLoadModal;
+  loadModalClose.onclick = closeLoadModal;
+
+  // 초기화
+
+ // 초기 저장 목록이 없으면 기본 저장값 등록
+  const defaultSaves = [
+    { title: "음식", menu: ["김치찌개", "제육볶음", "짜장면", "짬뽕", "돈까스", "초밥", "비빔밥", "햄버거", "김밥", "샌드위치", "닭갈비", "피자", "치킨"] },
+    { title: "주사위", menu: ["1", "2", "3", "4", "5", "6"] },
+    { title: "로또번호 추첨기", menu: Array.from({ length: 45 }, (_, i) => (i + 1).toString()) },
+    { title: "가위바위보", menu: ["가위", "바위", "보", "가위", "바위", "보", "가위", "바위", "보"] },
+    { title: "요일", menu: ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"] },
+    { title: "개월", menu: Array.from({ length: 12 }, (_, i) => `${i + 1}월`) },
+    { title: "무지개 색상", menu: ["빨간색", "주황색", "노란색", "초록색", "파란색", "남색", "보라색"] },
+  ];
+
+  const existing = localStorage.getItem("roulette_saves");
+  if (!existing) {
+    localStorage.setItem("roulette_saves", JSON.stringify(defaultSaves));
+  }
+
+
+  resizeCanvas();
+  drawRoulette();
+})();
+</script>
+<script>
+  const spans = document.querySelectorAll('#start-button span');
+  const bounceDuration = 500; // 0.5초 튀는 시간
+  const pauseAfterCycle = 5000; // 5초 휴식
+  const betweenBounceDelay = 600; // 글자 간 간격
+
+  let current = 0;
+
+  function bounceOne() {
+    // 이전 애니메이션 리셋
+    spans.forEach(s => s.style.animation = 'none');
+
+    // 현재 글자에 애니메이션 부여
+    setTimeout(() => {
+      spans[current].style.animation = `bounce ${bounceDuration}ms ease forwards`;
+      current++;
+
+      if (current < spans.length) {
+        // 다음 글자 튀기기
+        setTimeout(bounceOne, betweenBounceDelay);
+      } else {
+        // 다 튀었으면 5초 쉬고 다시 처음부터 시작
+        current = 0;
+        setTimeout(bounceOne, pauseAfterCycle);
+      }
+    }, 50);
+  }
+
+  bounceOne(); // 애니메이션 시작
+</script>
+</body>
+</html>
