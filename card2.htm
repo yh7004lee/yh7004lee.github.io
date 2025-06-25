@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>퀴즈 카드</title>
+<style>
+:root {
+  --bg-color: #ffffff;
+  --text-color: #000000;
+  --card-bg: #f9f9f9;
+  --card-border: #ccc;
+  --menu-bg: linear-gradient(180deg, #fff 0%, #e6e6e6 100%);
+  --menu-hover-bg: #c8d6e5;
+  --menu-divider: #eee;
+}
+body.dark {
+  --bg-color: #121212;
+  --text-color: #eeeeee;
+  --card-bg: #1e1e1e;
+  --card-border: #444;
+  --menu-bg: linear-gradient(180deg, #222 0%, #333 100%);
+  --menu-hover-bg: #555;
+  --menu-divider: #444;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+  overflow-x: hidden;
+}
+
+/* 상단바 */
+.top-bar-wrapper {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  background-color: var(--bg-color);
+
+  z-index: 1000;
+}
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+/* 햄버거 */
+.hamburger {
+  width: 22px;
+  height: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+}
+.hamburger span {
+  display: block;
+  height: 3px;
+  background-color: var(--text-color);
+  border-radius: 2px;
+  transition: background-color 0.3s;
+}
+
+/* 우측 아이콘 */
+.right-icons {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.right-icons svg {
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  fill: var(--text-color);
+  stroke: var(--text-color);
+  transition: fill 0.3s ease, stroke 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+svg {
+  width: 28px;
+  height: 28px;
+  stroke: var(--text-color);
+  fill: none;
+  cursor: pointer;
+  transition: stroke 0.3s, fill 0.3s;
+}
+svg:hover {
+  stroke: #007bff;
+  fill: #007bff;
+}
+.settings-icon path,
+.settings-icon circle {
+  fill: none;
+  stroke: var(--text-color);
+}
+body.dark .settings-icon path,
+body.dark .settings-icon circle {
+  fill: none;
+  stroke: var(--text-color);
+}
+
+/* 메뉴 */
+.menu-wrapper {
+  position: absolute;
+  top: 56px;
+  left: 0; right: 0;
+  display: flex;
+  justify-content: center;
+  z-index: 999;
+}
+.menu {
+  background: var(--menu-bg);
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 12px 24px rgba(0,0,0,0.25);
+  display: none;
+  flex-direction: column;
+  width: 100%;
+  max-width: 600px;
+  max-height: 300px;
+  overflow-y: auto;
+  user-select: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--text-color);
+  animation: slideDown 0.3s ease forwards;
+}
+.menu.show {
+  display: flex;
+}
+.menu div {
+  padding: 16px 24px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--menu-divider);
+  transition: background-color 0.25s, color 0.25s;
+}
+.menu div:last-child {
+  border-bottom: none;
+}
+.menu div:hover {
+  background-color: var(--menu-hover-bg);
+  color: #0056b3;
+}
+.menu::-webkit-scrollbar {
+  width: 8px;
+}
+.menu::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+.menu::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+@keyframes slideDown {
+  0% {opacity: 0; transform: translateY(-10px);}
+  100% {opacity: 1; transform: translateY(0);}
+}
+
+/* 본문 */
+.content {
+  padding: 80px 16px 24px 16px;
+  max-width: 600px;
+  margin: 0 auto;
+  user-select: none;
+}
+
+/* 카드 */
+.card {
+  background-color: var(--card-bg);
+  border-radius: 16px;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.15);
+  padding: 32px 36px;
+  margin-bottom: 28px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  transition: background-color 0.3s, box-shadow 0.3s, border 0.3s;
+}
+body.dark .card {
+  box-shadow: 0 12px 28px rgba(0,0,0,0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* 질문/답변 텍스트 */
+.question,
+.answer {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--text-color);
+  line-height: 1.5;
+}
+.question {
+  color: #007bff;
+}
+body.dark .question {
+  color: #3399ff;
+}
+
+.title-card {
+  /* 질문/답변 카드와 동일한 패딩/마진/테두리 등은 .card에서 상속됩니다 */
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #16A085;      /* 라이트 모드에서 오렌지 글자 */
+  text-align: left;
+}
+body.dark .title-card {
+  color: #1ABC9C      /* 다크 모드에서 밝은 오렌지 */
+}
+
+</style>
+</head>
+<body>
+
+<div class="top-bar-wrapper">
+  <div class="top-bar">
+    <div class="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </div>
+    <div class="right-icons">
+      <!-- 다크모드 아이콘 -->
+      <svg id="dark-icon" onclick="toggleDarkMode()" viewBox="0 0 24 24">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 1 0 9.79 9.79z"/>
+      </svg>
+      <svg id="light-icon" onclick="toggleDarkMode()" viewBox="0 0 24 24" style="display: none;">
+        <circle cx="12" cy="12" r="5"/>
+        <line x1="12" y1="1" x2="12" y2="3"/>
+        <line x1="12" y1="21" x2="12" y2="23"/>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+        <line x1="1" y1="12" x2="3" y2="12"/>
+        <line x1="21" y1="12" x2="23" y2="12"/>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </svg>
+      <!-- 설정 아이콘 -->
+      <svg class="settings-icon" onclick="alert('설정 열기')" viewBox="0 0 24 24">
+        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+        <circle cx="12" cy="12" r="3"/>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="menu-wrapper">
+  <div class="menu" id="menu">
+    <!-- 메뉴 아이템 JS로 채움 -->
+  </div>
+</div>
+
+<div class="content" id="content">
+ <div class="card title-card" id="title-box"></div>
+  <div class="card question" id="question-box"></div>
+  <div class="card answer" id="answer-box"></div>
+</div>
+
+
+<script>
+ const quizData = {
+  "과학 상식": [
+    {"Q":"물이 100도에서 끓는 이유는?","A":"기압이 1기압일 때의 물의 끓는점이기 때문이다."},
+    {"Q":"사람의 혈액형은 무엇으로 나뉘나요?","A":"A, B, AB, O형으로 나뉘며 RH식도 포함된다."},
+    {"Q":"지구가 둥글다는 증거는 무엇인가요?","A":"배가 수평선 너머로 사라질 때 아래부터 안 보인다."},
+    {"Q":"번개보다 천둥 소리가 늦게 들리는 이유는?","A":"소리보다 빛의 속도가 더 빠르기 때문이다."},
+    {"Q":"달에는 바람이 불지 않는 이유는?","A":"대기가 없기 때문이다."}
+  ],
+  "속담 퀴즈": [
+    {"Q":"가는 말이 고와야","A":"오는 말이 곱다"},
+    {"Q":"호랑이도 제 말 하면","A":"온다"},
+    {"Q":"돌다리도","A":"두들겨 보고 건너라"},
+    {"Q":"배보다","A":"배꼽이 더 크다"},
+    {"Q":"하늘이 무너져도","A":"솟아날 구멍이 있다"}
+  ],
+  "영어 단어 암송": [
+    {"Q":"incredible","A":"믿을 수 없는, 놀라운"},
+    {"Q":"maintain","A":"유지하다, 지속하다"},
+    {"Q":"purchase","A":"구매하다, 구입"},
+    {"Q":"confident","A":"자신감 있는, 확신하는"},
+    {"Q":"explore","A":"탐험하다, 조사하다"}
+  ],
+  "넌센스 퀴즈 모음": [
+    {"Q":"왜 고양이는 항상 키보드 위에 앉을까?","A":"자기 '입력'도 중요하다고 생각하거든."},
+    {"Q":"닭은 왜 길을 건넜을까?","A":"왜냐면... 옆 치킨집에 친구가 있어서."},
+    {"Q":"컴퓨터가 화났을 때 하는 말은?","A":"나 지금 CPU 폭발 직전이야!"},
+    {"Q":"피카츄가 전기를 너무 쓰면 생기는 문제는?","A":"한전에 고지서가 날아온다."},
+    {"Q":"왜 시계는 항상 틱틱거릴까?","A":"시간에 쫓겨서 스트레스 받는 중이래."}
+  ]
+};
+
+const menu = document.getElementById('menu');
+const questionBox = document.getElementById('question-box');
+const answerBox = document.getElementById('answer-box');
+let currentCategory = null;
+let currentIndex = 0;
+
+// 메뉴 토글
+function toggleMenu() {
+  menu.classList.toggle('show');
+}
+
+// 다크모드 토글
+function toggleDarkMode() {
+  const body = document.body;
+  const darkIcon = document.getElementById('dark-icon');
+  const lightIcon = document.getElementById('light-icon');
+  body.classList.toggle('dark');
+  const isDark = body.classList.contains('dark');
+  darkIcon.style.display = isDark ? 'none' : 'inline';
+  lightIcon.style.display = isDark ? 'inline' : 'none';
+}
+
+// 메뉴 생성
+function createMenu() {
+  menu.innerHTML = '';
+  for (const category in quizData) {
+    const div = document.createElement('div');
+    div.textContent = category;
+    div.addEventListener('click', () => {
+      currentCategory = category;
+      currentIndex = 0;
+      showQA();
+      toggleMenu();
+    });
+    menu.appendChild(div);
+  }
+
+  // ✅ 나가기 버튼 추가
+  const exit = document.createElement('div');
+  exit.textContent = '나가기';
+  exit.style.color = '#ff4444';
+  exit.style.fontWeight = 'bold';
+  exit.addEventListener('click', toggleMenu);
+  menu.appendChild(exit);
+}
+
+// 질문과 답변 표시
+function showQA() {
+  // ① 메뉴에서 선택된 카테고리를 제목에 표시
+document.getElementById('title-box').textContent = '📚 ' + currentCategory;
+
+  const arr = quizData[currentCategory];
+  if (!arr || arr.length === 0) {
+    questionBox.textContent = '데이터가 없습니다.';
+    answerBox.textContent   = '';
+    return;
+  }
+  const qa = arr[currentIndex];
+  questionBox.textContent = 'Q: ' + qa.Q;
+  answerBox.textContent   = 'A: ' + qa.A;
+}
+
+// 좌우 스와이프 및 드래그 기능 변수
+let startX = 0;
+let currentX = 0;
+let isDragging = false;
+
+function touchStart(e) {
+  startX = e.touches ? e.touches[0].clientX : e.clientX;
+  currentX = startX;
+  isDragging = true;
+}
+
+function touchMove(e) {
+  if (!isDragging) return;
+  currentX = e.touches ? e.touches[0].clientX : e.clientX;
+}
+
+function touchEnd(e) {
+  if (!isDragging) return;
+  const diff = currentX - startX;
+  if (diff > 40) prevQA();
+  else if (diff < -40) nextQA();
+  isDragging = false;
+}
+
+function touchCancel() {
+  isDragging = false;
+}
+
+// 이전 질문
+function prevQA() {
+  if (!currentCategory) return;
+  currentIndex--;
+  if (currentIndex < 0) currentIndex = quizData[currentCategory].length - 1;
+  showQA();
+}
+
+// 다음 질문
+function nextQA() {
+  if (!currentCategory) return;
+  currentIndex++;
+  if (currentIndex >= quizData[currentCategory].length) currentIndex = 0;
+  showQA();
+}
+
+  // 이벤트 등록 (전체 화면 대상)
+  window.addEventListener('touchstart', touchStart, {passive:true});
+  window.addEventListener('touchmove', touchMove, {passive:true});
+  window.addEventListener('touchend', touchEnd);
+  window.addEventListener('touchcancel', touchCancel);
+
+  window.addEventListener('mousedown', touchStart);
+  window.addEventListener('mousemove', touchMove);
+  window.addEventListener('mouseup', touchEnd);
+  window.addEventListener('mouseleave', touchCancel);
+
+  window.onload = () => {
+    createMenu();
+    currentCategory = Object.keys(quizData)[0]; // 기본: 첫번째 카테고리
+    currentIndex = 0;
+    showQA();
+  }
+document.addEventListener('touchstart', (e) => {
+  if (menu.classList.contains('show')) {
+    const isTouchInside = menu.contains(e.target) || e.target.closest('.hamburger');
+    if (!isTouchInside) toggleMenu();
+  }
+}, { passive: true });
+
+</script>
+
+</body>
+</html>
