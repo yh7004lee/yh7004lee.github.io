@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>퀴즈 카드</title>
+<style>
+:root {
+  --bg-color: #ffffff;
+  --text-color: #000000;
+  --card-bg: #f4f6f8;
+  --card-border: rgba(0, 0, 0, 0.06);
+  --menu-bg: linear-gradient(180deg, #fff 0%, #e6e6e6 100%);
+  --menu-hover-bg: #c8d6e5;
+  --menu-divider: #eee;
+}
+body.dark {
+  --bg-color: #121212;
+  --text-color: #eeeeee;
+  --card-bg: #1e1e1e;
+  --card-border: rgba(255, 255, 255, 0.1);
+  --menu-bg: linear-gradient(180deg, #222 0%, #333 100%);
+  --menu-hover-bg: #555;
+  --menu-divider: #444;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+  overflow-x: hidden;
+}
+
+/* 상단바 */
+.top-bar-wrapper {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  background-color: var(--bg-color);
+  z-index: 1000;
+}
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 16px 0 20px;
+  box-sizing: border-box;
+}
+@media screen and (min-width: 632px) {
+  .top-bar {
+    padding: 0 2px 0 6px;
+  }
+}
+
+/* 햄버거 */
+.hamburger {
+  width: 22px;
+  height: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+}
+.hamburger span {
+  display: block;
+  height: 3px;
+  background-color: var(--text-color);
+  border-radius: 2px;
+  transition: background-color 0.3s;
+}
+
+/* 우측 아이콘 */
+.right-icons {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.right-icons svg {
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  fill: var(--text-color);
+  stroke: var(--text-color);
+  transition: fill 0.3s ease, stroke 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+svg {
+  width: 28px;
+  height: 28px;
+  stroke: var(--text-color);
+  fill: none;
+  cursor: pointer;
+  transition: stroke 0.3s, fill 0.3s;
+}
+svg:hover {
+  stroke: #007bff;
+  fill: #007bff;
+}
+.settings-icon path,
+.settings-icon circle {
+  fill: none;
+  stroke: var(--text-color);
+}
+body.dark .settings-icon path,
+body.dark .settings-icon circle {
+  fill: none;
+  stroke: var(--text-color);
+}
+
+/* 메뉴 */
+.menu-wrapper {
+  position: absolute;
+  top: 56px;
+  left: 0; right: 0;
+  display: flex;
+  justify-content: center;
+  z-index: 999;
+}
+.menu {
+  background: var(--menu-bg);
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 12px 24px rgba(0,0,0,0.25);
+  display: none;
+  flex-direction: column;
+  width: 100%;
+  max-width: 600px;
+  max-height: 600px;
+  overflow-y: auto;
+  user-select: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--text-color);
+  animation: slideDown 0.3s ease forwards;
+}
+.menu.show {
+  display: flex;
+}
+.menu div {
+  padding: 8px 24px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--menu-divider);
+  transition: background-color 0.25s, color 0.25s;
+}
+.menu div:last-child {
+  border-bottom: none;
+}
+.menu div:hover {
+  background-color: var(--menu-hover-bg);
+  color: #0056b3;
+}
+.menu::-webkit-scrollbar {
+  width: 8px;
+}
+.menu::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+.menu::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+@keyframes slideDown {
+  0% {opacity: 0; transform: translateY(-10px);}
+  100% {opacity: 1; transform: translateY(0);}
+}
+
+/* 본문 */
+.content {
+  padding: 70px 16px 24px 16px;
+  max-width: 600px;
+  margin: 0 auto;
+  user-select: none;
+  transition: transform 0.3s ease;
+
+}
+
+/* 카드 (공통) */
+.card {
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 18px 22px;
+  margin-bottom: 25px;
+  border: 1px solid var(--card-border);
+  transition: background-color 0.3s, box-shadow 0.3s, border 0.3s;
+}
+body.dark .card {
+  background-color: #1e1e1e;
+  border: 1px solid var(--card-border);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.7);
+}
+
+/* 제목 */
+.title-card {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #ff6f61;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+body.dark .title-card {
+  color: #1ABC9C
+}
+
+/* 질문 */
+.question {
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: #0077cc;
+  line-height: 1.6;
+}
+body.dark .question {
+  color: #3399ff;
+}
+
+/* 답변 */
+.answer {
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: #333;
+  line-height: 1.7;
+  transition: opacity 0.3s ease;
+}
+body.dark .answer {
+  color: #ddd;
+}
+
+/* 답변 숨김 처리 스타일 */
+.answer.hidden {
+  opacity: 0;
+  pointer-events: none;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* 즐겨찾기 라벨 */
+.favorite-label {
+  font-size: 1.6rem;
+  font-weight: 500;
+  line-height: 1.6;
+  color: #0077cc;
+}
+body.dark .favorite-label {
+  color: #3399ff;
+}
+
+/* 활성화된 아이콘 색상 처리 */
+svg.active {
+  fill: #ff6f61 !important;
+  stroke: #ff6f61 !important;
+}
+
+
+</style>
+</head>
+<body>
+
+<div class="top-bar-wrapper">
+  <div class="top-bar">
+    <div class="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </div>
+    <div class="right-icons">
+
+<!-- 주사위 아이콘 -->
+<svg id="random-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+  style="fill:none;" >
+  <g transform="translate(2.4 2.4) scale(0.82)">
+    <rect x="2" y="2" width="20" height="20" rx="3" ry="3" fill="none"/>
+    <circle cx="12" cy="12" r="1" fill="currentColor"/>
+    <circle cx="7"  cy="7"  r="1" fill="currentColor"/>
+    <circle cx="17" cy="7"  r="1" fill="currentColor"/>
+    <circle cx="7"  cy="17" r="1" fill="currentColor"/>
+    <circle cx="17" cy="17" r="1" fill="currentColor"/>
+  </g>
+</svg>
+
+<!-- 유령 아이콘 -->
+<svg id="ghost-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M4.8 10
+           a7.2 7.2 0 1 1 14.4 0v10
+           c0 .3-.3.5-.6.3
+           l-2.2-1.5-2.2 1.5-2.2-1.5-2.2 1.5-2.2-1.5-2.2 1.5
+           c-.3.2-.6 0-.6-.3V10z"
+        fill="currentColor" stroke="none"/>
+  <circle cx="9.5"  cy="11" r="1.7" fill="var(--bg-color)"/>
+  <circle cx="14.5" cy="11" r="1.7" fill="var(--bg-color)"/>
+</svg>
+
+<!-- 북마크 아이콘 -->
+<svg id="bookmark-icon" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M6 4h12a1 1 0 0 1 1 1v14.5a0.5 0.5 0 0 1-0.8 0.4L12 13.3l-6.2 6.6a0.5 0.5 0 0 1-0.8-0.4V5a1 1 0 0 1 1-1z" />
+</svg>
+
+<!-- 다크모드 아이콘 -->
+<svg id="dark-icon" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" >
+  <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 1 0 9.79 9.79z"/>
+</svg>
+
+<svg id="light-icon" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+  <circle cx="12" cy="12" r="5"/>
+  <line x1="12" y1="1" x2="12" y2="3"/>
+  <line x1="12" y1="21" x2="12" y2="23"/>
+  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+  <line x1="1" y1="12" x2="3" y2="12"/>
+  <line x1="21" y1="12" x2="23" y2="12"/>
+  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+</svg>
+
+<!-- 설정 아이콘 -->
+<svg class="settings-icon" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+  <circle cx="12" cy="12" r="3"/>
+</svg>
+    </div>
+  </div>
+</div>
+
+<div class="menu-wrapper">
+  <div class="menu" id="menu">
+    <!-- 메뉴 아이템 JS로 채움 -->
+  </div>
+</div>
+
+<div  class="content" id="content">
+  <div class="card title-card" id="title-box"></div>
+  <div class="card question" id="question-box"></div>
+  <div class="card answer" id="answer-box"></div>
+
+  <!-- 즐겨찾기 카드 추가 -->
+  <div class="card favorite-card">
+    <div style="font-size: 1.6rem; font-weight: 500; line-height: 1.6; color: var(--question-color);">
+      <label class="favorite-label" style="display: inline-flex; align-items: center; gap: 12px; cursor: pointer;">
+        즐겨찾기 추가
+        <input type="checkbox" id="bookmark-checkbox" style="width: 20px; height: 20px; accent-color: #ff6f61;">
+      </label>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const quizData = {
+  "과학 상식": [
+    {"Q":"물이 100도에서 끓는 이유는?","A":"기압이 1기압일 때의 물의 끓는점이기 때문이다."},
+    {"Q":"사람의 혈액형은 무엇으로 나뉘나요?","A":"A, B, AB, O형으로 나뉘며 RH식도 포함된다."},
+    {"Q":"지구가 둥글다는 증거는 무엇인가요?","A":"배가 수평선 너머로 사라질 때 아래부터 안 보인다."},
+    {"Q":"번개보다 천둥 소리가 늦게 들리는 이유는?","A":"소리보다 빛의 속도가 더 빠르기 때문이다."},
+    {"Q":"달에는 바람이 불지 않는 이유는?","A":"대기가 없기 때문이다."}
+  ],
+  "속담 퀴즈": [
+    {"Q":"가는 말이 고와야","A":"오는 말이 곱다"},
+    {"Q":"호랑이도 제 말 하면","A":"온다"},
+    {"Q":"돌다리도","A":"두들겨 보고 건너라"},
+    {"Q":"배보다","A":"배꼽이 더 크다"},
+    {"Q":"하늘이 무너져도","A":"솟아날 구멍이 있다"}
+  ],
+  "영어 단어 암송": [
+    {"Q":"incredible","A":"믿을 수 없는, 놀라운"},
+    {"Q":"maintain","A":"유지하다, 지속하다"},
+    {"Q":"purchase","A":"구매하다, 구입"},
+    {"Q":"confident","A":"자신감 있는, 확신하는"},
+    {"Q":"explore","A":"탐험하다, 조사하다"}
+  ]
+};
+
+const menu = document.getElementById('menu');
+const questionBox = document.getElementById('question-box');
+const answerBox = document.getElementById('answer-box');
+const titleBox = document.getElementById('title-box');
+const bookmarkCheckbox = document.getElementById('bookmark-checkbox');
+const bookmarkIcon = document.getElementById('bookmark-icon');
+const ghostIcon = document.getElementById('ghost-icon');
+const randomIcon = document.getElementById('random-icon');
+const darkIcon = document.getElementById('dark-icon');
+const lightIcon = document.getElementById('light-icon');
+const content = document.getElementById('content');
+
+let currentCategory = null;
+let currentIndex = 0;
+let categories = Object.keys(quizData);
+let ghostMode = false;    // 답변 숨김 모드
+let randomMode = false;   // 랜덤 스와이프 모드
+let favoriteFilter = false; // 즐겨찾기 필터 모드
+let favorites = new Set();  // 즐겨찾기 문제 인덱스 저장, 여기서는 인덱스 번호 대신 고유키 사용 예정
+
+// 1. 메뉴 생성 및 선택 기능
+function createMenu() {
+  menu.innerHTML = '';
+  categories.forEach(cat => {
+    const div = document.createElement('div');
+    div.textContent = cat;
+    div.onclick = () => {
+      currentCategory = cat;
+      currentIndex = 0;
+      ghostMode = false;
+      randomMode = false;
+      favoriteFilter = false;
+      updateIconsState();
+      bookmarkCheckbox.checked = false;
+      showMenu(false);
+      renderCard();
+      saveStatesToStorage();
+    };
+    menu.appendChild(div);
+  });
+
+  // 나가기 버튼 추가
+  const exitBtn = document.createElement('div');
+  exitBtn.textContent = '나가기';
+  exitBtn.style.color = '#ff4444';
+  exitBtn.style.fontWeight = 'bold';
+  exitBtn.onclick = () => {
+    showMenu(false);
+  };
+  menu.appendChild(exitBtn);
+}
+
+
+// 메뉴 보이기/숨기기 토글
+function toggleMenu() {
+  menu.classList.toggle('show');
+}
+
+// 2. 카드 렌더링 함수
+function renderCard() {
+  if (!currentCategory) return;
+  const data = quizData[currentCategory];
+
+  // 즐겨찾기 필터가 켜져 있으면 즐겨찾기만 필터링
+  let filteredData = data;
+  if (favoriteFilter) {
+    filteredData = data.filter((item, idx) => favorites.has(getKey(currentCategory, idx)));
+    if(filteredData.length === 0){
+      questionBox.textContent = '즐겨찾기된 항목이 없습니다.';
+      answerBox.textContent = '';
+      titleBox.textContent = (currentCategory ? '🎯 ' + currentCategory : '');
+      return;
+    }
+  }
+
+  if (randomMode) {
+    // 랜덤 인덱스
+    currentIndex = Math.floor(Math.random() * filteredData.length);
+  } else {
+    // 순차 인덱스 보정
+    if (currentIndex >= filteredData.length) currentIndex = 0;
+    else if (currentIndex < 0) currentIndex = filteredData.length - 1;
+  }
+
+  const card = filteredData[currentIndex];
+  titleBox.textContent = (currentCategory ? '🎯 ' + currentCategory : '');
+  questionBox.textContent = card.Q;
+  if (ghostMode) {
+    // 답변 숨김 처리
+    answerBox.classList.add('hidden');
+  } else {
+    answerBox.classList.remove('hidden');
+    answerBox.textContent = card.A;
+  }
+  // 체크박스 동기화
+  const key = getKey(currentCategory, getRealIndex(currentIndex));
+  bookmarkCheckbox.checked = favorites.has(key);
+}
+
+// 즐겨찾기 체크박스 클릭 처리
+bookmarkCheckbox.addEventListener('change', () => {
+  if (!currentCategory) return;
+  const realIndex = getRealIndex(currentIndex);
+  const key = getKey(currentCategory, realIndex);
+  if (bookmarkCheckbox.checked) {
+    favorites.add(key);
+  } else {
+    favorites.delete(key);
+  }
+  saveStatesToStorage();
+  if (favoriteFilter) {
+    // 즐겨찾기 필터 중이면 다시 렌더링해서 필터 적용
+    renderCard();
+  }
+});
+
+// 현재 보여지는 카드의 실제 인덱스 찾기 (필터링 때문에 달라짐)
+function getRealIndex(currentFilteredIndex) {
+  if (!favoriteFilter) return currentFilteredIndex;
+  const data = quizData[currentCategory];
+  // favoriteFilter = true라면 필터링된 인덱스 -> 원본 인덱스 변환 필요
+  const filteredIndices = [];
+  for(let i=0; i<data.length; i++) {
+    if(favorites.has(getKey(currentCategory, i))) filteredIndices.push(i);
+  }
+  return filteredIndices[currentFilteredIndex] ?? 0;
+}
+
+// 카테고리 + 인덱스 문자열 키 생성
+function getKey(category, index) {
+  return category + '_' + index;
+}
+
+// 3. 아이콘 상태 업데이트 (색상 활성화 반영)
+function updateIconsState() {
+  // 다크모드
+  if (document.body.classList.contains('dark')) {
+    darkIcon.style.display = 'none';
+    lightIcon.style.display = 'inline';
+  } else {
+    darkIcon.style.display = 'inline';
+    lightIcon.style.display = 'none';
+  }
+  // 즐겨찾기 아이콘 활성화 여부 (즐겨찾기 필터 켜짐)
+  if (favoriteFilter) bookmarkIcon.classList.add('active');
+  else bookmarkIcon.classList.remove('active');
+  // 유령 아이콘 활성화 여부 (답변 숨김)
+  if (ghostMode) ghostIcon.classList.add('active');
+  else ghostIcon.classList.remove('active');
+  // 랜덤 모드 아이콘 활성화 여부
+  if (randomMode) randomIcon.classList.add('active');
+  else randomIcon.classList.remove('active');
+}
+
+// 4. 다크모드 토글 함수
+function toggleDarkMode() {
+  document.body.classList.toggle('dark');
+  updateIconsState();
+  // 상태 저장
+  localStorage.setItem('darkMode', document.body.classList.contains('dark') ? '1' : '0');
+}
+
+// 5. 유령 모드 토글 (답변 숨김/보임)
+function toggleGhostMode() {
+  ghostMode = !ghostMode;
+  updateIconsState();
+  renderCard();
+  alert(ghostMode ? '답변이 숨겨졌습니다.' : '답변이 표시됩니다.');
+}
+
+// 6. 랜덤 모드 토글 (스와이프 모드 전환)
+function toggleRandomMode() {
+  randomMode = !randomMode;
+  updateIconsState();
+  alert(randomMode ? '랜덤 모드가 활성화되었습니다.' : '순차 모드가 활성화되었습니다.');
+}
+
+// 7. 즐겨찾기 필터 토글 (북마크 아이콘 클릭)
+function toggleBookmarkMode() {
+  favoriteFilter = !favoriteFilter;
+  updateIconsState();
+  alert(favoriteFilter ? '즐겨찾기 추가된 카드만 노출됩니다.' : '전체 카드가 노출됩니다.');
+  currentIndex = 0;  // 필터 변경시 인덱스 초기화
+  renderCard();
+}
+
+// 8. 스와이프 (터치 및 마우스) 이벤트 구현
+let startX = 0;
+let currentX = 0;
+let isDragging = false;
+
+document.addEventListener('touchstart', e => {
+  if (isInteractiveElement(e.target)) return;
+  if (e.touches.length > 1) return; // 멀티터치 방지
+  startX = e.touches[0].clientX;
+  currentX = startX;
+  isDragging = true;
+}, { passive: false });
+
+document.addEventListener('touchmove', e => {
+  if (!isDragging) return;
+  currentX = e.touches[0].clientX;
+}, { passive: false });
+
+document.addEventListener('touchend', e => {
+  if (!isDragging) return;
+  const distance = currentX - startX;
+  handleSwipe(distance);
+  isDragging = false;
+});
+
+document.addEventListener('mousedown', e => {
+  if (isInteractiveElement(e.target)) return;
+  startX = e.clientX;
+  currentX = startX;
+  isDragging = true;
+});
+
+document.addEventListener('mousemove', e => {
+  if (!isDragging) return;
+  currentX = e.clientX;
+});
+
+document.addEventListener('mouseup', e => {
+  if (!isDragging) return;
+  const distance = currentX - startX;
+  handleSwipe(distance);
+  isDragging = false;
+});
+
+// 스와이프 처리 함수 예시
+function handleSwipe(distance) {
+  const swipeThreshold = 50;
+  if (Math.abs(distance) < swipeThreshold) return;
+
+  if (favoriteFilter && getFilteredLength() === 0) {
+    alert('즐겨찾기된 항목이 없습니다.');
+    return;
+  }
+
+  // 방향 판단
+  const direction = distance > 0 ? 1 : -1; // 1: 오른쪽 스와이프(이전), -1: 왼쪽 스와이프(다음)
+
+  // 슬라이드 애니메이션 효과
+  // 1) content를 스와이프 방향 반대로 이동시키기 (보여지는 화면에서 반대 방향으로 빠지도록)
+  content.style.transition = 'transform 0.3s ease';
+  content.style.transform = `translateX(${direction * 100}%)`;
+
+  // 2) 애니메이션이 끝나면 내용 교체 및 content 원위치
+  content.addEventListener('transitionend', onTransitionEnd);
+
+  function onTransitionEnd() {
+    content.removeEventListener('transitionend', onTransitionEnd);
+
+    // 인덱스 조정
+    if (randomMode) {
+      currentIndex = Math.floor(Math.random() * getFilteredLength());
+    } else {
+      currentIndex += direction * -1; // 방향과 반대로 움직임
+      if (currentIndex < 0) currentIndex = getFilteredLength() - 1;
+      else if (currentIndex >= getFilteredLength()) currentIndex = 0;
+    }
+
+    renderCard();
+
+    // content를 즉시 반대편으로 이동(애니메이션 없이)
+    content.style.transition = 'none';
+    content.style.transform = `translateX(${-direction * 100}%)`;
+
+    // 약간의 지연 후 content를 원위치로 부드럽게 복귀시키기
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        content.style.transition = 'transform 0.3s ease';
+        content.style.transform = 'translateX(0)';
+      });
+    });
+  }
+}
+
+// 필터 적용된 데이터 길이 반환
+function getFilteredLength() {
+  if (!currentCategory) return 0;
+  const data = quizData[currentCategory];
+  if (!favoriteFilter) return data.length;
+
+  return data.filter((item, idx) => favorites.has(getKey(currentCategory, idx))).length;
+}
+
+// 입력 요소인지 확인하는 함수
+function isInteractiveElement(el) {
+  const tag = el.tagName;
+  return ['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON', 'LABEL'].includes(tag);
+}
+
+// 9. 상태 로컬 저장 / 복원
+function saveStatesToStorage() {
+  // 즐겨찾기 목록 저장(문자열로)
+  localStorage.setItem('favorites', JSON.stringify(Array.from(favorites)));
+
+  // 다크모드 저장 (이미 위 toggleDarkMode에서 저장 중)
+
+  // 현재 카테고리 저장
+  localStorage.setItem('currentCategory', currentCategory || '');
+
+  // 즐겨찾기 필터 저장
+  localStorage.setItem('favoriteFilter', favoriteFilter ? '1' : '0');
+}
+
+// 즐겨찾기 복원
+function loadFavoritesFromStorage() {
+  const favs = localStorage.getItem('favorites');
+  if (favs) {
+    try {
+      const arr = JSON.parse(favs);
+      favorites = new Set(arr);
+    } catch {
+      favorites = new Set();
+    }
+  }
+}
+
+// 전체 상태 복원
+function loadStatesFromStorage() {
+  // 다크모드
+  const dark = localStorage.getItem('darkMode');
+  if (dark === '1') document.body.classList.add('dark');
+  else document.body.classList.remove('dark');
+
+  // 즐겨찾기 복원
+  loadFavoritesFromStorage();
+
+  // 현재 카테고리 복원
+  const savedCat = localStorage.getItem('currentCategory');
+  if (savedCat && categories.includes(savedCat)) {
+    currentCategory = savedCat;
+  } else {
+    currentCategory = categories[0];
+  }
+
+  // 즐겨찾기 필터 복원
+ 
+   favoriteFilter = false;
+
+  // 유령 모드 초기화 (항상 숨김 해제 상태로 시작)
+  ghostMode = false;
+
+  // 랜덤 모드 초기화
+  randomMode = false;
+
+  updateIconsState();
+  renderCard();
+  bookmarkCheckbox.checked = favoriteFilter; // 즐겨찾기 체크박스 반영 (필터 상태 표시)
+}
+
+// 10. 아이콘 클릭 이벤트 연결
+darkIcon.onclick = () => {
+  toggleDarkMode();
+  saveStatesToStorage();
+};
+lightIcon.onclick = () => {
+  toggleDarkMode();
+  saveStatesToStorage();
+};
+
+bookmarkIcon.onclick = () => {
+  toggleBookmarkMode();
+  saveStatesToStorage();
+};
+
+ghostIcon.onclick = () => {
+  toggleGhostMode();
+  saveStatesToStorage();
+};
+
+randomIcon.onclick = () => {
+  toggleRandomMode();
+  saveStatesToStorage();
+};
+
+// 11. 페이지 초기화
+createMenu();
+loadStatesFromStorage();
+
+// 메뉴 처음에 표시
+showMenu(false);
+
+// 메뉴 표시/숨기기 함수
+function showMenu(show) {
+  if (show) menu.classList.add('show');
+  else menu.classList.remove('show');
+}
+</script>
+</body>
+</html>

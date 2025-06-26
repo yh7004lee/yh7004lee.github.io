@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>퀴즈 카드</title>
+<style>
+:root {
+  --bg-color: #ffffff;
+  --text-color: #000000;
+  --card-bg: #f4f6f8;
+  --card-border: rgba(0, 0, 0, 0.06);
+  --menu-bg: linear-gradient(180deg, #fff 0%, #e6e6e6 100%);
+  --menu-hover-bg: #c8d6e5;
+  --menu-divider: #eee;
+}
+body.dark {
+  --bg-color: #121212;
+  --text-color: #eeeeee;
+  --card-bg: #1e1e1e;
+  --card-border: rgba(255, 255, 255, 0.1);
+  --menu-bg: linear-gradient(180deg, #222 0%, #333 100%);
+  --menu-hover-bg: #555;
+  --menu-divider: #444;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+  overflow-x: hidden;
+}
+
+/* 상단바 */
+.top-bar-wrapper {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  background-color: var(--bg-color);
+
+  z-index: 1000;
+}
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 16px 0 20px;
+  box-sizing: border-box;
+}
+@media screen and (min-width: 632px) {
+  .top-bar {
+    padding: 0 2px 0 6px;
+  }
+}
+
+/* 햄버거 */
+.hamburger {
+  width: 22px;
+  height: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+}
+.hamburger span {
+  display: block;
+  height: 3px;
+  background-color: var(--text-color);
+  border-radius: 2px;
+  transition: background-color 0.3s;
+}
+
+/* 우측 아이콘 */
+.right-icons {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.right-icons svg {
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+/*  fill: var(--text-color); */
+ fill: var(--text-color);
+  stroke: var(--text-color);
+  transition: fill 0.3s ease, stroke 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+svg {
+  width: 28px;
+  height: 28px;
+  stroke: var(--text-color);
+  fill: none;
+  cursor: pointer;
+  transition: stroke 0.3s, fill 0.3s;
+}
+svg:hover {
+  stroke: #007bff;
+  fill: #007bff;
+}
+.settings-icon path,
+.settings-icon circle {
+  fill: none;
+  stroke: var(--text-color);
+}
+body.dark .settings-icon path,
+body.dark .settings-icon circle {
+  fill: none;
+  stroke: var(--text-color);
+}
+
+/* 메뉴 */
+.menu-wrapper {
+  position: absolute;
+  top: 56px;
+  left: 0; right: 0;
+  display: flex;
+  justify-content: center;
+  z-index: 999;
+}
+.menu {
+  background: var(--menu-bg);
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 12px 24px rgba(0,0,0,0.25);
+  display: none;
+  flex-direction: column;
+  width: 100%;
+  max-width: 600px;
+  max-height: 600px;
+  overflow-y: auto;
+  user-select: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--text-color);
+  animation: slideDown 0.3s ease forwards;
+}
+.menu.show {
+  display: flex;
+}
+.menu div {
+  padding: 8px 24px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--menu-divider);
+  transition: background-color 0.25s, color 0.25s;
+}
+.menu div:last-child {
+  border-bottom: none;
+}
+.menu div:hover {
+  background-color: var(--menu-hover-bg);
+  color: #0056b3;
+}
+.menu::-webkit-scrollbar {
+  width: 8px;
+}
+.menu::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+.menu::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+@keyframes slideDown {
+  0% {opacity: 0; transform: translateY(-10px);}
+  100% {opacity: 1; transform: translateY(0);}
+}
+
+/* 본문 */
+.content {
+  padding: 70px 16px 24px 16px;
+  max-width: 600px;
+  margin: 0 auto;
+  user-select: none;
+}
+
+/* 카드 (공통) */
+.card {
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 18px 22px;
+  margin-bottom: 25px;
+  border: 1px solid var(--card-border);
+  transition: background-color 0.3s, box-shadow 0.3s, border 0.3s;
+}
+body.dark .card {
+  background-color: #1e1e1e;
+  border: 1px solid var(--card-border);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.7);
+}
+
+/* 제목 */
+.title-card {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #ff6f61;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+body.dark .title-card {
+  color: #1ABC9C
+}
+
+/* 질문 */
+.question {
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: #0077cc;
+  line-height: 1.6;
+}
+body.dark .question {
+  color: #3399ff;
+}
+
+/* 답변 */
+.answer {
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: #333;
+  line-height: 1.7;
+}
+body.dark .answer {
+  color: #ddd;
+}
+
+.favorite-label {
+  font-size: 1.6rem;
+  font-weight: 500;
+  line-height: 1.6;
+  color: #0077cc;
+}
+body.dark .favorite-label {
+  color: #3399ff;
+}
+</style>
+</head>
+<body>
+
+<div class="top-bar-wrapper">
+  <div class="top-bar">
+    <div class="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </div>
+    <div class="right-icons">
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="28"
+  height="28"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <!-- 전체를 0.8배로 축소하고, (24-24*0.8)/2 = 2.4px 만큼 이동 -->
+  <g transform="translate(2.4 2.4) scale(0.82)">
+    <!-- 주사위 정사각형 -->
+    <rect x="2" y="2" width="20" height="20" rx="3" ry="3" fill="none"/>
+    
+    <!-- 5개의 점 (동그라미) -->
+    <circle cx="12" cy="12" r="1" fill="currentColor"/>
+    <circle cx="7"  cy="7"  r="1" fill="currentColor"/>
+    <circle cx="17" cy="7"  r="1" fill="currentColor"/>
+    <circle cx="7"  cy="17" r="1" fill="currentColor"/>
+    <circle cx="17" cy="17" r="1" fill="currentColor"/>
+  </g>
+</svg>
+
+<!-- 유령 아이콘 -->
+<svg id="ghost-icon" onclick="alert('유령!')" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+  <!-- 머리 반지름: a7.2 → 시각적으로 몸통과 완전 일치 -->
+  <path d="M4.8 10
+           a7.2 7.2 0 1 1 14.4 0v10
+           c0 .3-.3.5-.6.3
+           l-2.2-1.5-2.2 1.5-2.2-1.5-2.2 1.5-2.2-1.5-2.2 1.5
+           c-.3.2-.6 0-.6-.3V10z"
+        fill="currentColor" stroke="none"/>
+
+  <!-- 눈 위치 그대로 -->
+  <circle cx="9.5"  cy="11" r="1.7" fill="var(--bg-color)"/>
+  <circle cx="14.5" cy="11" r="1.7" fill="var(--bg-color)"/>
+</svg>
+
+
+
+
+
+
+
+<!-- 좌우대칭으로 정밀 조정된 북마크 아이콘 -->
+<svg id="bookmark-icon" onclick="alert('북마크!')" viewBox="0 0 24 24">
+  <path d="M6 4h12a1 1 0 0 1 1 1v14.5a0.5 0.5 0 0 1-0.8 0.4L12 13.3l-6.2 6.6a0.5 0.5 0 0 1-0.8-0.4V5a1 1 0 0 1 1-1z" />
+</svg>
+
+      <!-- 다크모드 아이콘 -->
+      <svg id="dark-icon" onclick="toggleDarkMode()" viewBox="0 0 24 24">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 1 0 9.79 9.79z"/>
+      </svg>
+      <svg id="light-icon" onclick="toggleDarkMode()" viewBox="0 0 24 24" style="display: none;">
+        <circle cx="12" cy="12" r="5"/>
+        <line x1="12" y1="1" x2="12" y2="3"/>
+        <line x1="12" y1="21" x2="12" y2="23"/>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+        <line x1="1" y1="12" x2="3" y2="12"/>
+        <line x1="21" y1="12" x2="23" y2="12"/>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </svg>
+      <!-- 설정 아이콘 -->
+      <svg class="settings-icon" onclick="alert('설정 열기')" viewBox="0 0 24 24">
+        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+        <circle cx="12" cy="12" r="3"/>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="menu-wrapper">
+  <div class="menu" id="menu">
+    <!-- 메뉴 아이템 JS로 채움 -->
+  </div>
+</div>
+
+<div class="content" id="content">
+ <div class="card title-card" id="title-box"></div>
+  <div class="card question" id="question-box"></div>
+  <div class="card answer" id="answer-box"></div>
+
+<!-- 즐겨찾기 카드 추가 -->
+<div class="card favorite-card">
+  <div style="font-size: 1.6rem; font-weight: 500; line-height: 1.6; color: var(--question-color);">
+    <label class="favorite-label" style="display: inline-flex; align-items: center; gap: 12px; cursor: pointer;">
+      즐겨찾기 추가
+      <input type="checkbox" id="bookmark-checkbox" style="width: 20px; height: 20px; accent-color: #ff6f61;">
+    </label>
+  </div>
+</div>
+
+</div>
+
+
+<script>
+ const quizData = {
+  "과학 상식": [
+    {"Q":"물이 100도에서 끓는 이유는?","A":"기압이 1기압일 때의 물의 끓는점이기 때문이다."},
+    {"Q":"사람의 혈액형은 무엇으로 나뉘나요?","A":"A, B, AB, O형으로 나뉘며 RH식도 포함된다."},
+    {"Q":"지구가 둥글다는 증거는 무엇인가요?","A":"배가 수평선 너머로 사라질 때 아래부터 안 보인다."},
+    {"Q":"번개보다 천둥 소리가 늦게 들리는 이유는?","A":"소리보다 빛의 속도가 더 빠르기 때문이다."},
+    {"Q":"달에는 바람이 불지 않는 이유는?","A":"대기가 없기 때문이다."}
+  ],
+  "속담 퀴즈": [
+    {"Q":"가는 말이 고와야","A":"오는 말이 곱다"},
+    {"Q":"호랑이도 제 말 하면","A":"온다"},
+    {"Q":"돌다리도","A":"두들겨 보고 건너라"},
+    {"Q":"배보다","A":"배꼽이 더 크다"},
+    {"Q":"하늘이 무너져도","A":"솟아날 구멍이 있다"}
+  ],
+  "영어 단어 암송": [
+    {"Q":"incredible","A":"믿을 수 없는, 놀라운"},
+    {"Q":"maintain","A":"유지하다, 지속하다"},
+    {"Q":"purchase","A":"구매하다, 구입"},
+    {"Q":"confident","A":"자신감 있는, 확신하는"},
+    {"Q":"explore","A":"탐험하다, 조사하다"}
+  ]
+};
+
+const menu = document.getElementById('menu');
+const questionBox = document.getElementById('question-box');
+const answerBox = document.getElementById('answer-box');
+let currentCategory = null;
+let currentIndex = 0;
+
+// 메뉴 토글
+function toggleMenu() {
+  menu.classList.toggle('show');
+}
+
+// 다크모드 토글
+function toggleDarkMode() {
+  const body = document.body;
+  const darkIcon = document.getElementById('dark-icon');
+  const lightIcon = document.getElementById('light-icon');
+  body.classList.toggle('dark');
+  const isDark = body.classList.contains('dark');
+  darkIcon.style.display = isDark ? 'none' : 'inline';
+  lightIcon.style.display = isDark ? 'inline' : 'none';
+}
+
+// 메뉴 생성
+function createMenu() {
+  menu.innerHTML = '';
+  for (const category in quizData) {
+    const div = document.createElement('div');
+    div.textContent = category;
+    div.addEventListener('click', () => {
+      currentCategory = category;
+      currentIndex = 0;
+      showQA();
+      toggleMenu();
+    });
+    menu.appendChild(div);
+  }
+
+  // ✅ 나가기 버튼 추가
+  const exit = document.createElement('div');
+  exit.textContent = '나가기';
+  exit.style.color = '#ff4444';
+  exit.style.fontWeight = 'bold';
+  exit.addEventListener('click', toggleMenu);
+  menu.appendChild(exit);
+}
+
+// 질문과 답변 표시
+function showQA() {
+  // ① 메뉴에서 선택된 카테고리를 제목에 표시
+document.getElementById('title-box').textContent = '🎯 '+currentCategory ; 
+
+  const arr = quizData[currentCategory];
+  if (!arr || arr.length === 0) {
+    questionBox.textContent = '데이터가 없습니다.';
+    answerBox.textContent   = '';
+    return;
+  }
+  const qa = arr[currentIndex];
+  questionBox.textContent =  qa.Q;
+  answerBox.textContent   =   qa.A;
+}
+
+// 좌우 스와이프 및 드래그 기능 변수
+let startX = 0;
+let currentX = 0;
+let isDragging = false;
+
+function touchStart(e) {
+  startX = e.touches ? e.touches[0].clientX : e.clientX;
+  currentX = startX;
+  isDragging = true;
+}
+
+function touchMove(e) {
+  if (!isDragging) return;
+  currentX = e.touches ? e.touches[0].clientX : e.clientX;
+}
+
+function touchEnd(e) {
+  if (!isDragging) return;
+  const diff = currentX - startX;
+  if (diff > 40) prevQA();
+  else if (diff < -40) nextQA();
+  isDragging = false;
+}
+
+function touchCancel() {
+  isDragging = false;
+}
+
+// 이전 질문
+function prevQA() {
+  if (!currentCategory) return;
+  currentIndex--;
+  if (currentIndex < 0) currentIndex = quizData[currentCategory].length - 1;
+  showQA();
+}
+
+// 다음 질문
+function nextQA() {
+  if (!currentCategory) return;
+  currentIndex++;
+  if (currentIndex >= quizData[currentCategory].length) currentIndex = 0;
+  showQA();
+}
+
+  // 이벤트 등록 (전체 화면 대상)
+  window.addEventListener('touchstart', touchStart, {passive:true});
+  window.addEventListener('touchmove', touchMove, {passive:true});
+  window.addEventListener('touchend', touchEnd);
+  window.addEventListener('touchcancel', touchCancel);
+
+  window.addEventListener('mousedown', touchStart);
+  window.addEventListener('mousemove', touchMove);
+  window.addEventListener('mouseup', touchEnd);
+  window.addEventListener('mouseleave', touchCancel);
+
+  window.onload = () => {
+    createMenu();
+    currentCategory = Object.keys(quizData)[0]; // 기본: 첫번째 카테고리
+    currentIndex = 0;
+    showQA();
+  }
+document.addEventListener('touchstart', (e) => {
+  if (menu.classList.contains('show')) {
+    const isTouchInside = menu.contains(e.target) || e.target.closest('.hamburger');
+    if (!isTouchInside) toggleMenu();
+  }
+}, { passive: true });
+
+</script>
+
+</body>
+</html>
