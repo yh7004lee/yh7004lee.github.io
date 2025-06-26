@@ -115,10 +115,7 @@ svg {
   cursor: pointer;
   transition: stroke 0.3s, fill 0.3s;
 }
-svg:hover {
-  stroke: #007bff;
-  fill: #007bff;
-}
+
 .settings-icon path,
 .settings-icon circle {
   fill: none;
@@ -222,7 +219,7 @@ body.dark .card {
   font-size: 1.6rem;
   font-weight: 600;
   color: #ff6f61;
-  text-align: center;
+  text-align: left;
   letter-spacing: 0.5px;
 }
 body.dark .title-card {
@@ -274,11 +271,49 @@ body.dark .favorite-label {
 }
 
 /* 활성화된 아이콘 색상 처리 */
-svg.active {
-  fill: #ff6f61 !important;
-  stroke: #ff6f61 !important;
+/* 아이콘 활성화 색상 (화이트모드 전용) */
+body:not(.dark) svg.active {
+  fill: #007BFF !important;   /* 선명한 파란색 */
+  stroke: #007BFF !important;
 }
 
+/* 아이콘 활성화 색상 (다크모드 전용) */
+body.dark svg.active {
+  fill: #1ABC9C !important;   /* 청록색 */
+  stroke: #1ABC9C !important;
+}
+
+
+
+
+.card.slide-left {
+  animation: slideLeft 0.3s ease;
+}
+.card.slide-right {
+  animation: slideRight 0.3s ease;
+}
+
+@keyframes slideLeft {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideRight {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
 
 </style>
 </head>
@@ -312,8 +347,8 @@ svg.active {
            l-2.2-1.5-2.2 1.5-2.2-1.5-2.2 1.5-2.2-1.5-2.2 1.5
            c-.3.2-.6 0-.6-.3V10z"
         fill="currentColor" stroke="none"/>
-  <circle cx="9.5"  cy="11" r="1.7" fill="var(--bg-color)"/>
-  <circle cx="14.5" cy="11" r="1.7" fill="var(--bg-color)"/>
+<circle cx="9.5" cy="11" r="1.7" fill="var(--bg-color)"/>
+<circle cx="14.5" cy="11" r="1.7" fill="var(--bg-color)"/>
 </svg>
 
 <!-- 북마크 아이콘 -->
@@ -602,9 +637,12 @@ content.addEventListener('mouseup', e => {
 });
 
 function handleSwipe() {
-  const swipeThreshold = 50; // 최소 스와이프 거리
+  const swipeThreshold = 50;
   const dist = touchEndX - touchStartX;
-  if (Math.abs(dist) < swipeThreshold) return; // 너무 짧으면 무시
+  if (Math.abs(dist) < swipeThreshold) return;
+
+  // 애니메이션 방향 결정
+  const direction = dist > 0 ? 'right' : 'left';
 
   if (favoriteFilter && favorites.size === 0) {
     alert('즐겨찾기된 항목이 없습니다.');
@@ -612,15 +650,15 @@ function handleSwipe() {
   }
 
   if (dist > 0) {
-    // 오른쪽 스와이프 => 이전 카드
+    // 이전 카드
     if (randomMode) {
       currentIndex = Math.floor(Math.random() * getFilteredLength());
     } else {
       currentIndex--;
-      if (currentIndex < 0) currentIndex = getFilteredLength() -1;
+      if (currentIndex < 0) currentIndex = getFilteredLength() - 1;
     }
   } else {
-    // 왼쪽 스와이프 => 다음 카드
+    // 다음 카드
     if (randomMode) {
       currentIndex = Math.floor(Math.random() * getFilteredLength());
     } else {
@@ -628,7 +666,19 @@ function handleSwipe() {
       if (currentIndex >= getFilteredLength()) currentIndex = 0;
     }
   }
+
+  // 애니메이션 클래스 적용
+  animateCardSlide(direction);
   renderCard();
+}
+
+function animateCardSlide(direction) {
+  const cards = document.querySelectorAll('.card');
+  cards.forEach(card => {
+    card.classList.remove('slide-left', 'slide-right');
+    void card.offsetWidth; // 강제 리플로우
+    card.classList.add(direction === 'left' ? 'slide-left' : 'slide-right');
+  });
 }
 
 // 필터링 적용 후 길이 반환

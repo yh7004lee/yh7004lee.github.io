@@ -271,16 +271,41 @@ body.dark .favorite-label {
 }
 
 /* 활성화된 아이콘 색상 처리 */
-/* 아이콘 활성화 색상 (화이트모드 전용) */
-body:not(.dark) svg.active {
-  fill: #007BFF !important;   /* 선명한 파란색 */
-  stroke: #007BFF !important;
+
+
+/* 네온 빛나는 애니메이션 */
+@keyframes neonPulseBlue {
+  0%, 100% {
+    filter: drop-shadow(0 0 2px #00aaff) drop-shadow(0 0 4px #00aaff);
+  }
+  50% {
+    filter: drop-shadow(0 0 4px #00ccff) drop-shadow(0 0 8px #00ccff);
+  }
+}
+@keyframes neonPulseCyan {
+  0%, 100% {
+    filter: drop-shadow(0 0 2px #00e6d8) drop-shadow(0 0 4px #00e6d8);
+  }
+  50% {
+    filter: drop-shadow(0 0 4px #1abc9c) drop-shadow(0 0 8px #1abc9c);
+  }
 }
 
-/* 아이콘 활성화 색상 (다크모드 전용) */
+/* 공통 네온 효과 (활성화된 아이콘 중 neon-icon 클래스만 적용됨) */
+svg.active {
+  animation-duration: 1.8s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+/* 화이트 모드용 푸른빛 네온 */
+body:not(.dark) svg.active {
+  animation-name: neonPulseBlue;
+}
+
+/* 다크모드용 청록빛 네온 */
 body.dark svg.active {
-  fill: #1ABC9C !important;   /* 청록색 */
-  stroke: #1ABC9C !important;
+  animation-name: neonPulseCyan;
 }
 
 
@@ -347,8 +372,8 @@ body.dark svg.active {
            l-2.2-1.5-2.2 1.5-2.2-1.5-2.2 1.5-2.2-1.5-2.2 1.5
            c-.3.2-.6 0-.6-.3V10z"
         fill="currentColor" stroke="none"/>
-<circle cx="9.5" cy="11" r="1.7" fill="var(--bg-color)"/>
-<circle cx="14.5" cy="11" r="1.7" fill="var(--bg-color)"/>
+<circle cx="9.5" cy="11" r="2.2" fill="var(--bg-color)"/>
+<circle cx="14.5" cy="11" r="2.2" fill="var(--bg-color)"/>
 </svg>
 
 <!-- 북마크 아이콘 -->
