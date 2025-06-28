@@ -194,7 +194,7 @@ body.dark .settings-icon circle {
 /* 본문 */
 .content {
   position: absolute;
-  top: 56px; /* 상단바 높이 */
+  top: 56px;
   left: 0;
   right: 0;
   bottom: 0;
@@ -203,7 +203,8 @@ body.dark .settings-icon circle {
   margin: 0 auto;
   user-select: none;
   touch-action: pan-y;
-  overflow: hidden;
+  overflow-y: auto;       /* ✅ 안드로이드 스크롤 핵심 */
+  overscroll-behavior: contain; /* ✅ 스크롤 튕김 효과 제어 (선택사항) */
 }
 
 /* 카드 (공통) */
