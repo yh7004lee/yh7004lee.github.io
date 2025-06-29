@@ -1156,7 +1156,7 @@ body.dark .answer-input:focus {
   </div>
   <div class="mac-popup-body">
     <div class="popup-label">편집할 암송카드를 선택하세요.</div>
-    <select id="cardSelector" onchange="onCardTitleChange()"></select>
+    <select id="cardSelector" onchange="onCardTitleChange()" style="appearance: auto; -webkit-appearance: auto; -moz-appearance: auto; width: 100%; padding: 6px 24px 6px 8px; font-size: 16px;"></select>
 
     <div class="title-edit-section">
       <input type="text" id="cardTitleInput" placeholder="제목을 입력하세요">
@@ -1985,62 +1985,50 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // 카드 제목 리스트를 메뉴에서 불러오는 로직 참고해서 불러오기
   function loadCardTitles() {
-    // 여기서 메뉴에서 카드제목 리스트를 가져오는 로직 예시 (실제 메뉴가 localStorage에 저장되어 있다고 가정)
-    // 이 부분을 실제 메뉴 아이콘 클릭시 불러오는 로직과 동일하게 맞추면 됨
+  const selector = document.getElementById('cardSelector');
+  selector.innerHTML = '';
 
-    // 우선 localStorage에서 저장된 카드들 가져오기
-    const cards = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-    const selector = document.getElementById('cardSelector');
-    selector.innerHTML = '';
+  const titles = Object.keys(quizData); // quizData에서 카테고리 목록 추출
 
-    const titles = Object.keys(cards);
-
-    // 카드가 없으면 기본 안내 문구 추가
-    if (titles.length === 0) {
-      const opt = document.createElement('option');
-      opt.value = "";
-      opt.textContent = "저장된 암송카드가 없습니다.";
-      opt.disabled = true;
-      opt.selected = true;
-      selector.appendChild(opt);
-
-      // 입력란 초기화
-      document.getElementById('cardTitleInput').value = "";
-      document.getElementById('cardEditorTextarea').value = "";
-      return;
-    }
-
-    // 카드 제목 옵션 추가
-    titles.forEach((title, idx) => {
-      const opt = document.createElement('option');
-      opt.value = title;
-      opt.textContent = title;
-      selector.appendChild(opt);
-    });
-
-    // 첫번째 항목 선택 & 내용 표시
-    selector.selectedIndex = 0;
-    onCardTitleChange();
+  if (titles.length === 0) {
+    const opt = document.createElement('option');
+    opt.value = '';
+    opt.textContent = '저장된 암송카드가 없습니다.';
+    opt.disabled = true;
+    opt.selected = true;
+    selector.appendChild(opt);
+    return;
   }
+
+  titles.forEach(title => {
+    const opt = document.createElement('option');
+    opt.value = title;
+    opt.textContent = title;
+    selector.appendChild(opt);
+  });
+
+  // 첫 번째 항목 선택 및 내용 표시
+  selector.selectedIndex = 0;
+  onCardTitleChange();
+}
 
   // 선택된 카드 제목 변경시 내용 표시
-  function onCardTitleChange() {
-    const title = document.getElementById('cardSelector').value;
-    const cards = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+ function onCardTitleChange() {
+  const title = document.getElementById('cardSelector').value;
 
-    if (!title || !cards[title]) {
-      document.getElementById('cardTitleInput').value = "";
-      document.getElementById('cardEditorTextarea').value = "";
-      return;
-    }
-
-    const data = cards[title]; // 배열 [{Q, A}, ...]
-    document.getElementById('cardTitleInput').value = title;
-
-    // Q/A를 "Q:내용 A:내용" 형태로 줄바꿈 포함 표시
-    const formatted = data.map(item => `Q:${item.Q} A:${item.A}`).join('\n');
-    document.getElementById('cardEditorTextarea').value = formatted;
+  if (!title || !quizData[title]) {
+    document.getElementById('cardTitleInput').value = '';
+    document.getElementById('cardEditorTextarea').value = '';
+    return;
   }
+
+  const data = quizData[title]; // 배열 [{Q, A}, ...]
+  document.getElementById('cardTitleInput').value = title;
+
+  // Q와 A를 줄 단위로 정리
+  const lines = data.map(item => `${item.Q} = ${item.A}`);
+  document.getElementById('cardEditorTextarea').value = lines.join('\n');
+}
 
   // 제목수정 버튼 클릭
   function renameCardTitle() {
