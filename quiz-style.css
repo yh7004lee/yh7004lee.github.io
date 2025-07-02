@@ -210,7 +210,7 @@
   transition: background-color 0.3s ease, border-color 0.3s ease;
   margin: 0 ;
 
-  background-color: #121212;  /* 어두운 배경 */
+  background-color: #1e1e1e;  /* 어두운 배경 */
   color: #eee;
   box-shadow: none; /* 그림자 제거 */
 }

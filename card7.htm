@@ -931,44 +931,74 @@ function onCardTitleChange() {
   // 적용 버튼 클릭 (내용 저장)
 function applyCardChanges() {
   const selector = document.getElementById('cardSelector');
+  const selectedValue = selector.value;
   const titleInput = document.getElementById('cardTitleInput');
   const textarea = document.getElementById('cardEditorTextarea');
 
-  const selectedCategory = selector.value;
   const newTitle = titleInput.value.trim();
   const rawText = textarea.value.trim();
 
-  if (!selectedCategory || !rawText) {
-    showTooltip('카드 내용을 입력해주세요.');
+  if (!selectedValue || !rawText) {
+    alert('카테고리와 내용을 모두 입력해주세요.');
     return;
   }
 
-  const newCards = rawText.split('\n').map(line => {
-    const [q, a] = line.split('//').map(t => t.trim());
-    return { Q: q || '', A: a || '' };
-  }).filter(card => card.Q && card.A);
+  // 내용 파싱
+  const lines = rawText.split('\n').map(line => line.trim()).filter(line => line.includes('//'));
+  const parsedCards = lines.map(line => {
+    const [Q, A] = line.split('//');
+    return { Q: Q.trim(), A: A.trim() };
+  });
 
-  // 제목 수정이 필요한 경우 기존 키 삭제 후 새로 추가
-  let newCategoryKey = selectedCategory;
-  if (newTitle && newTitle !== selectedCategory && newTitle !== '제목을 입력하세요') {
-    quizData[newTitle] = newCards;
-    delete quizData[selectedCategory];
-    newCategoryKey = newTitle;
+  // 새 제목이 기존 것과 다르면 이름 변경
+  const oldTitle = selectedValue;
+  if (oldTitle !== newTitle) {
+    // 새 제목 중복 체크
+    if (quizData[newTitle]) {
+      alert('같은 제목이 이미 존재합니다.');
+      return;
+    }
+    quizData[newTitle] = parsedCards;
+    delete quizData[oldTitle];
+
+    // 즐겨찾기 키도 변경
+    const newFavorites = new Set();
+   favorites.forEach(key => {
+  if (typeof key === 'string' && key.startsWith(oldTitle + '_')) {
+    const idx = key.split('_')[1];
+    newFavorites.add(newTitle + '_' + idx);
   } else {
-    quizData[selectedCategory] = newCards;
+    newFavorites.add(key);
   }
-showTooltip('카드 내용이 적용되었습니다.');
-  // 저장
-  localStorage.setItem('allQuizData', JSON.stringify(quizData));
-  categories = Object.keys(quizData);
-  currentCategory = newCategoryKey;
-  currentIndex = 0;
+});
+    favorites = newFavorites;
 
-  // 메뉴 다시 생성 + 카드 렌더링
+    if (currentCategory === oldTitle) currentCategory = newTitle;
+  } else {
+    // 기존 제목 그대로일 경우 데이터만 덮어쓰기
+    quizData[oldTitle] = parsedCards;
+  }
+
+  // 로컬 저장
+
+  localStorage.setItem('allQuizData', JSON.stringify(quizData));
+
+  saveStatesToStorage();
+
+  // 콤보박스 및 풀다운 메뉴 갱신
+setTimeout(() => {
+ onCardTitleChange();
+}, 300);  // 100ms 딜레이
+  
+  updateCardSelectorOptions();
   createMenu();
   renderCard();
-  closeCardEditorPopup();
-  
+
+  // 콤보박스, 입력 필드 초기화 후 다시 불러오기
+  selector.value = newTitle;
+  onCardTitleChange();
+
+  showTooltip('변경사항이 적용되었습니다.');
 }
 
 
@@ -985,6 +1015,18 @@ function populateCardSelector() {
   });
 }
 
+function updateCardSelectorOptions() {
+  const selector = document.getElementById('cardSelector');
+  selector.innerHTML = '';
+  categories = Object.keys(quizData);
+
+  categories.forEach(title => {
+    const opt = document.createElement('option');
+    opt.value = title;
+    opt.textContent = title;
+    selector.appendChild(opt);
+  });
+}
 
   // 새로운 암기카드 만들기 버튼 클릭
 function prepareNewCard() {
