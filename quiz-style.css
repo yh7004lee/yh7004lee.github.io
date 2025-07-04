@@ -1,0 +1,923 @@
+/* 팝업 전체 스타일 */
+.mac-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+   width: 100%;
+  height: 100%;
+  background: rgba(30, 30, 30, 0.96); /* 반투명 어두운 배경 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1111;
+  padding: 12px; /* 양쪽 여백 */
+  box-sizing: border-box;
+}
+
+.mac-popup-inner {
+  width: 99%; 
+  max-width: 1280px;
+  height: 100%;
+  background: #1e1e1e;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+
+  /* 추가 */
+  margin: 0 auto;  /* 좌우 가운데 정렬 */
+}
+
+
+
+/* 상단 헤더 */
+.mac-popup-header {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  border-bottom: 1px solid #333; /* 어두운 구분선 */
+  position: relative;
+  background: #2a2a2a;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+/* 맥 스타일 원형 버튼 3개 */
+.mac-window-controls {
+  display: flex;
+  gap: 8px;
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.mac-btn {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.3);
+  cursor: default;
+}
+.mac-close {
+  background: #ff5f56;
+  border: 1px solid #bf2d2d;
+}
+.mac-minimize {
+  background: #ffbd2e;
+  border: 1px solid #b38a1f;
+}
+.mac-maximize {
+  background: #27c93f;
+  border: 1px solid #1a8f25;
+}
+
+/* 팝업 타이틀 */
+.mac-popup-title {
+  margin: 0 auto;
+  font-weight: 600;
+  font-size: 16px;
+  color: #ddd;
+}
+
+/* 닫기 버튼 (우측) - 텍스트 × 만 보이도록, 두껍고 크기 키움 */
+.mac-popup-close {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 16px; /* 크기 줄임 */
+  font-weight: 900;
+  color: #ff5f56;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  width: auto;
+  height: auto;
+  user-select: none;
+  transition: color 0.2s;
+  display: inline-block;
+}
+
+
+/* 본문 영역 */
+.mac-popup-body {
+  flex: 1; /* ← 나머지 전체 영역 차지 */
+  display: flex;
+  flex-direction: column;
+  padding: 10px 10px 14px;
+  overflow: hidden; /* 필요 시 */
+}
+
+/* 라벨 */
+.popup-label {
+  margin-bottom: 12px;
+  font-weight: 500;
+  font-size: 14px;
+  color: #aaa;
+}
+
+/* 버튼 공통 스타일 */
+.mac-popup-body button {
+  background: #444; /* 어두운 배경 */
+  color: #ddd;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  user-select: none;
+}
+.mac-popup-body button:hover {
+  background: #666;
+}
+
+  #cardSelector {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    margin-bottom: 14px;
+    appearance: none;
+    background: white;
+    cursor: pointer;
+  }
+
+  .title-edit-section {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .title-edit-section input {
+    flex-grow: 1;
+    padding: 8px 10px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+  }
+  .title-edit-section button {
+    background: #007aff;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  .title-edit-section button:hover {
+    background: #005bb5;
+  }
+
+ #cardEditorTextarea {
+  flex: 1; /* 본문 에디터가 최대한 커지도록 */
+  resize: vertical; /* 수동 리사이즈 허용 */
+  width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  padding: 10px; /* 더 나은 가독성 */
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  height: 160px; /* 둘 중 더 넉넉한 값 선택 */
+  margin-bottom: 20px; /* 둘 중 더 넓은 값 선택 */
+  overflow-y: auto;
+  line-height: 1.5;
+  color: #222;
+  box-sizing: border-box;
+}
+
+
+.editor-buttons2,
+.editor-buttons {
+    display: flex;
+    justify-content: space-between;
+  gap: 10px; /* 버튼 사이 간격 10px */
+  }
+
+.editor-buttons2 button,
+.editor-buttons button {
+  flex: 1;
+  padding: 10px 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 1.5px solid rgba(255, 255, 255, 0.3); /* 세련된 흰색 반투명 테두리 */
+  cursor: pointer;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  margin: 0 ;
+
+  background-color: #1e1e1e;  /* 어두운 배경 */
+  color: #eee;
+  box-shadow: none; /* 그림자 제거 */
+}
+
+.editor-buttons2 button:hover,
+.editor-buttons button:hover {
+  background-color: #333333; /* 호버 시 살짝 밝은 어두운 색 */
+  border-color: rgba(255, 255, 255, 0.6); /* 테두리 더 선명하게 */
+}
+ 
+#cardSelector {
+  width: 100%;
+  padding: 6px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+.title-edit-section {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.title-edit-section input {
+  flex: 1;
+  padding: 6px;
+  font-size: 14px;
+}
+.title-edit-section button {
+  padding: 6px 12px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+
+#cardSelector {
+  width: 100%;
+  padding: 6px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+.title-edit-section {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.title-edit-section input {
+  flex: 1;
+  padding: 6px;
+  font-size: 14px;
+}
+.title-edit-section button {
+  padding: 6px 12px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+
+
+.menu-item.slider-setting {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 24px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-color); /* 기존 메뉴 색상과 통일 */
+}
+
+/* 라벨 */
+.menu-item.slider-setting label {
+  margin-bottom: 4px;
+  font-weight: 600;
+  color: var(--text-color); /* 어두운 모드도 대응 */
+}
+
+/* 슬라이더 */
+#fontSlider {
+  appearance: none;
+  width: 100%;
+  height: 3px; /* ✅ 더 얇게 */
+  background: linear-gradient(to right, #4caf50, #2196f3);
+  border-radius: 3px;
+  outline: none;
+  transition: background 0.3s ease;
+ margin-bottom: 16px; /* 슬라이더 아래 여백 */
+}
+
+/* 슬라이더 썸 (thumb) */
+#fontSlider::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  background: white;
+  border: 2px solid #2196f3;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+#fontSlider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  background: white;
+  border: 2px solid #2196f3;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+#answer-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+.answer-wrapper {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+}
+
+.answer-label {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  height: 1.5em; /* 필요에 따라 조절 */
+}
+
+
+.answer-input {
+  min-width: 3ch;
+  width: auto;
+  max-width: 100px;
+  padding: 2px;
+  text-align: center;
+  height: 28px;
+  line-height: 28px;
+  box-sizing: border-box;
+  font-size: 18px;
+  /* vertical-align 제거 가능 */
+}
+
+.hint-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.85);
+  color: #999999;
+  font-weight: bold;
+  font-size: 14px;
+  max-width: 100%;
+  white-space: nowrap;
+  letter-spacing: 1px;
+  pointer-events: none;
+  user-select: none;
+  display: none;
+}
+
+
+/* 다크 모드일 땐 검은 테두리 */
+body.dark #game-icon circle {
+  stroke: #000000;
+}
+
+
+#ghost-icon {
+  transform: scale(1.15);
+  transform-origin: center;
+}
+
+#random-icon {
+  transform: scale(1.1);
+  transform-origin: center;
+  vertical-align: middle;
+}
+
+#bookmark-icon {
+  transform: scale(1.05);
+  transform-origin: center;
+  vertical-align: middle;
+}
+
+
+:root {
+  --bg-color: #ffffff;
+  --text-color: #000000;
+  --card-bg: #ffffff;
+  --card-border: rgba(0, 0, 0, 0.06);
+  --menu-bg: linear-gradient(180deg, #fff 0%, #e6e6e6 100%);
+  --menu-hover-bg: #c8d6e5;
+  --menu-divider: #eee;
+}
+body.dark {
+  --bg-color: #121212;
+  --text-color: #eeeeee;
+  --card-bg: #1e1e1e;
+  --card-border: rgba(255, 255, 255, 0.1);
+  --menu-bg: linear-gradient(180deg, #222 0%, #333 100%);
+  --menu-hover-bg: #555;
+  --menu-divider: #444;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+  overflow-x: hidden;
+}
+
+/* 상단바 */
+.top-bar-wrapper {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  background-color: var(--bg-color);
+  z-index: 1000;
+}
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 16px 0 20px;
+  box-sizing: border-box;
+}
+@media screen and (min-width: 1312px) {
+  .top-bar {
+    padding: 0 2px 0 6px;
+  }
+}
+
+/* 햄버거 */
+.hamburger {
+  width: 22px;
+  height: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+}
+.hamburger span {
+  display: block;
+  height: 3px;
+  background-color: var(--text-color);
+  border-radius: 2px;
+  transition: background-color 0.3s;
+}
+
+/* 우측 아이콘 */
+.right-icons {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.right-icons svg {
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  fill: var(--text-color);
+  stroke: var(--text-color);
+  transition: fill 0.3s ease, stroke 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+svg {
+  width: 28px;
+  height: 28px;
+  stroke: var(--text-color);
+  fill: none;
+  cursor: pointer;
+  transition: stroke 0.3s, fill 0.3s;
+}
+
+.settings-icon path,
+.settings-icon circle {
+  fill: none;
+  stroke: var(--text-color);
+}
+body.dark .settings-icon path,
+body.dark .settings-icon circle {
+  fill: none;
+  stroke: var(--text-color);
+}
+
+/* 메뉴 */
+.menu-wrapper {
+  position: absolute;
+  top: 56px;
+  left: 0; right: 0;
+  display: flex;
+  justify-content: center;
+  z-index: 999;
+}
+.menu {
+  background: var(--menu-bg);
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 12px 24px rgba(0,0,0,0.25);
+  display: none;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1280px;
+  max-height: 600px;
+  overflow-y: auto;
+  user-select: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--text-color);
+  animation: slideDown 0.3s ease forwards;
+}
+.menu.show {
+  display: flex;
+}
+.menu div {
+  padding: 8px 24px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--menu-divider);
+  transition: background-color 0.25s, color 0.25s;
+}
+.menu div:last-child {
+  border-bottom: none;
+}
+.menu div:hover {
+  background-color: var(--menu-hover-bg);
+  color: #0056b3;
+}
+.menu::-webkit-scrollbar {
+  width: 8px;
+}
+.menu::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+.menu::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+@keyframes slideDown {
+  0% {opacity: 0; transform: translateY(-10px);}
+  100% {opacity: 1; transform: translateY(0);}
+}
+
+/* 본문 */
+.content {
+  position: absolute;
+  top: 56px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0px 16px 5px 16px;
+  max-width: 1280px;
+  margin: 0 auto;
+  user-select: none;
+  touch-action: pan-y;
+  overflow-y: auto;       /* ✅ 안드로이드 스크롤 핵심 */
+  overscroll-behavior: contain; /* ✅ 스크롤 튕김 효과 제어 (선택사항) */
+}
+
+/* 카드 (공통) */
+.card {
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 10px 16px;
+  margin-bottom: 15px;
+  border: 1px solid var(--card-border);
+  transition: background-color 0.3s, box-shadow 0.3s, border 0.3s;
+}
+
+/* 🎀 화이트 모드에서 깜찍한 점선 테두리 적용 */
+body:not(.dark) .title-card {
+  border: 1px solid #e35c6a;  /* 기존 #ff9aa2 → 좀 더 진한 코랄 핑크 */
+  background-color: #fff0f2;
+  color: #e35c6a !important;
+}
+
+body:not(.dark) .question {
+  border: 1px solid #e6a548;  /* 기존 #fbc687 → 좀 더 진한 살구 오렌지 */
+  background-color: #fff5e0;
+  color: #e6a548 !important;
+}
+
+body:not(.dark) .answer {
+  border: 1px solid #56b89e;  /* 기존 #b5ead7 → 좀 더 진한 민트 그린 */
+  background-color: #e6f6f3;
+  color: #56b89e !important;
+}
+
+body:not(.dark) .favorite-card {
+  border: 1px solid #7b7fe3;  /* 기존 #c7ceea → 진한 라벤더 블루 */
+  background-color: #f0f0ff;
+  color: #7b7fe3 !important;
+}
+
+
+
+/* 제목 */
+.title-card {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #ff6f61;
+  text-align: left;
+  letter-spacing: 0.5px;
+}
+body.dark .title-card {
+  color: #1ABC9C
+}
+
+/* 질문 */
+.question {
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: #0077cc;
+  line-height: 1.6;
+}
+body.dark .question {
+  color: #3399ff;
+}
+
+/* 답변 */
+.answer {
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: #333;
+  line-height: 1.7;
+  transition: opacity 0.3s ease;
+}
+body.dark .answer {
+  color: #ddd;
+}
+
+/* 답변 숨김 처리 스타일 */
+.answer.hidden {
+  opacity: 0;
+  pointer-events: none;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* 즐겨찾기 라벨 */
+.favorite-label {
+  font-size: 1.6rem;
+  font-weight: 500;
+  line-height: 1.6;
+
+}
+body.dark .favorite-label {
+  color: #3399ff;
+}
+
+/* 활성화된 아이콘 색상 처리 */
+
+
+/* 네온 빛나는 애니메이션 */
+@keyframes neonPulseBlue {
+  0%, 100% {
+    filter: drop-shadow(0 0 2px #00aaff) drop-shadow(0 0 4px #00aaff);
+  }
+  50% {
+    filter: drop-shadow(0 0 4px #00ccff) drop-shadow(0 0 8px #00ccff);
+  }
+}
+@keyframes neonPulseCyan {
+  0%, 100% {
+    filter: drop-shadow(0 0 2px #00e6d8) drop-shadow(0 0 4px #00e6d8);
+  }
+  50% {
+    filter: drop-shadow(0 0 4px #1abc9c) drop-shadow(0 0 8px #1abc9c);
+  }
+}
+
+/* 공통 네온 효과 (활성화된 아이콘 중 neon-icon 클래스만 적용됨) */
+svg.active {
+  animation-duration: 1.8s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+/* 화이트 모드용 푸른빛 네온 */
+body:not(.dark) svg.active {
+  animation-name: neonPulseBlue;
+}
+
+/* 다크모드용 청록빛 네온 */
+body.dark svg.active {
+  animation-name: neonPulseCyan;
+}
+
+
+.icon-button.active {
+  filter: drop-shadow(0 0 4px #00ffff) drop-shadow(0 0 8px #00ffff);
+  transition: filter 0.3s ease;
+}
+
+.card.slide-left {
+  animation: slideLeft 0.3s ease;
+}
+.card.slide-right {
+  animation: slideRight 0.3s ease;
+}
+
+@keyframes slideLeft {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideRight {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+/* 설정 아이콘과 메뉴 관련 스타일 */
+/* 공통 풀다운 메뉴 스타일 */
+.dropdown {
+  display: none;
+  position: absolute;
+  top: 48px; /* 메뉴바 높이에 맞게 조절 */
+  left: 10px; /* 메뉴 버튼 기준 위치 (필요 시 right: auto; 제거) */
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 15px;
+  width: 250px;
+  z-index: 1000;
+}
+
+.dropdown.active {
+  display: block;
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown label {
+  font-weight: bold;
+  margin-top: 10px;
+  display: block;
+}
+
+.dropdown input[type="range"] {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.menu-item {
+  margin-top: 12px;
+  color: #333;
+  cursor: pointer;
+}
+
+.menu-item:hover {
+  text-decoration: underline;
+}
+
+
+/* 버튼 스타일 */
+#game-buttons {
+  display: none; /* 기본은 숨김 */
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+#game-buttons button {
+  width: 100%;
+  padding: 14px 0;
+  font-size: 17px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.2s ease,
+    color 0.3s ease;
+}
+
+/* 화이트 모드 */
+body:not(.dark) #game-buttons button {
+  background: linear-gradient(135deg, #56b89e, #4aa086);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(86, 184, 158, 0.5);
+}
+
+body:not(.dark) #game-buttons button:hover,
+body:not(.dark) #game-buttons button:focus,
+body:not(.dark) #game-buttons button:active {
+  background: linear-gradient(135deg, #4aa086, #3e7a6f);
+  box-shadow: 0 4px 15px rgba(86, 184, 158, 0.7), inset 0 0 8px #56b89e;
+
+}
+
+/* 다크 모드 */
+body.dark #game-buttons button {
+  background: linear-gradient(135deg, #2e2e2e, #444444);
+  color: #eee;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.7);
+}
+
+body.dark #game-buttons button:hover,
+body.dark #game-buttons button:focus,
+body.dark #game-buttons button:active {
+  background: linear-gradient(135deg, #444444, #5a5a5a);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.9), inset 0 0 8px #6affc1;
+  border: 2px solid #6affc1;
+}
+
+.answer-input {
+  width: 100px;
+  max-width: 120px;
+  height: 30px;
+  padding: 6px 12px;
+  font-size: 16px;
+  border: 2px solid #56b89e; /* 변경된 테두리 색상 */
+  border-radius: 8px;
+  box-sizing: border-box;
+  background-color: #fff;
+  color: #333;
+  transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+}
+
+.answer-input:focus {
+  border-color: #3d8f7a; /* 좀 더 진한 색상으로 포커스 표시 */
+  outline: none;
+  box-shadow: 0 0 6px rgba(86, 184, 158, 0.6);
+  background-color: #fff;
+  color: #222;
+}
+
+/* 다크모드 적용 시 */
+body.dark .answer-input {
+  background-color: #2a2a2a;
+  color: #eee;
+  border-color: #555;
+}
+
+body.dark .answer-input:focus {
+  border-color: #5599ff;
+  box-shadow: 0 0 8px rgba(85,153,255,0.7);
+  background-color: #333;
+  color: #fff;
+}
+.answer-input {
+  font-weight: bold;
+  font-size: 18px;
+  letter-spacing: 2px;
+  text-align: center;
+  border: 1px solid #56b89e; /* 화이트모드 테두리 */
+  border-radius: 6px;
+  padding: 4px 8px;
+  width: 100px; /* 적절한 너비 */
+  height: 30px; /* 높이 좀 키우기 */
+  box-sizing: border-box;
+}
+
+/* 슬라이더 꾸미기 */
+  .slider-container {
+    padding: 8px 14px;
+  }
+
+  #fontSlider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    background: linear-gradient(to right, #4caf50, #2196f3);
+    outline: none;
+    transition: background 0.3s ease;
+  }
+
+  #fontSlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: white;
+    border: 2px solid #2196f3;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  #fontSlider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: white;
+    border: 2px solid #2196f3;
+    cursor: pointer;
+  }
