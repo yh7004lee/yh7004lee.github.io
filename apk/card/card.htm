@@ -129,6 +129,7 @@
     <div onclick="resetFontSize()">글자사이즈 초기화</div>
     <div onclick="changePosition()">문제 정답 위치이동</div>
     <div onclick="openCardEditorPopup()">암기카드 편집</div>
+    <div onclick="refreshPage()">페이지 새로고침</div>
     <div onclick="openManualPopup()">설명서</div>
     <div onclick="exitApp(); closeSettingsMenu();" style="color: rgb(255, 68, 68); font-weight: 600;">나가기</div>
   </div>
@@ -1270,7 +1271,9 @@ function changePosition() {
 function openManualPopup() {
   document.getElementById('manualPopup').style.display = 'flex';
 }
-
+  function refreshPage() {
+    location.reload();
+  }
 function closeManualPopup() {
   document.getElementById('manualPopup').style.display = 'none';
 }
