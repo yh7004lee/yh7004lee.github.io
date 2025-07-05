@@ -573,7 +573,7 @@ body.dark .settings-icon circle {
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 0px 16px 5px 16px;
+  padding: 5px 16px 5px 16px;
   max-width: 1280px;
   min-height: calc(100vh - 56px); /* 상단바 높이 보정 */
   margin: 0 auto;
