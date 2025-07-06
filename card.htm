@@ -1190,6 +1190,7 @@ function resetToInitialData() {
 }
 
 // 🔵 2. 백업: 현재 로컬 데이터를 JSON 파일로 저장
+// ✅ 웹어플 호환 백업 함수
 function backupQuizData() {
   const data = localStorage.getItem('allQuizData');
   if (!data) {
@@ -1197,43 +1198,60 @@ function backupQuizData() {
     return;
   }
 
-  const blob = new Blob([data], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
+  try {
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
 
-  const now = new Date();
-  const filename = `암기카드백업_${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()}.json`;
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(url);
+    const now = new Date();
+    const filename = `암기카드백업_${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}.json`;
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.style.display = 'none';
+
+    document.body.appendChild(a);
+    a.click(); // 사용자 클릭 기반 이벤트 내에서 호출되면 PWA에서도 잘 동작
+    document.body.removeChild(a);
+
+    URL.revokeObjectURL(url);
+  } catch (e) {
+    alert('파일을 생성하는 데 실패했습니다.');
+  }
 }
 
 // 🔵 3. 복구: JSON 파일 업로드하여 반영
+// ✅ 웹어플 호환 복구 함수
 function restoreFromFile() {
   const input = document.createElement('input');
   input.type = 'file';
   input.accept = '.json';
+  input.style.display = 'none';
 
-  input.onchange = async (event) => {
+  input.addEventListener('change', (event) => {
     const file = event.target.files[0];
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = function (e) {
+    reader.onload = (e) => {
       try {
-        const restored = JSON.parse(e.target.result);
-        localStorage.setItem('allQuizData', JSON.stringify(restored));
+        const content = e.target.result;
+        const parsed = JSON.parse(content);
+
+        localStorage.setItem('allQuizData', JSON.stringify(parsed));
         alert('복구 완료! 페이지를 새로고침합니다.');
         location.reload();
       } catch (err) {
-        alert('잘못된 JSON 파일입니다.');
+        console.error(err);
+        alert('복구 실패: 잘못된 JSON 형식입니다.');
       }
     };
     reader.readAsText(file);
-  };
+  });
 
+  document.body.appendChild(input);
   input.click();
+  document.body.removeChild(input);
 }
 
 
