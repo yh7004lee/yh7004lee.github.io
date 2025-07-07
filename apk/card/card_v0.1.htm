@@ -129,7 +129,7 @@
     <div onclick="resetFontSize()">글자사이즈 초기화</div>
     <div onclick="changePosition()">문제 정답 위치이동</div>
     <div onclick="openCardEditorPopup()">암기카드 편집</div>
-    <div onclick="openDownloadPopup()">암기카드 다운로드</div>
+    <div onclick="window.location.href='https://m.cafe.naver.com/ArticleList.nhn?search.clubid=31515265&menuid=3'">암기카드 가져오기</div>
     <div onclick="refreshPage()">페이지 새로고침</div>
     <div onclick="openManualPopup()">설명서</div>
     <div onclick="exitApp(); closeSettingsMenu();" style="color: rgb(255, 68, 68); font-weight: 600;">나가기</div>
@@ -295,57 +295,6 @@
     </div>
   </div>
 </div>
-
-
-
-<div id="cardDownloadPopup" class="mac-popup" style="display: none;">
-  <div class="mac-popup-inner">
-    <div class="mac-popup-header">
-      <div class="mac-window-controls">
-        <span class="mac-btn mac-close"></span>
-        <span class="mac-btn mac-minimize"></span>
-        <span class="mac-btn mac-maximize"></span>
-      </div>
-      <div class="mac-popup-title">암기카드 다운로드</div>
-      <button onclick="closeDownloadPopup()" style="font-size: 28px; font-weight: bold; background: none; border: none; color: #ff4d4f; line-height: 1; cursor: pointer; display: inline-flex; align-items: center; justify-content: center;">×</button>
-    </div>
-
-    <div class="mac-popup-body">
-      <div id="fileListBox" style="
-        flex: 1;
-        background: #1e1e1e;
-        border-radius: 8px;
-        padding: 10px;
-        color: #ccc;
-        font-size: 14px;
-        line-height: 1.6;
-        overflow-y: auto;
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-        overscroll-behavior: contain;
-        -webkit-overflow-scrolling: touch;
-      ">
-        <!-- 동적 체크박스 파일 목록 들어갈 자리 -->
-      </div>
-
-      <div style="margin-top: 12px;">
-        <button onclick="applySelectedFiles()" style="
-          width: 100%;
-          padding: 12px;
-          font-size: 16px;
-          font-weight: bold;
-          color: white;
-          background-color: #4ea1f3;
-          border: none;
-          border-radius: 6px;
-          cursor: pointer;
-        ">체크한 리스트 다운 및 적용</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
 
 
 <script src="fireworks.js"></script>
@@ -1428,93 +1377,6 @@ function closeManualPopup() {
   window.addEventListener('load', adjustContentHeight);
   // 창 크기 변경 시에도 실행
   window.addEventListener('resize', adjustContentHeight);
-
-//암기카드 다운로드
-
-
-function openDownloadPopup() {
-  document.getElementById("cardDownloadPopup").style.display = "block";
-  loadFileList();
-}
-
-function closeDownloadPopup() {
-  document.getElementById("cardDownloadPopup").style.display = "none";
-}
-
-// 1.txt, 2.txt, ... 순차 접근
-function loadFileList() {
-  const container = document.getElementById("fileListBox");
-  container.innerHTML = '';
-  let index = 1;
-
-  function tryNext() {
-    const url = `data/${index}.txt`;
-
-    fetch(url)
-      .then(res => {
-        if (!res.ok) throw new Error("no file");
-        return res.text();
-      })
-      .then(text => {
-        const div = document.createElement("div");
-        div.innerHTML = `
-          <label style="display:block; margin:5px 0;">
-            <input type="checkbox" value="${index}" /> ${index}.txt
-          </label>`;
-        container.appendChild(div);
-        index++;
-        tryNext(); // 다음 파일 시도
-      })
-      .catch(() => {
-        console.log(`총 ${index - 1}개의 파일을 찾았습니다.`);
-      });
-  }
-
-  tryNext();
-}
-
-function applySelectedFiles() {
-  const checkboxes = document.querySelectorAll("#fileListBox input[type=checkbox]:checked");
-  if (checkboxes.length === 0) {
-    alert("파일을 선택해주세요.");
-    return;
-  }
-
-  const selectedIndexes = Array.from(checkboxes).map(cb => cb.value);
-  let loadedCount = 0;
-
-  selectedIndexes.forEach(index => {
-    fetch(`data/${index}.txt`)
-      .then(res => res.text())
-      .then(text => {
-        const lines = text.trim().split("\n");
-        const quizList = [];
-
-        lines.forEach(line => {
-          const [q, a] = line.split("//").map(s => s.trim());
-          if (q && a) {
-            quizList.push({ question: q, answer: a });
-          }
-        });
-
-        if (quizList.length > 0) {
-          const title = `${index}.txt`;
-          allQuizData[title] = quizList;
-          localStorage.setItem('allQuizData', JSON.stringify(allQuizData));
-        }
-
-        loadedCount++;
-        if (loadedCount === selectedIndexes.length) {
-          createMenu();
-          renderCard();
-          closeDownloadPopup();
-          alert("선택한 암기카드가 적용되었습니다.");
-        }
-      });
-  });
-}
-
-
 </script>
 
 
