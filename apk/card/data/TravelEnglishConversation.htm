@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>상황별 여행 영어 회화 모음</title>
+    <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f8;
+      height: 100%;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 16px;
+      box-sizing: border-box;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .copy-btn {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 16px 24px;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      align-self: flex-start;
+      transition: background 0.3s ease;
+    }
+
+    .copy-btn:hover {
+      background-color: #45a049;
+    }
+
+    textarea {
+      width: 100%;
+      font-size: 16px;
+      line-height: 1.6;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      resize: none;
+      background: #fafafa;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        border-radius: 0;
+        padding: 12px;
+      }
+
+      .copy-btn {
+        width: 100%;
+        font-size: 20px;
+        padding: 18px;
+        border-radius: 10px;
+        text-align: center;
+      }
+
+      textarea {
+        font-size: 15px;
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <button class="copy-btn" onclick="copyText()">📋 복사하기</button>
+    <textarea id="quizText" readonly>
+체크인 카운터가 어디에 있나요? // Where is the check-in counter? (웨어 이즈 더 체크인 카운터?)
+체크인해주세요. // I'd like to check in, please. (아이드 라잌 투 체크인, 플리즈)
+여권 여기 있습니다. // Here's my passport. (히어즈 마이 패스포트)
+이 가방을 부쳐야 하나요? // Do I need to check this bag? (두 아이 니드 투 체크 디스 백?)
+직항 비행기인가요? // Is this a direct flight? (이즈 디스 어 디렉트 플라잇?)
+탑승 게이트가 어디인가요? // Where is the boarding gate? (웨어 이즈 더 보딩 게이트?)
+탑승은 몇 시에 시작하나요? // What time is boarding? (왓 타임 이즈 보딩?)
+이거 기내 반입 가능한가요? // Can I bring this on the plane? (캔 아이 브링 디스 온 더 플레인?)
+비행기를 놓쳤어요. // I missed my flight. (아이 미스드 마이 플라잇)
+오늘 서울 가는 비행기 있나요? // Is there a flight to Seoul today? (이즈 데어 어 플라잇 투 서울 투데이?)
+환승 대기 시간이 얼마나 되나요? // How long is the layover? (하우 롱 이즈 더 레이오버?)
+입국 심사대는 어디인가요? // Where is the immigration office? (웨어 이즈 더 이미그레이션 오피스?)
+여행하러 왔습니다. // I’m here for vacation. (아임 히어 포 베이케이션)
+신고할 물품 없습니다. // I have nothing to declare. (아이 해브 나씽 투 디클레어)
+짐은 어디서 찾나요? // Where can I get my luggage? (웨어 캔 아이 겟 마이 러기지?)
+담요 좀 주시겠어요? // Could I have a blanket, please? (쿧 아이 해브 어 블랭킷, 플리즈?)
+물 좀 주시겠어요? // May I have some water? (메이 아이 해브 섬 워터?)
+화장실이 어디에 있나요? // Where is the restroom? (웨어 이즈 더 레스트룸?)
+언제 도착하나요? // What time will we arrive? (왓 타임 윌 위 어라이브?)
+속이 안 좋아요. // I feel sick. (아이 필 식)
+자리 바꿀 수 있을까요? // Can I change my seat? (캔 아이 체인지 마이 시트?)
+이 비행기에 와이파이 있나요? // Is there Wi-Fi on this flight? (이즈 데어 와이파이 온 디스 플라잇?)
+채식 식사를 주문했어요. // I ordered a vegetarian meal. (아이 오더드 어 베지테리언 밀)
+이거 좀 도와주시겠어요? // Can you help me with this? (캔 유 헬프 미 윗 디스?)
+비행시간은 얼마나 되나요? // How long is the flight? (하우 롱 이즈 더 플라잇?)
+예약했습니다. // I have a reservation. (아이 해브 어 레저베이션)
+신분증 좀 보여주세요. // Can I see your ID, please? (캔 아이 씨 유어 아이디, 플리즈?)
+체크아웃은 몇 시인가요? // What time is check-out? (왓 타임 이즈 체크아웃?)
+숙박 연장하고 싶어요. // I'd like to extend my stay. (아이드 라잌 투 익스텐드 마이 스테이)
+방이 너무 추워요. // The room is too cold. (더 룸 이즈 투 콜드)
+뜨거운 물이 안 나와요. // There's no hot water. (데어즈 노 핫 워터)
+수건 더 받을 수 있을까요? // Can I get extra towels? (캔 아이 겟 엑스트라 타월스?)
+조식 포함인가요? // Is breakfast included? (이즈 브렉퍼스트 인클루디드?)
+체크아웃 할게요. // I'd like to check out, please. (아이드 라잌 투 체크아웃, 플리즈)
+짐을 맡길 수 있나요? // Can I store my luggage here? (캔 아이 스토어 마이 러기지 히어?)
+공항 셔틀 있나요? // Do you offer airport shuttle? (두 유 오퍼 에어포트 셔틀?)
+택시 불러주시겠어요? // Can you call me a taxi? (캔 유 콜 미 어 택시?)
+모닝콜 부탁드립니다. // I'd like a wake-up call. (아이드 라잌트 어 웨이크업 콜)
+객실에 와이파이 있나요? // Is there Wi-Fi in the room? (이즈 데어 와이파이 인 더 룸?)
+가장 가까운 지하철역이 어디죠? // Where is the nearest subway station? (웨어 이즈 더 니어레스트 서브웨이 스테이션?)
+표는 얼마인가요? // How much is the ticket? (하우 머치 이즈 더 티킷?)
+편도 티켓 주세요. // I'd like a one-way ticket. (아이드 라잌트 어 원-웨이 티킷)
+이 버스 공항 가나요? // Does this bus go to the airport? (더즈 디스 버스 고 투 디 에어포트?)
+다음 기차는 언제 오나요? // When is the next train? (웬 이즈 더 넥스트 트레인?)
+어느 플랫폼인가요? // Which platform is it? (위치 플랫폼 이즈 잇?)
+어디서 내려야 하나요? // Where should I get off? (웨어 슈드 아이 겟 오프?)
+이 자리 비었나요? // Is this seat taken? (이즈 디스 시트 테이큰?)
+얼마나 걸리나요? // How long does it take? (하우 롱 더즈 잇 테이크?)
+신용카드 사용할 수 있나요? // Can I use a credit card? (캔 아이 유즈 어 크레딧 카드?)
+두 명 자리 주세요. // A table for two, please. (어 테이블 포 투, 플리즈)
+메뉴판 볼 수 있을까요? // May I see the menu? (메이 아이 씨 더 메뉴?)
+오늘의 특별 메뉴는 무엇인가요? // What's today's special? (왓츠 투데이즈 스페셜?)
+견과류 알레르기가 있어요. // I'm allergic to nuts. (아임 알러직 투 넛츠)
+이제 주문할게요. // I'd like to order now. (아이드 라잌트 투 오더 나우)
+치즈 빼고 주세요. // Can I have this without cheese? (캔 아이 해브 디스 위다웃 치즈?)
+포장해 주세요. // Can I get it to go? (캔 아이 겟 잇 투 고?)
+음식 정말 맛있었어요. // The food was great. (더 푸드 워즈 그레잇)
+계산서 주세요. // Could we have the bill, please? (쿧 위 해브 더 빌, 플리즈?)
+봉사료 포함인가요? // Is service charge included? (이즈 서비스 차지 인클루디드?)
+신용카드 되나요? // Do you take credit cards? (두 유 테이크 크레딧 카드스?)
+저도 같은 걸로 주세요. // I’ll have the same. (아일 해브 더 세임)
+너무 짜요. // It's too salty. (잇츠 투 솔티)
+이거 매워요? // Is this spicy? (이즈 디스 스파이시?)
+감사합니다. 맛있었어요. // Thank you. It was delicious. (땡큐. 잇 워즈 딜리셔스)
+톨 사이즈 아메리카노 주세요. // I'd like a tall Americano, please. (아이드 라잌 어 톨 아메리카노, 플리즈)
+아이스로 주세요. // Can I get it iced? (캔 아이 겟 잇 아이스트?)
+설탕은 빼주세요. // No sugar, please. (노 슈거, 플리즈)
+매장에서 드시나요, 포장이신가요? // For here or to go? (포 히어 오어 투 고?)
+포장이요. // To go, please. (투 고, 플리즈)
+감자튀김도 같이 주세요. // Can I have fries with that? (캔 아이 해브 프라이즈 윗 댓?)
+세트 메뉴로 주세요. // I'd like a combo meal. (아이드 라잌 어 콤보 밀)
+어떤 음료가 있나요? // What drinks do you have? (왓 드링크스 두 유 해브?)
+음료 사이즈 업 가능한가요? // Can I upsize the drink? (캔 아이 업사이즈 더 드링크?)
+이게 전부예요. 감사합니다. // That’s all, thank you. (댓츠 올, 땡큐)
+이거 얼마인가요? // How much is this? (하우 머치 이즈 디스?)
+이거 다른 사이즈 있나요? // Do you have this in a different size? (두 유 해브 디스 인 어 디퍼런트 사이즈?)
+이거 입어볼 수 있나요? // Can I try this on? (캔 아이 트라이 디스 온?)
+너무 비싸요. // It's too expensive. (잇츠 투 익스펜시브)
+할인해 주실 수 있나요? // Can you give me a discount? (캔 유 기브 미 어 디스카운트?)
+이거 살게요. // I'll take it. (아일 테이크 잇)
+환전하고 싶어요. // I'd like to exchange money. (아이드 라잌 투 익스체인지 머니)
+오늘 환율이 어떻게 되나요? // What's the exchange rate today? (왓츠 디 익스체인지 레이트 투데이?)
+100달러를 유로로 환전하고 싶어요. // I'd like to exchange 100 dollars to euros. (아이드 라잌 투 익스체인지 원 헌드레드 달러스 투 유로스)
+여기서 신용카드 사용 가능한가요? // Can I use my credit card here? (캔 아이 유즈 마이 크레딧 카드 히어?)
+지하철역 가는 길 좀 알려주세요. // Excuse me, how do I get to the subway station? (익스큐즈 미, 하우 두 아이 겟 투 더 서브웨이 스테이션?)
+걸어갈 수 있는 거리인가요? // Is it within walking distance? (이즈 잇 위딘 워킹 디스턴스?)
+여기서 얼마나 먼가요? // How far is it from here? (하우 파 이즈 잇 프럼 히어?)
+다음 모퉁이에서 좌회전하세요. // Turn left at the next corner. (턴 레프트 앳 더 넥스트 코너)
+두 블록 직진하세요. // Go straight for two blocks. (고 스트레이트 포 투 블럭스)
+오른쪽에 있어요. // It’s on your right. (잇츠 온 유어 라잇)
+길을 잃었어요. 도와주세요. // I'm lost. Can you help me? (아임 로스트. 캔 유 헬프 미?)
+지도에서 보여주실 수 있나요? // Can you show me on the map? (캔 유 쇼우 미 온 더 맵?)
+근처에 있나요? // Is it near here? (이즈 잇 니어 히어?)
+이 주소를 찾고 있어요. // I’m looking for this address. (아임 루킹 포 디스 어드레스)
+도와주세요! // I need help! (아이 니드 헬프!)
+경찰을 불러주세요. // Call the police, please. (콜 더 폴리스, 플리즈)
+여권을 잃어버렸어요. // I lost my passport. (아이 로스트 마이 패스포트)
+의사가 필요해요. // I need a doctor. (아이 니드 어 닥터)
+근처에 약국 있나요? // Is there a pharmacy nearby? (이즈 데어 어 파머시 니어바이?)
+    </textarea>
+  </div>
+
+  <script>
+    function copyText() {
+      const textArea = document.getElementById("quizText");
+      textArea.select();
+      textArea.setSelectionRange(0, 999999); // For mobile devices
+      document.execCommand("copy");
+      alert("내용이 복사되었습니다!");
+    }
+    function adjustHeight() {
+      const vh = window.innerHeight;
+      const container = document.querySelector('.container');
+      const btn = document.querySelector('.copy-btn');
+      const textarea = document.getElementById('quizText');
+
+      const padding = 40;
+      const btnHeight = btn.offsetHeight + 16;
+      const newHeight = vh - container.offsetTop - btnHeight - padding;
+
+      textarea.style.height = `${newHeight}px`;
+    }
+
+    window.addEventListener("load", adjustHeight);
+    window.addEventListener("resize", adjustHeight);
+  </script>
+
+</body>
+</html>
