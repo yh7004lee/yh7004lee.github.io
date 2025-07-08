@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>여행 일본어 회화 </title>
+    <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f8;
+      height: 100%;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 16px;
+      box-sizing: border-box;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .copy-btn {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 16px 24px;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      align-self: flex-start;
+      transition: background 0.3s ease;
+    }
+
+    .copy-btn:hover {
+      background-color: #45a049;
+    }
+
+    textarea {
+      width: 100%;
+      font-size: 16px;
+      line-height: 1.6;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      resize: none;
+      background: #fafafa;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        border-radius: 0;
+        padding: 12px;
+      }
+
+      .copy-btn {
+        width: 100%;
+        font-size: 20px;
+        padding: 18px;
+        border-radius: 10px;
+        text-align: center;
+      }
+
+      textarea {
+        font-size: 15px;
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <button class="copy-btn" onclick="copyText()">📋 복사하기</button>
+    <textarea id="quizText" readonly>
+안녕하세요 // こんにちは (Konnichiwa/콘니치와)
+안녕히 주무세요 // おやすみなさい (Oyasuminasai/오야스미나사이)
+좋은 아침입니다 // おはようございます (Ohayou gozaimasu/오하요우고자이마스)
+감사합니다 // ありがとう (Arigatou/아리가토오)
+실례합니다 / 미안합니다 // すみません (Sumimasen/스미마센)
+죄송합니다 // ごめんなさい (Gomennasai/고멘나사이)
+수고하셨습니다 // お疲れ様でした (Otsukaresama deshita/오츠카레사마데시타)
+네 // はい (Hai/하이)
+아니요 // いいえ (Iie/이에)
+천만에요 // どういたしまして (Douitashimashite/도우이타시마시테)
+이게 뭐에요? // これは何ですか？ (Kore wa nan desu ka?)
+얼마에요? // いくらですか？ (Ikura desu ka?)
+어디에요? // どこですか？ (Doko desu ka?)
+메뉴 주세요 // メニューをください (Menyuu o kudasai)
+주문하겠습니다 // 注文します (Chuumon shimasu)
+맛있어요 // おいしいですね (Oishii desu ne)
+계산 부탁합니다 // お勘定をお願いします (Okane wo onegaishimasu)
+물 주세요 // 水をください (Mizu o kudasai)
+역은 어디에요? // 駅はどこですか (Eki wa doko desu ka)
+티켓을 삽니다 // チケットを買います (Chiketto o kaimasu)
+버스는 몇 시에요? // バスは何時ですか (Basu wa nanji desu ka)
+내려야 할 역 알려주세요 // 降りる駅教えてください (Oriru eki oshiete kudasai)
+택시를 불러주세요 // タクシーを呼んでください (Takushii o yonde kudasai)
+공항으로 가주세요 // 空港へお願いします (Kuukou e onegaishimasu)
+여기에 세워주세요 // ここでとまってください (Koko de tomatte kudasai)
+체크인은 몇 시에요? // チェックインは何時ですか (Chekkuin wa nanji desu ka)
+룸 키를 주시겠어요? // ルームキーをくれますか (Ruumu kii o kuremasu ka)
+와이파이 있나요? // Wi-Fiはありますか (Wi-Fi wa arimasu ka)
+와이파이 사용할 수 있나요? // Wi-Fiは使えますか？ (Wi-Fi wa tsukaemasu ka?)
+수건이 필요해요 // タオルが必要です (Taoru ga hitsuyou desu)
+방 청소해주세요 // 部屋の掃除をお願いします (Heya no souji o onegaishimasu)
+이거 얼마에요? // これいくらですか (Kore ikura desu ka)
+사이즈가 있나요? // サイズがありますか (Saizu ga arimasu ka)
+카드로 결제할 수 있나요? // カードで払えますか (Kaado de haraemasu ka)
+거스름돈이 있나요? // おつりがありますか (Otsuri ga arimasu ka)
+봉투 주세요 // 袋をください (Fukuro o kudasai)
+영수증 주세요 // 領収書をください (Ryoushuusho o kudasai)
+도와주세요 // 助けてください (Tasukete kudasai)
+110번이에요 // 110番です (Hyaku-juu-ban desu)
+병원은 어디에요? // 病院はどこですか (Byouin wa doko desu ka)
+약국이 있나요? // 薬局はありますか (Yakkyoku wa arimasu ka)
+열쇠를 잃어버렸어요 // 鍵をなくしました (Kagi o nakushimashita)
+구급차를 호출해주세요 // 救急車を呼んでください (Kyuukyuu sha o yonde kudasai)
+병원의 위치를 알려주실 수 있을까요? // 病院の場所を教えていただけますか？ (Byouin no basho o oshiete itadakemasu ka?)
+관광지는 어디에요? // 観光地はどこですか (Kankouchi wa doko desu ka)
+지도가 있나요? // 地図がありますか (Chizu ga arimasu ka)
+이건 어떻게 가나요? // これはどうやって行きますか (Kore wa dou yatte ikimasu ka)
+이걸 보내주세요 // これを送ってください (Kore o okutte kudasai)
+선물을 사겠습니다 // お土産を買います (Omiyage o kaimasu)
+이걸 먹어도 될까요? // これをいただけますか (Kore o itadakemasu ka)
+신발을 벗어주세요 // 靴を脱いでください (Kutsu o nuide kudasai)
+절합니다 // お辞儀をします (Ojigi o shimasu)
+사진을 찍어도 괜찮아요? // 写真を撮ってもいいですか (Shashin o totte mo ii desu ka)
+실례합니다 // お邪魔します (Ojama shimasu)
+오늘 날씨가 좋네요 // 今日は天気が良いですね (Kyou wa tenki ga ii desu ne)
+비가 오고 있네요 // 雨が降っていますね (Ame ga futteimasu ne)
+추워요 // 寒いですね (Samui desu ne)
+더워요 // 暑いですね (Atsui desu ne)
+눈이 내리고 있어요 // 雪が降っています (Yuki ga futteimasu)
+이 장소는 유명한가요? // この場所は有名ですか (Kono basho wa yuumei desu ka)
+입장료는 얼마에요? // 入場券はいくらですか (Nyuujooken wa ikura desu ka)
+가이드 투어가 있나요? // ガイドツアーはありますか (Gaido tsuaa wa arimasu ka)
+이건 뭐에요? // これは何ですか (Kore wa nan desu ka)
+멋진 풍경이에요 // すばらしい景色ですね (Subarashii keshiki desu ne)
+휴일을 즐기고 있나요? // 休日を楽しんでいますか (Kyuujitsu o tanoshindeimasu ka)
+해변에 가고 싶어요 // ビーチに行きたいです (Biichi ni ikitai desu)
+공원에서 산책하자 // 公園で散歩しましょう (Kouen de sanpo shimashou)
+영화를 보지 않을래요? // 映画を見ませんか (Eiga o mimasen ka)
+쇼핑하러 가자 // 買い物に行きましょう (Kaimono ni ikimashou)
+이걸 가지고 가도 될까요? // これを持って行ってもいいですか (Kore o motte itte mo ii desu ka)
+가방을 놓고 왔어요 // かばんを忘れました (Kaban o wasuremashita)
+지갑을 잊었어요 // 財布がありません (Saifu ga arimasen)
+휴대전화를 충전하고 싶어요 // 携帯電話を充電したい (Keitai denwa o juuden shitai)
+우산을 사고 싶어요 // 傘を買いたい (Kasa o kaitai)
+어디에서 만날까요? // どこで会いましょうか (Doko de aimashou ka)
+같이 식사하지 않을래요? // 一緒に食事しませんか (Issho ni shokuji shimasen ka)
+다음에 같이 놀아요 // 今度、一緒に遊びましょう (Kondo, issho ni asobimashou)
+연락처를 알려주세요 // 連絡先を教えてください (Renrakusaki o oshiete kudasai)
+차 한 잔 할래요? // お茶でも飲みましょう (Ocha demo nomimashou)
+지금 몇 시에요? // 今何時ですか (Ima nanji desu ka)
+오늘은 무슨 요일이에요? // 今日は何曜日ですか (Kyou wa nan youbi desu ka)
+언제 출발하나요? // いつ出発しますか (Itsu shuppatsu shimasu ka)
+일정이 있나요? // 予定はありますか (Yotei wa arimasu ka)
+언제 돌아가나요? // いつ帰りますか (Itsu kaerimasu ka)
+커피 한 잔 주세요 // コーヒーを一杯ください (Koohii o ippai kudasai)
+아이스 커피 주세요 // アイスコーヒーお願いします (Aisu koohii onegaishimasu)
+여기서 마셔도 되나요? // ここで飲んでもいいですか (Koko de nondemo ii desu ka)
+추천 메뉴가 뭐에요? // おすすめは何ですか (Osusume wa nan desu ka)
+달콤한 것으로 먹고 싶어요 // 甘いものが食べたいです (Amai mono ga tabetai desu)
+일본어를 이해하지 못합니다. 번역기를 사용해도 될까요? // すみませんが、日本語が理解できません。翻訳機を使ってもいいですか？
+이걸 한국어로 번역해 주실 수 있을까요? // これを 韓国語に 翻訳してもらえますか？
+말이 너무 빨라요. 천천히 말씀해 주실 수 있나요? // 話すのが速すぎて理解できません。ゆっくり話してもらえますか？
+이 구문의 의미를 모르겠는데, 가르쳐 주실 수 있을까요? // このフレーズの意味が分からないのですが、教えていただけますか？
+죄송합니다만, 번역 앱을 사용하고 있습니다. // すみませんが、翻訳アプリを使用しています。
+    </textarea>
+  </div>
+
+  <script>
+    function copyText() {
+      const textArea = document.getElementById("quizText");
+      textArea.select();
+      textArea.setSelectionRange(0, 999999); // For mobile devices
+      document.execCommand("copy");
+      alert("내용이 복사되었습니다!");
+    }
+    function adjustHeight() {
+      const vh = window.innerHeight;
+      const container = document.querySelector('.container');
+      const btn = document.querySelector('.copy-btn');
+      const textarea = document.getElementById('quizText');
+
+      const padding = 40;
+      const btnHeight = btn.offsetHeight + 16;
+      const newHeight = vh - container.offsetTop - btnHeight - padding;
+
+      textarea.style.height = `${newHeight}px`;
+    }
+
+    window.addEventListener("load", adjustHeight);
+    window.addEventListener("resize", adjustHeight);
+  </script>
+
+</body>
+</html>
