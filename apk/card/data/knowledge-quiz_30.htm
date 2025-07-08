@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>상식 퀴즈 30</title>
+    <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f8;
+      height: 100%;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 16px;
+      box-sizing: border-box;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .copy-btn {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 16px 24px;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      align-self: flex-start;
+      transition: background 0.3s ease;
+    }
+
+    .copy-btn:hover {
+      background-color: #45a049;
+    }
+
+    textarea {
+      width: 100%;
+      font-size: 16px;
+      line-height: 1.6;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      resize: none;
+      background: #fafafa;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        border-radius: 0;
+        padding: 12px;
+      }
+
+      .copy-btn {
+        width: 100%;
+        font-size: 20px;
+        padding: 18px;
+        border-radius: 10px;
+        text-align: center;
+      }
+
+      textarea {
+        font-size: 15px;
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <button class="copy-btn" onclick="copyText()">📋 복사하기</button>
+    <textarea id="quizText" readonly>
+태양계에서 가장 큰 행성은? // 목성  
+비타민 C가 풍부한 과일은? // 오렌지  
+세계에서 가장 긴 강은? // 아마존강  
+커피의 원산지는? // 에티오피아  
+'시속 0km'로 유명한 동물은? // 나무늘보  
+대한민국의 수도는? // 서울  
+올림픽에서 금메달을 만드는 주요 금속은? // 은  
+'피타고라스 정리'는 어떤 수학 분야에 속하는가? // 기하학  
+세계 최초의 인쇄된 책은? // 구텐베르크 성경  
+'사과의 도시'로 유명한 미국의 도시는? // 뉴욕  
+피카소는 어느 나라 사람인가? // 스페인  
+'빅벤'이 위치한 나라는? // 영국  
+다음 중 세계 3대 미술관에 속하지 않는 것은? (루브르, 에르미타주, 메트로폴리탄) // 메트로폴리탄  
+인간의 DNA는 몇 쌍의 염색체로 이루어져 있는가? // 23쌍  
+고대 그리스에서 '민주주의'가 시작된 도시는? // 아테네  
+세계에서 가장 큰 사막은? // 사하라 사막  
+바다의 여왕이라고 불리는 생물은? // 고래  
+'로마는 하루아침에 이루어지지 않았다'는 말의 의미는? // 중요한 일은 시간이 걸린다는 의미  
+'아시모프의 3원칙'이 적용된 분야는? // 로봇 공학  
+세계에서 가장 큰 산호초는? // 그레이트 배리어 리프  
+세계 최초의 컴퓨터는? // ENIAC (에니악)  
+'달리는 의사'라고 불리는 인물은? // 히포크라테스  
+산소의 화학 기호는? // O  
+피아노의 건반 수는 몇 개인가? // 88개  
+'아인슈타인'이 제시한 상대성 이론은? // E=mc²  
+'블랙홀'을 처음 예측한 과학자는? // 앨버트 아인슈타인  
+인체에서 가장 큰 기관은? // 피부  
+'유리천장'이란 무엇을 의미하는가? // 성별 등에 의한 직장 내 승진의 한계  
+'헬레니즘'은 어떤 문화의 확산을 의미하는가? // 그리스 문화  
+'노벨상'을 창설한 인물은? // 알프레드 노벨  
+    </textarea>
+  </div>
+
+  <script>
+    function copyText() {
+      const textArea = document.getElementById("quizText");
+      textArea.select();
+      textArea.setSelectionRange(0, 999999); // For mobile devices
+      document.execCommand("copy");
+      alert("내용이 복사되었습니다!");
+    }
+    function adjustHeight() {
+      const vh = window.innerHeight;
+      const container = document.querySelector('.container');
+      const btn = document.querySelector('.copy-btn');
+      const textarea = document.getElementById('quizText');
+
+      const padding = 40;
+      const btnHeight = btn.offsetHeight + 16;
+      const newHeight = vh - container.offsetTop - btnHeight - padding;
+
+      textarea.style.height = `${newHeight}px`;
+    }
+
+    window.addEventListener("load", adjustHeight);
+    window.addEventListener("resize", adjustHeight);
+  </script>
+
+</body>
+</html>
