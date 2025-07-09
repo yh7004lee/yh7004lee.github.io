@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>영어 명언 100선</title>
+    <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f8;
+      height: 100%;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 16px;
+      box-sizing: border-box;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .copy-btn {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 16px 24px;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      align-self: flex-start;
+      transition: background 0.3s ease;
+    }
+
+    .copy-btn:hover {
+      background-color: #45a049;
+    }
+
+    textarea {
+      width: 100%;
+      font-size: 16px;
+      line-height: 1.6;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      resize: none;
+      background: #fafafa;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        border-radius: 0;
+        padding: 12px;
+      }
+
+      .copy-btn {
+        width: 100%;
+        font-size: 20px;
+        padding: 18px;
+        border-radius: 10px;
+        text-align: center;
+      }
+
+      textarea {
+        font-size: 15px;
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <button class="copy-btn" onclick="copyText()">📋 복사하기</button>
+    <textarea id="quizText" readonly>
+Life is what happens when you're busy making other plans. [John Lennon] // 인생은 당신이 다른 계획을 세우느라 바쁠 때 일어나는 것이다.
+In the end, it's not the years in your life that count. It's the life in your years. [Abraham Lincoln] // 결국 중요한 것은 당신의 삶의 연수가 아니라, 삶 속의 내용이다.
+Life is either a daring adventure or nothing at all. [Helen Keller] // 인생은 대담한 모험이거나, 아니면 아무것도 아니다.
+The purpose of our lives is to be happy. [Dalai Lama] // 우리 삶의 목적은 행복해지는 것이다.
+Life is really simple, but we insist on making it complicated. [Confucius] // 인생은 정말 단순하지만, 우리는 그것을 복잡하게 만든다.
+Success is not final, failure is not fatal: It is the courage to continue that counts. [Winston Churchill] // 성공은 끝이 아니고, 실패는 치명적이지 않다. 중요한 것은 계속하는 용기다.
+The only way to do great work is to love what you do. [Steve Jobs] // 위대한 일을 하는 유일한 방법은 자신이 하는 일을 사랑하는 것이다.
+Success usually comes to those who are too busy to be looking for it. [Henry David Thoreau] // 성공은 보통 그것을 찾느라 바쁜 사람들에게 찾아온다.
+If you want to achieve greatness, stop asking for permission. [Anonymous] // 위대함을 이루고 싶다면, 허락을 구하는 것을 그만둬라.
+The harder you work for something, the greater you'll feel when you achieve it. [Anonymous] // 무언가를 위해 더 열심히 노력할수록, 그것을 이뤘을 때 더 큰 성취감을 느낀다.
+Courage is not the absence of fear, but the triumph over it. [Nelson Mandela] // 용기는 두려움이 없는 것이 아니라, 두려움을 이기는 것이다.
+Do one thing every day that scares you. [Eleanor Roosevelt] // 매일 자신을 두렵게 하는 한 가지를 하라.
+Fear is a reaction. Courage is a decision. [Winston Churchill] // 두려움은 반응이고, 용기는 결정이다.
+You gain strength, courage, and confidence by every experience in which you really stop to look fear in the face. [Eleanor Roosevelt] // 두려움을 직면할 때마다 힘과 용기, 자신감을 얻는다.
+Bravery is being the only one who knows you're afraid. [Franklin P. Jones] // 용기는 자신이 두렵다는 것을 아는 유일한 사람이 되는 것이다.
+The only constant in life is change. [Heraclitus] // 인생에서 유일한 불변의 진리는 변화다.
+Time is what we want most, but what we use worst. [William Penn] // 시간은 우리가 가장 원하지만, 가장 잘못 사용하는 것이다.
+Change your thoughts and you change your world. [Norman Vincent Peale] // 생각을 바꾸면 세상이 바뀐다.
+The future depends on what you do today. [Mahatma Gandhi] // 미래는 오늘 당신이 하는 일에 달려 있다.
+Don’t watch the clock; do what it does. Keep going. [Sam Levenson] // 시계를 보지 말고, 시계가 하는 일을 하라. 계속 나아가라.
+To love and be loved is to feel the sun from both sides. [David Viscott] // 사랑하고 사랑받는 것은 양쪽에서 태양을 느끼는 것이다.
+The best thing to hold onto in life is each other. [Audrey Hepburn] // 인생에서 가장 잡아둘 만한 것은 서로다.
+Love is not about possession. It's about appreciation. [Osho] // 사랑은 소유가 아니라 감사함이다.
+A successful marriage requires falling in love many times, always with the same person. [Mignon McLaughlin] // 성공한 결혼은 같은 사람과 계속 사랑에 빠지는 것이다.
+Where there is love, there is life. [Mahatma Gandhi] // 사랑이 있는 곳에 삶이 있다.
+The future belongs to those who believe in the beauty of their dreams. [Eleanor Roosevelt] // 미래는 꿈의 아름다움을 믿는 사람들의 것이다.
+Dream big and dare to fail. [Norman Vaughan] // 큰 꿈을 꾸고 실패할 용기를 가져라.
+Passion is energy. Feel the power that comes from focusing on what excites you. [Oprah Winfrey] // 열정은 에너지다. 당신을 흥분시키는 것에 집중할 때 오는 힘을 느껴라.
+If you can dream it, you can do it. [Walt Disney] // 꿈꿀 수 있다면, 이룰 수 있다.
+Don’t be pushed around by the fears in your mind. Be led by the dreams in your heart. [Roy T. Bennett] // 마음속 두려움에 휘둘리지 말고, 가슴속 꿈을 따라가라.
+Happiness is not something ready-made. It comes from your own actions. [Dalai Lama] // 행복은 미리 만들어진 것이 아니다. 당신의 행동에서 온다.
+The happiest people don’t have the best of everything, they make the best of everything. [Anonymous] // 가장 행복한 사람들은 모든 것을 최고로 소유한 사람이 아니라, 모든 것을 최선으로 만드는 사람들이다.
+Positive anything is better than negative nothing. [Elbert Hubbard] // 긍정적인 아무것이라도 부정적인 아무것보다 낫다.
+Happiness depends upon ourselves. [Aristotle] // 행복은 우리 자신에게 달려 있다.
+The only joy in the world is to begin. [Cesare Pavese] // 세상에서 유일한 기쁨은 시작하는 것이다.
+The more that you read, the more things you will know. The more that you learn, the more places you'll go. [Dr. Seuss] // 더 많이 읽을수록 더 많이 알게 된다. 더 많이 배울수록 더 많은 곳에 갈 수 있다.
+Wisdom is not a product of schooling but of the lifelong attempt to acquire it. [Albert Einstein] // 지혜는 학교 교육의 산물이 아니라, 평생 습득하려는 노력의 결과다.
+Knowledge is power. [Francis Bacon] // 지식은 힘이다.
+The only true wisdom is in knowing you know nothing. [Socrates] // 진정한 지혜는 자신이 아무것도 모른다는 것을 아는 것이다.
+Learning never exhausts the mind. [Leonardo da Vinci] // 학습은 결코 마음을 지치게 하지 않는다.
+Patience is not the ability to wait, but the ability to keep a good attitude while waiting. [Joyce Meyer] // 인내는 기다리는 능력이 아니라, 기다리는 동안 좋은 태도를 유지하는 능력이다.
+Rome wasn’t built in a day. [Proverb] // 로마는 하루 아침에 이루어지지 않았다.
+The difference between ordinary and extraordinary is that little extra. [Jimmy Johnson] // 평범함과 비범함의 차이는 그 작은 '추가'에 있다.
+Hard work beats talent when talent doesn’t work hard. [Tim Notke] // 재능이 노력하지 않을 때, 노력이 재능을 이긴다.
+Success is the sum of small efforts, repeated day in and day out. [Robert Collier] // 성공은 작은 노력들이 계속 반복된 결과다.
+Hope is being able to see that there is light despite all of the darkness. [Desmond Tutu] // 희망은 모든 어둠 속에서도 빛이 있다는 것을 볼 수 있는 것이다.
+Believe you can and you're halfway there. [Theodore Roosevelt] // 할 수 있다고 믿으면, 이미 반은 온 것이다.
+Faith is taking the first step even when you don’t see the whole staircase. [Martin Luther King Jr.] // 믿음은 전체 계단을 보지 못해도 첫걸음을 내딛는 것이다.
+Keep your face always toward the sunshine—and shadows will fall behind you. [Walt Whitman] // 항상 태양을 바라보면, 그림자는 뒤에 남는다.
+Everything you can imagine is real. [Pablo Picasso] // 당신이 상상할 수 있는 모든 것은 현실이 될 수 있다.
+Success is walking from failure to failure with no loss of enthusiasm. [Winston Churchill] // 성공은 열정을 잃지 않고 실패에서 실패로 걸어가는 것이다.
+Growth begins when we begin to accept our own weakness. [Jean Vanier] // 성장은 우리가 자신의 약점을 받아들이기 시작할 때 시작된다.
+The secret of success is to do the common thing uncommonly well. [John D. Rockefeller] // 성공의 비밀은 평범한 일을 비범하게 잘하는 것이다.
+Don't let the fear of losing be greater than the excitement of winning. [Robert Kiyosaki] // 이길 때의 흥분보다 질 때의 두려움이 더 크게 하지 마라.
+Success is not how high you have climbed, but how you make a positive difference to the world. [Roy T. Bennett] // 성공은 얼마나 높이 올랐느냐가 아니라 세상에 긍정적인 변화를 만드는 것이다.
+A leader is one who knows the way, goes the way, and shows the way. [John C. Maxwell] // 리더는 길을 알고, 가고, 보여주는 사람이다.
+The greatest leader is not necessarily the one who does the greatest things. He is the one that gets the people to do the greatest things. [Ronald Reagan] // 위대한 리더는 위대한 일을 하는 사람이 아니라 사람들이 위대한 일을 하도록 만드는 사람이다.
+Leadership is not about being in charge. It is about taking care of those in your charge. [Simon Sinek] // 리더십은 책임지는 것이 아니라 돌보는 것이다.
+To handle yourself, use your head; to handle others, use your heart. [Eleanor Roosevelt] // 자신을 다루려면 머리를 쓰고, 타인을 다루려면 마음을 써라.
+The best way to predict the future is to create it. [Peter Drucker] // 미래를 예측하는 가장 좋은 방법은 미래를 창조하는 것이다.
+Creativity is intelligence having fun. [Albert Einstein] // 창의성은 지능이 즐거움을 느끼는 것이다.
+Innovation distinguishes between a leader and a follower. [Steve Jobs] // 혁신은 리더와 추종자를 구분한다.
+The worst enemy to creativity is self-doubt. [Sylvia Plath] // 창의성의 가장 큰 적은 자기 의심이다.
+You can't use up creativity. The more you use, the more you have. [Maya Angelou] // 창의성은 다 쓸 수 없다. 더 많이 쓸수록 더 많이 생긴다.
+Originality is nothing but judicious imitation. [Voltaire] // 독창성은 분별력 있는 모방일 뿐이다.
+Your life does not get better by chance, it gets better by change. [Jim Rohn] // 인생은 우연히 나아지지 않는다. 변화로 나아진다.
+We are our choices. [Jean-Paul Sartre] // 우리는 우리의 선택이다.
+Every choice you make makes you. [John C. Maxwell] // 당신이 하는 모든 선택이 당신을 만든다.
+When you have to make a choice and don't make it, that is in itself a choice. [William James] // 선택해야 할 때 선택하지 않는 것 자체가 하나의 선택이다.
+It's choice - not chance - that determines your destiny. [Jean Nidetch] // 당신의 운명을 결정하는 것은 우연이 아니라 선택이다.
+Gratitude turns what we have into enough. [Anonymous] // 감사는 우리가 가진 것을 충분하게 만든다.
+Happiness is not having what you want, but wanting what you have. [Rabbi Hyman Schachtel] // 행복은 원하는 것을 갖는 것이 아니라 가진 것을 원하는 것이다.
+The more you praise and celebrate your life, the more there is in life to celebrate. [Oprah Winfrey] // 인생을 칭찬하고 축하할수록 축하할 일이 더 많아진다.
+Enjoy the little things, for one day you may look back and realize they were the big things. [Robert Brault] // 작은 것들을 즐겨라. 어느 날 돌아보면 그것들이 큰 것들이었음을 깨닫게 될 것이다.
+Gratitude is the healthiest of all human emotions. [Zig Ziglar] // 감사는 인간의 감정 중 가장 건강한 것이다.
+Forgiveness is the fragrance that the violet sheds on the heel that has crushed it. [Mark Twain] // 용서는 제비꽃이 자신을 짓밟은 발꿈치에 남기는 향기다.
+Understanding is the first step to acceptance, and only with acceptance can there be recovery. [J.K. Rowling] // 이해는 받아들임의 첫 걸음이며, 받아들임이 있어야만 회복이 있다.
+The weak can never forgive. Forgiveness is the attribute of the strong. [Mahatma Gandhi] // 약자는 결코 용서할 수 없다. 용서는 강한 자의 특성이다.
+To err is human; to forgive, divine. [Alexander Pope] // 실수하는 것은 인간적이지만, 용서하는 것은 신성하다.
+Holding onto anger is like drinking poison and expecting the other person to die. [Buddha] // 분노를 품는 것은 독을 마시고 상대방이 죽기를 바라는 것과 같다.
+Honesty is the first chapter in the book of wisdom. [Thomas Jefferson] // 정직은 지혜라는 책의 첫 장이다.
+The truth will set you free, but first it will piss you off. [Gloria Steinem] // 진실은 당신을 자유롭게 할 것이지만, 먼저 당신을 화나게 할 것이다.
+No legacy is so rich as honesty. [William Shakespeare] // 정직만큼 풍부한 유산은 없다.
+Rather than love, than money, than fame, give me truth. [Henry David Thoreau] // 사랑이나 돈, 명예보다 진실을 달라.
+A lie can travel half way around the world while the truth is putting on its shoes. [Mark Twain] // 진실이 신발을 신는 동안 거짓말은 지구 반 바퀴를 돌 수 있다.
+It does not matter how slowly you go as long as you do not stop. [Confucius] // 멈추지만 않는다면 얼마나 천천히 가는지는 중요하지 않다.
+Perseverance is not a long race; it is many short races one after the other. [Walter Elliot] // 인내는 긴 경주가 아니라 많은 짧은 경주들을 연속으로 하는 것이다.
+Fall seven times, stand up eight. [Japanese Proverb] // 일곱 번 넘어져도 여덟 번 일어나라.
+The difference between a successful person and others is not a lack of strength, not a lack of knowledge, but rather a lack in will. [Vince Lombardi] // 성공한 사람과 그렇지 않은 사람의 차이는 힘의 부족도, 지식의 부족도 아닌 의지의 부족이다.
+Energy and persistence conquer all things. [Benjamin Franklin] // 에너지와 끈기는 모든 것을 정복한다.
+Hope is the thing with feathers that perches in the soul. [Emily Dickinson] // 희망은 영혼에 앉아 있는 깃털 달린 것이다.
+Optimism is the faith that leads to achievement. Nothing can be done without hope and confidence. [Helen Keller] // 낙관주의는 성취로 이끄는 믿음이다. 희망과 자신감 없이는 아무것도 이룰 수 없다.
+When it is dark enough, you can see the stars. [Ralph Waldo Emerson] // 충분히 어두울 때 별을 볼 수 있다.
+The sun himself is weak when he first rises, and gathers strength and courage as the day gets on. [Charles Dickens] // 태양도 처음 떠오를 때는 약하고, 하루가 지나면서 힘과 용기를 얻는다.
+Every day may not be good, but there's something good in every day. [Alice Morse Earle] // 매일이 좋은 날은 아니지만, 매일 좋은 무언가는 있다.
+Enjoy the little things in life, for one day you may look back and realize they were the big things. [Robert Brault] // 인생의 작은 것들을 즐겨라. 어느 날 그것들이 큰 것이었음을 깨닫게 될 것이다.
+Not how long, but how well you have lived is the main thing. [Seneca] // 얼마나 오래 살았는지가 아니라 얼마나 잘 살았는지가 중요하다.
+The present moment is filled with joy and happiness. If you are attentive, you will see it. [Thich Nhat Hanh] // 현재 순간은 기쁨과 행복으로 가득 차 있다. 주의를 기울이면 볼 수 있다.
+Happiness is not a station you arrive at, but a manner of traveling. [Margaret Lee Runbeck] // 행복은 도착하는 역이 아니라 여행하는 방식이다.
+The purpose of life is to live it, to taste experience to the utmost, to reach out eagerly and without fear for newer and richer experience. [Eleanor Roosevelt] // 인생의 목적은 인생을 살고, 경험을 최대한 맛보며, 두려움 없이 새롭고 풍부한 경험을 추구하는 것이다.
+    </textarea>
+  </div>
+
+  <script>
+    function copyText() {
+      const textArea = document.getElementById("quizText");
+      textArea.select();
+      textArea.setSelectionRange(0, 999999); // For mobile devices
+      document.execCommand("copy");
+      alert("내용이 복사되었습니다!");
+    }
+    function adjustHeight() {
+      const vh = window.innerHeight;
+      const container = document.querySelector('.container');
+      const btn = document.querySelector('.copy-btn');
+      const textarea = document.getElementById('quizText');
+
+      const padding = 40;
+      const btnHeight = btn.offsetHeight + 16;
+      const newHeight = vh - container.offsetTop - btnHeight - padding;
+
+      textarea.style.height = `${newHeight}px`;
+    }
+
+    window.addEventListener("load", adjustHeight);
+    window.addEventListener("resize", adjustHeight);
+  </script>
+
+</body>
+</html>
