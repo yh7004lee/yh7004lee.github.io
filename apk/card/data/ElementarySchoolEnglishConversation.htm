@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>초등학교 영어 회화 100</title>
+    <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f8;
+      height: 100%;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 16px;
+      box-sizing: border-box;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .copy-btn {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 16px 24px;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      align-self: flex-start;
+      transition: background 0.3s ease;
+    }
+
+    .copy-btn:hover {
+      background-color: #45a049;
+    }
+
+    textarea {
+      width: 100%;
+      font-size: 16px;
+      line-height: 1.6;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      resize: none;
+      background: #fafafa;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        border-radius: 0;
+        padding: 12px;
+      }
+
+      .copy-btn {
+        width: 100%;
+        font-size: 20px;
+        padding: 18px;
+        border-radius: 10px;
+        text-align: center;
+      }
+
+      textarea {
+        font-size: 15px;
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <button class="copy-btn" onclick="copyText()">📋 복사하기</button>
+    <textarea id="quizText" readonly>
+Hello, everyone. // 여러분 안녕하세요.
+Hi, I'm Lucy. // 안녕, 나는 루시야.
+Nice to meet you. // 만나서 반가워.
+Nice to meet you, too. // 나도 만나서 반가워.
+Goodbye. // 잘 가.
+See you. // 잘 가.
+Look at this! // 이것 좀 봐!
+What's this? // 이것은 뭐지?
+It's a book. // 책이야.
+What's that? // 저것은 뭐지?
+It's a cup. // 컵이야.
+I'm sorry. // 미안해.
+That's okay. // 괜찮아.
+Catch the ball! // 공을 잡아!
+Okay. // 알았어.
+Stand up. // 일어서.
+Sit down, please. // 앉아주세요!
+Open the door. // 문을 열어.
+Close the door. // 문을 닫아.
+Open this, please. // 이것을 열어 주세요.
+It's long. // 기네요.
+It's small. // 작네요.
+Is it a pig? // 그것은 돼지니?
+Yes, it is. // 응, 맞아.
+Is it a duck? // 그것은 오리니?
+No, it isn't. // 아니야.
+Tomatoes, please. // 토마토 주세요.
+How many pears? // 배 몇 개 드릴까요?
+Five apples, please. // 사과 5개 좀 주세요.
+One, two, three, four, five. // 하나, 둘, 셋, 넷, 다섯.
+Here you are. // 여기 있습니다.
+Thank you. // 고맙습니다.
+You're welcome. // 천만에요.
+Do you like pizza? // 너는 피자를 좋아하니?
+Yes, I do. // 응, 좋아해.
+I like bananas. // 나는 바나나를 좋아해.
+How about you? // 너는 어때?
+I like them, too. // 나도 그것들을 좋아해.
+Do you like chicken? // 너는 치킨을 좋아하니?
+No, I don't. // 아니, 좋아하지 않아.
+I don't like fish. // 나는 생선을 좋아하지 않아.
+Mmm, It's good. // 음, 맛있다.
+I like it. // 마음에 들어요.
+How are you? // 기분이 어떠니?
+I'm good. // 나는 좋아.
+I'm great, too. // 나도 매우 좋아.
+How are you, Ms. Simson? // 심슨 선생님, 어떻게 지내세요?
+I'm not good. // 나는 좋지 않아.
+Good morning. // 안녕하세요.(아침 인사)
+Good afternoon. // 안녕하세요.(오후 인사)
+Do you have an eraser? // 너 지우개 있니?
+Yes, I do. // 응, 있어.
+I have bread and tomatoes. // 저에게 빵이랑 토마토가 있어요.
+Do you have any crayons? // 너 크레용 있니?
+No, I don't. // 아니, 없어.
+I don't have a glue stick. // 나 풀이 없어.
+How old are you? // 몇 살이니?
+I'm seven years old. // 7살이에요.
+You're cute! // 너 귀엽구나!
+Today is my birthday. // 오늘이 제 생일이에요.
+Happy Birthday! // 생일 축하해요!
+What color is it? // 이것은 무슨 색이지?
+It's red. // 빨간 색이네.
+It's pretty. // 예쁘다.
+Can you swim? // 너는 수영을 할 수 있니?
+Yes, I can. // 응, 할 수 있어.
+I can skate. // 나는 스케이트를 탈 수 있어.
+I can help you. // 제가 도울 수 있어요.
+Can you ski? // 너는 스키를 탈 수 있니?
+No, I can't. // 아니, 못 해.
+I can't dance. // 나는 춤을 출 수가 없어.
+I can do it. // 나는 할 수 있어.
+You can do it. // 너는 할 수 있어.
+Are you okay? // 괜찮아?
+No, I'm not. // 아니, 그렇지 않아.
+Be careful. // 조심하렴.
+Stop! // 멈춰.
+Watch out! // 조심해!
+How's the weather? // 날씨가 어떤가요?
+It's sunny. // 화창해요.
+How's the weather in Lodon? // 런던 날씨는 어때요?
+It's cloudy. // 흐려요.
+It's cold! // 추워!
+It's snowing. // 눈이 오고 있어.
+It's a snowman. // 눈사람이네.
+Let's go outside. // 밖으로 나가자.
+Hurry up. // 서둘러.
+Let's run. // 달리자.
+Let's color together. // 같이 색칠하자.
+Don't push, please. // 밀지 말아 줘.
+Have a good time! // 즐거운 시간 보내렴!
+Who is she? // 그녀는 누구니?
+She's my mom. // 그녀는 나의 엄마야.
+She's tall. // 그녀는 키가 크구나.
+Who is he? // 그는 누구니?
+He's my dad. // 그는 나의 아빠야.
+Do you have a brother? // 너 남동생 있니?
+Sure. // 물론이죠.
+I'm here. // 나 여기 있어.
+I'm sad. // 슬퍼.
+    </textarea>
+  </div>
+
+  <script>
+    function copyText() {
+      const textArea = document.getElementById("quizText");
+      textArea.select();
+      textArea.setSelectionRange(0, 999999); // For mobile devices
+      document.execCommand("copy");
+      alert("내용이 복사되었습니다!");
+    }
+    function adjustHeight() {
+      const vh = window.innerHeight;
+      const container = document.querySelector('.container');
+      const btn = document.querySelector('.copy-btn');
+      const textarea = document.getElementById('quizText');
+
+      const padding = 40;
+      const btnHeight = btn.offsetHeight + 16;
+      const newHeight = vh - container.offsetTop - btnHeight - padding;
+
+      textarea.style.height = `${newHeight}px`;
+    }
+
+    window.addEventListener("load", adjustHeight);
+    window.addEventListener("resize", adjustHeight);
+  </script>
+
+</body>
+</html>
