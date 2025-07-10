@@ -1,3 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>조선 왕조 계보 </title>
+    <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f8;
+      height: 100%;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 16px;
+      box-sizing: border-box;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .copy-btn {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 16px 24px;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      align-self: flex-start;
+      transition: background 0.3s ease;
+    }
+
+    .copy-btn:hover {
+      background-color: #45a049;
+    }
+
+    textarea {
+      width: 100%;
+      font-size: 16px;
+      line-height: 1.6;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      resize: none;
+      background: #fafafa;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        border-radius: 0;
+        padding: 12px;
+      }
+
+      .copy-btn {
+        width: 100%;
+        font-size: 20px;
+        padding: 18px;
+        border-radius: 10px;
+        text-align: center;
+      }
+
+      textarea {
+        font-size: 15px;
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <button class="copy-btn" onclick="copyText()">📋 복사하기</button>
+    <textarea id="quizText" readonly>
 1대왕 태조(太祖) // 즉위년도: 1392-1398 재위기간: 약 6년 휘는 성계(成桂). 고려말 무신으로 왜구를 물리쳐 공을 세우고, 1388년 위화도 회군으로 고려를 멸망시키고 1392년 조선왕조를 세움.
 2대왕 정종(定宗) // 즉위년도: 1398-1400 재위기간: 약 2년 휘는 방과(芳果). 사병을 삼군부에 편입시킴. 즉위 2년 만에 방원에게 왕위를 물려주고 상왕이 됨.
 3대왕 태종(太宗) // 즉위년도: 1400-1418 재위기간: 약 18년 휘는 방원(芳遠). 조선 건국에 기여했고, 왕자의 난에서 이기고 즉위. 조선의 정치 제도를 확립함.
@@ -25,3 +107,33 @@
 25대왕 철종(哲宗) // 즉위년도: 1849-1863 재위기간: 약 14년 휘는 변. 안동김씨 세도정치 강화. 민란 다수. 병사함.
 26대왕 고종(高宗) // 즉위년도: 1863-1907 재위기간: 약 44년 휘는 희(熙). 흥선대원군의 아들. 대원군-민비 갈등, 열강의 개입, 1907년 헤이그 밀사사건으로 퇴위.
 27대왕 순종(純宗) // 즉위년도: 1907-1910 재위기간: 약 3년 이름은 척(拓). 고종의 둘째 아들. 1910년 한일합방으로 국권을 상실하고 일제강점기 시작. 이왕(李王)으로 불림.
+    </textarea>
+  </div>
+
+  <script>
+    function copyText() {
+      const textArea = document.getElementById("quizText");
+      textArea.select();
+      textArea.setSelectionRange(0, 999999); // For mobile devices
+      document.execCommand("copy");
+      alert("내용이 복사되었습니다!");
+    }
+    function adjustHeight() {
+      const vh = window.innerHeight;
+      const container = document.querySelector('.container');
+      const btn = document.querySelector('.copy-btn');
+      const textarea = document.getElementById('quizText');
+
+      const padding = 40;
+      const btnHeight = btn.offsetHeight + 16;
+      const newHeight = vh - container.offsetTop - btnHeight - padding;
+
+      textarea.style.height = `${newHeight}px`;
+    }
+
+    window.addEventListener("load", adjustHeight);
+    window.addEventListener("resize", adjustHeight);
+  </script>
+
+</body>
+</html>
