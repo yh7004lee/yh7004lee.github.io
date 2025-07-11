@@ -670,6 +670,7 @@ function loadStatesFromStorage() {
   ghostMode = false;
   randomMode = false;
 
+  restoreSessionState();  // ✅ 추가하세요!
   updateIconsState();
   renderCard();
   bookmarkCheckbox.checked = favoriteFilter;
@@ -1425,25 +1426,37 @@ function linkifyEnglishWords(containerId) {
   const temp = document.createElement("div");
   temp.innerHTML = html;
 
-  function processNode(node) {
-    if (node.nodeType === Node.TEXT_NODE) {
-      const text = node.nodeValue;
-      const replaced = text.replace(/\b([a-zA-Z]{2,})\b/g, function(match, word) {
-        const url = `https://en.dict.naver.com/#/search?query=${encodeURIComponent(word)}`;
-        return `<a href="${url}" target="_blank" class="linked-word">${word}</a>`;
-      });
+ function processNode(node) {
+  if (node.nodeType === Node.TEXT_NODE) {
+    const text = node.nodeValue;
 
-      if (replaced !== text) {
-        const span = document.createElement("span");
-        span.innerHTML = replaced;
-        node.replaceWith(span);
-      }
-    } else if (node.nodeType === Node.ELEMENT_NODE && !node.classList.contains("exclude-linkify")) {
-      for (let child of Array.from(node.childNodes)) {
-        processNode(child);
-      }
+const replaced = text.replace(/([a-zA-Z]{2,}|[\u3040-\u309F]+|[\u30A0-\u30FF]+|[\u4E00-\u9FFF]+)/gu, function (match) {
+  let url = null;
+
+  if (/^[a-zA-Z]{2,}$/.test(match)) {
+    url = `https://en.dict.naver.com/#/search?query=${encodeURIComponent(match)}`;
+  } else if (/^[\u3040-\u309F]+$/.test(match) || /^[\u30A0-\u30FF]+$/.test(match)) {
+    url = `https://ja.dict.naver.com/#/search?query=${encodeURIComponent(match)}`;
+  } else if (/^[\u4E00-\u9FFF]+$/.test(match)) {
+    url = `https://zh.dict.naver.com/#/search?query=${encodeURIComponent(match)}`;
+  }
+
+  return url ? `<a href="${url}" class="linked-word">${match}</a>` : match;
+});
+
+    if (replaced !== text) {
+      const span = document.createElement("span");
+      span.innerHTML = replaced;
+      node.replaceWith(span);
+    }
+  } else if (node.nodeType === Node.ELEMENT_NODE && !node.classList.contains("exclude-linkify")) {
+    for (let child of Array.from(node.childNodes)) {
+      processNode(child);
     }
   }
+}
+
+
 
   processNode(temp);
   container.innerHTML = temp.innerHTML;
