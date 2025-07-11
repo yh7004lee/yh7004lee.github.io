@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>회화를 삼켜버린 형용사 38개</title>
+    <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f8;
+      height: 100%;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 16px;
+      box-sizing: border-box;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .copy-btn {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 16px 24px;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      align-self: flex-start;
+      transition: background 0.3s ease;
+    }
+
+    .copy-btn:hover {
+      background-color: #45a049;
+    }
+
+    textarea {
+      width: 100%;
+      font-size: 16px;
+      line-height: 1.6;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      resize: none;
+      background: #fafafa;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        border-radius: 0;
+        padding: 12px;
+      }
+
+      .copy-btn {
+        width: 100%;
+        font-size: 20px;
+        padding: 18px;
+        border-radius: 10px;
+        text-align: center;
+      }
+
+      textarea {
+        font-size: 15px;
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <button class="copy-btn" onclick="copyText()">📋 복사하기</button>
+    <textarea id="quizText" readonly>
+interested [íntərəstid, -tərèst-]  // 관심있는 | 흥미있는 | 싶은 | 생각있는 | 원하는
+angry [ǽŋgri]  // 화난 | 성난 | 격렬한
+upset [ʌpset]  // 화난 | 기분 나쁜 | 당황 | 혼란 | 아픈
+confused [kənfjúːzd]  // 헛갈리는 | 당황한 | 어리둥절한 | 혼란한 | 혼잡한
+happy [hǽpi]  // 행복한 | 기쁜 | 즐거운 | 만족한 | 축하하다
+tired [taiərd]  // 피곤한 | 싫증난
+cold [kould]  // 추운 | 감기 | 추위 | 차가워진 | 콜드의
+exhausted [igzɔ́ːstid]  // 다 써버린 | 소모된 | 기진맥진한
+bored [bɔːrd]  // 지루한 | 싫증난
+sleepy [slíːpi]  // 졸리는 | 조용한 | 잠이 오는
+depressed [diprést]  // 우울한 | 의기소침한 | 불경기의
+beautiful [bjúːtəfəl]  // 아름다운 | 훌륭한 | 예쁜 | 멋있는 | 화창한
+sad [sæd]  // 슬픈 | 안타까운 | 우울한 | 불행 | 가슴아픈
+ashamed [əʃéimd]  // 부끄러워 | 창피한 | 수치스러운
+full [ful]  // 가득한 | 완전한 | 전체 | 많은 | 본격적인
+hungry [hΛŋgri]  // 배고픈 | 부족한 | 기아의 | 먹고 싶은
+mad [mæd]  // 화난 | 미친 | 미치광이 | 열광한
+thirsty [θə́ːrsti]  // 목이 마르는 | 갈증이 난 | 갈망하는
+attractive [ətrǽktiv]  // 매력적인 | 매혹적인
+hot [hat]  // 뜨거운 | 더운 | 섹시한 | 열이 있는 | 매운
+surprised [sərpráizd]  // 놀란
+scared [skεərd]  // 무서운 | 두려워하는 | 겁먹은 | 놀란 | 공포에 떠는
+impressive [imprésiv]  // 인상적인 | 놀라운 | 감동적인 | 눈부신
+gorgeous [gɔ́ːrdʒəs]  // 멋진 | 우아한 | 예쁜 | 화려한
+tall [tɔːl]  // 키가 큰 | 키 | 높이가 …인 | 높은 | 긴
+short [ʃɔːrt]  // 짧은 | 단편 | 단기의 | 간단한 | 작은
+pretty [príti]  // 꽤 | 예쁜 | 멋진 | 아름다운 | 재미있는
+ugly [Λgli]  // 추한 | 불쾌한
+skinny [skíni]  // 마른 | 스키니 | 깡마른 | 사실 | 어떤
+fat [fæt]  // 지방 | 기름 | 뚱뚱한 | 살찐 | 비만한
+cute [kjuːt]  // 귀여운 | 예쁜 | 앙증맞은 | 깜찍한 | 멋진
+selfish [sélfiʃ]  // 이기적인 | 자기 중심적인
+shy [ʃai]  // 수줍은 | 부끄러운 | 꺼리는 | 겁 많은 | 내성적인
+afraid [əfréid]  // 두려운 | 무서워하여 | 미안하지만 | 것 같다 | 걱정인
+slim [slim]  // 슬림 | 적은 | 날씬한 | 호리호리한 | 희박한
+dangerous [déindʒərəs]  // 위험한
+lovely [lΛvli]  // 사랑스런 | 멋진 | 아름다운 | 예쁜 | 귀여운
+charming [ʧάːrmiŋ]  // 매력적인 | 멋진
+
+    </textarea>
+  </div>
+
+  <script>
+    function copyText() {
+      const textArea = document.getElementById("quizText");
+      textArea.select();
+      textArea.setSelectionRange(0, 999999); // For mobile devices
+      document.execCommand("copy");
+      alert("내용이 복사되었습니다!");
+    }
+    function adjustHeight() {
+      const vh = window.innerHeight;
+      const container = document.querySelector('.container');
+      const btn = document.querySelector('.copy-btn');
+      const textarea = document.getElementById('quizText');
+
+      const padding = 40;
+      const btnHeight = btn.offsetHeight + 16;
+      const newHeight = vh - container.offsetTop - btnHeight - padding;
+
+      textarea.style.height = `${newHeight}px`;
+    }
+
+    window.addEventListener("load", adjustHeight);
+    window.addEventListener("resize", adjustHeight);
+  </script>
+
+</body>
+</html>
