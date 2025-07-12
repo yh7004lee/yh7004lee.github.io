@@ -1,0 +1,1563 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>퀴즈 카드</title>
+ <link rel="stylesheet" href="quiz-style.css" />
+<style>
+  .copy-icon {
+    cursor: pointer;
+    margin-left: 8px;
+    font-size: 14px;
+    user-select: none;
+  }
+
+  .tooltip {
+    display: inline-block;
+    background: black;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    position: absolute;
+    z-index: 10;
+    transform: translate(-50%, -150%);
+    white-space: nowrap;
+    visibility: hidden;
+  }
+
+  .copy-icon:hover .tooltip {
+    visibility: visible;
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar-wrapper">
+  <div class="top-bar">
+    <div class="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </div>
+    <div class="right-icons">
+
+
+<svg id="game-icon" viewBox="0 0 26 26" fill="none" stroke="none">
+  <g transform="translate(2.6 1.2) scale(1.3 1.5)">
+    <!-- 좌우 대칭 조이스틱 외곽 -->
+    <path
+      fill="#000000"
+      d="
+        M0 13
+        Q1.5 14.5, 4 13
+        L6.5 10.5
+        H9.5
+        L12 13
+        Q14.5 14.5, 16 13
+        L15.2 4.8
+        Q15 2.8, 12.3 2
+        H3.7
+        Q1 2.8, 0.8 4.8
+        L0 13
+        Z
+      "
+    />
+
+    <!-- 왼쪽 + 기호 (살짝 아래로) -->
+    <line x1="2.25" y1="6.8" x2="6.75" y2="6.8" stroke="#ffffff" stroke-width="1.5" stroke-linecap="butt"/>
+    <line x1="4.5"  y1="4.8" x2="4.5"  y2="8.8" stroke="#ffffff" stroke-width="1.5" stroke-linecap="butt"/>
+
+    <!-- 오른쪽 큰 버튼 (살짝 아래로) -->
+    <circle cx="11.5" cy="6.8" r="2" fill="#ffffff"/>
+  </g>
+</svg>
+
+
+
+
+<!-- 주사위 아이콘 -->
+<svg id="random-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+  style="fill:none;" >
+  <g transform="translate(2.4 2.4) scale(0.82)">
+    <rect x="2" y="2" width="20" height="20" rx="3" ry="3" fill="none"/>
+    <circle cx="12" cy="12" r="1" fill="currentColor"/>
+    <circle cx="7"  cy="7"  r="1" fill="currentColor"/>
+    <circle cx="17" cy="7"  r="1" fill="currentColor"/>
+    <circle cx="7"  cy="17" r="1" fill="currentColor"/>
+    <circle cx="17" cy="17" r="1" fill="currentColor"/>
+  </g>
+</svg>
+
+
+
+
+<!-- 유령 아이콘 -->
+<svg id="ghost-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M4.8 10
+           a7.2 7.2 0 1 1 14.4 0v10
+           c0 .3-.3.5-.6.3
+           l-2.2-1.5-2.2 1.5-2.2-1.5-2.2 1.5-2.2-1.5-2.2 1.5
+           c-.3.2-.6 0-.6-.3V10z"
+        fill="currentColor" stroke="none"/>
+<circle cx="9.5" cy="11" r="2.2" fill="var(--bg-color)"/>
+<circle cx="14.5" cy="11" r="2.2" fill="var(--bg-color)"/>
+</svg>
+
+<!-- 북마크 아이콘 -->
+<svg id="bookmark-icon" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M6 4h12a1 1 0 0 1 1 1v14.5a0.5 0.5 0 0 1-0.8 0.4L12 13.3l-6.2 6.6a0.5 0.5 0 0 1-0.8-0.4V5a1 1 0 0 1 1-1z" />
+</svg>
+
+<!-- 다크모드 아이콘 -->
+<svg id="dark-icon" viewBox="0 0 24 24" stroke-width="2"  >
+  <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 1 0 9.79 9.79z"/>
+</svg>
+
+<svg id="light-icon" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+  <circle cx="12" cy="12" r="5"/>
+  <line x1="12" y1="1" x2="12" y2="3"/>
+  <line x1="12" y1="21" x2="12" y2="23"/>
+  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+  <line x1="1" y1="12" x2="3" y2="12"/>
+  <line x1="21" y1="12" x2="23" y2="12"/>
+  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+</svg>
+
+
+<!-- 설정 아이콘 -->
+<svg class="settings-icon" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+     onclick="toggleSettingsMenu()" style="cursor:pointer; width:28px; height:28px;">
+  <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+  <circle cx="12" cy="12" r="3"/>
+</svg>
+    </div>
+  </div>
+</div>
+
+
+<div class="menu-wrapper">
+  <div class="menu" id="menu">
+    <!-- 메뉴 아이템 JS로 채움 -->
+  </div>
+</div>
+
+
+<!-- 설정 메뉴 -->
+<div class="menu-wrapper">
+  <div class="menu" id="settings-menu">
+<!-- 글자 사이즈 라벨과 슬라이더 통합 -->
+<div class="menu-item slider-setting">
+<label for="fontSlider" id="fontSizeLabel">글자 크기 조절</label>
+  <input type="range" id="fontSlider" min="0" max="6" value="2" step="1">
+</div>
+    <div onclick="resetFontSize()">글자사이즈 초기화</div>
+    <div onclick="changePosition()">문제 정답 위치이동</div>
+    <div onclick="openCardEditorPopup()">암기카드 편집</div>
+    <div onclick="window.location.href='https://m.cafe.naver.com/ca-fe/web/cafes/31515265/menus/2'">암기카드 가져오기</div>
+    <div onclick="refreshPage()">페이지 새로고침</div>
+    <div onclick="openManualPopup()">설명서</div>
+    <div onclick="exitApp(); closeSettingsMenu();" style="color: rgb(255, 68, 68); font-weight: 600;">나가기</div>
+  </div>
+</div>
+
+
+
+<div  class="content" id="content">
+<div class="card title-card font-adjust" id="title-box"></div>
+<div class="card question font-adjust" id="question-box"></div>
+<div class="card answer font-adjust" id="answer-box"></div>
+
+  <!-- 즐겨찾기 카드 추가 -->
+  <div id="bookmark-wrapper" class="card favorite-card">
+    
+<label class="favorite-label font-adjust" style="display: inline-flex; align-items: center; gap: 12px; cursor: pointer;">
+  즐겨찾기 추가
+  <input type="checkbox" id="bookmark-checkbox" style="width: 1.2em; height: 1.2em; vertical-align: middle; accent-color: #ff6f61;">
+</label>
+        
+  </div>
+
+   <div id="game-buttons" class="button-group">
+      <button id="hint-btn">힌트 보기</button>
+      <button id="check-btn">정답 확인</button>
+    </div>
+
+</div>
+
+
+
+
+
+
+<div id="tooltip" style="
+  position: fixed;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%) scale(0.95);
+  background: linear-gradient(135deg, #5a4de6, #8c77ff);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  z-index: 9999;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  white-space: normal;
+  max-width: 350px;
+  box-sizing: border-box;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  word-break: break-word;
+
+"></div>
+
+<!-- 🔵 맥 스타일 팝업 -->
+<div class="mac-popup" id="cardEditorPopup" style="display:none">
+  <div class="mac-popup-inner"  style="box-shadow: 0 0 10px rgba(0,255,255,0.5), 0 0 20px rgba(0,255,255,0.7), 0 0 40px rgba(0,255,255,0.9); border-radius: 16px; ">
+  <div class="mac-popup-header">
+    <!-- 맥 스타일 원형 버튼 3개 -->
+    <div class="mac-window-controls">
+      <span class="mac-btn mac-close"></span>
+      <span class="mac-btn mac-minimize"></span>
+      <span class="mac-btn mac-maximize"></span>
+    </div>
+    <span class="mac-popup-title">암기카드 리스트 편집</span>
+    <button class="mac-popup-close" onclick="closeCardEditorPopup()">×</button>
+  </div>
+  <div class="mac-popup-body">
+  <div class="popup-label">편집할 암기카드를 선택하세요.</div>
+  <select id="cardSelector" onchange="onCardTitleChange()" 
+    style="appearance: auto; -webkit-appearance: auto; -moz-appearance: auto; width: 100%; padding: 6px 24px 6px 8px; font-size: 16px; 
+    background-color: #1e1e1e; color: #aaa; border: 1px solid #444;">
+  </select>
+
+  <div class="title-edit-section" style="display: flex; gap: 6px; align-items: center;">
+    <div style="pointer-events: none; background-color: #2a2a2a; color: #ccc; border: 1px solid #444; border-radius: 6px; padding: 4px 10px; font-size: 14px; height: 25px; display: flex; align-items: center;">
+      제목 : 
+    </div>
+    <input type="text" id="cardTitleInput" style="flex: 1; padding: 4px 10px; font-size: 14px; border: 1px solid #444; border-radius: 6px; background-color: #1e1e1e; color: #aaa; height: 25px;"
+      value="제목을 입력하세요"
+      onfocus="if(this.value==='제목을 입력하세요'){this.value=''; this.style.color='#eee';}"
+      onblur="if(this.value===''){this.value='제목을 입력하세요'; this.style.color='#aaa';}">
+  </div>
+
+  <textarea id="cardEditorTextarea" rows="8" 
+    style="width: 100%; padding: 8px; font-size: 14px; background-color: #1e1e1e; color: #aaa; border: 1px solid #444; border-radius: 6px;">
+  </textarea>
+
+    <div class="editor-buttons">
+      
+  <button onclick="applyCardChanges()">적용</button>
+  <button onclick="prepareNewCard()">새 카드 </button>
+  <button onclick="deleteSelectedCard()">삭제</button> <!-- 🔴 추가 -->
+    </div>
+
+<div class="editor-buttons2" style="display: flex; gap: 10px; margin-top: 12px;">
+  <button onclick="resetToInitialData()">초기화</button>
+  <button onclick="backupQuizData()">백업</button>
+  <button onclick="restoreFromFile()">복구</button>
+</div>
+
+ </div> </div>
+</div>
+
+
+
+<!-- 설명서 팝업창 (초기에는 숨김 상태) -->
+<div id="manualPopup" class="mac-popup" style="display: none;">
+  <div class="mac-popup-inner">
+    <div class="mac-popup-header">
+      <div class="mac-window-controls">
+        <span class="mac-btn mac-close"></span>
+        <span class="mac-btn mac-minimize"></span>
+        <span class="mac-btn mac-maximize"></span>
+      </div>
+      <div class="mac-popup-title">암기카드 사용설명서 v1.1</div>
+      <button onclick="closeManualPopup()" style="font-size: 28px; font-weight: bold; background: none; border: none; color: #ff4d4f; line-height: 1; cursor: pointer; display: inline-flex; align-items: center; justify-content: center;">×</button>
+    </div>
+    <div class="mac-popup-body">
+      <div id="manualContent" style="
+        flex: 1;
+        background: #1e1e1e;   /* 팝업 배경색과 동일하게 설정 */
+        border: none;           /* 테두리 제거 */
+        border-radius: 8px;
+        padding: 0 5px 5px;
+        color: #ccc;
+        font-size: 14px;
+        line-height: 1.6;
+        overflow-y: auto;
+-ms-overflow-style: none;     /* IE, Edge */
+  scrollbar-width: none;        /* Firefox */
+  overscroll-behavior: contain; /* 모바일에서 스크롤 한정 */
+  -webkit-overflow-scrolling: touch; /* iOS 스와이프 */
+      ">
+<div style="font-size: 14px; line-height: 1.6; color: #ccc;">
+  <p>1. 화면을 좌우로 스와이프 하면 카드가 넘어갑니다. 카드개수가 많은 경우 하나씩 넘겨서 찾기가 힘들겁니다. 그래서 한번에 많이 넘길수있는 방법을 알려드리겠습니다. 연속으로 두번 빠르게 넘기면 10개씩 넘어가고 세번 빠르게 넘기면 50개씩 넘어갑니다. 빠르게 이동하고싶을때 사용하면 편리합니다.  </p>
+  <p>2. 상단의 즐겨찾기(북마크) 아이콘을 클릭해서 암기하고싶은 카드만 따로 집중적으로 암기하실수가 있습니다. 미리 카드들을 즐겨찾기 추가 해놓아야 사용가능합니다.</p>
+  <p>3. 상단의 주사위(랜덤모드) 아이콘을 한번 클릭하면 카드순서가 랜덤으로 나오게되며 한번더 클릭하면 순차적으로 나오게 됩니다.</p>
+  <p>4. 상단의 유령 아이콘을 클릭하면 정답을 안보이게 하며 한번더 클릭하면 보이게 됩니다. 외운 내용을 확인할때 사용하면 유용합니다.</p>
+  <p>5. 상단의 게임 아이콘을 클릭하면 퀴즈모드로 바뀝니다. 정답의 내용 일부가 가려지며 인풋박스에 정답을 입력하여 정답이 맞는지 틀린지 확인가능합니다. 힌트보기를 클릭하면 초성을 알려줍니다.</p>
+  <p>6. 좌측 상단의 메뉴 아이콘을 클릭해서 카테고리(제목)을 선택하면 해당 카테고리의 내용이 화면에 나오게 됩니다.</p>
+  <p>7. 설정 아이콘을 클릭하면 글자크기 수정및 암기카드 추가 편집 백업 복원 초기화 등의 기능을 사용하실수가 있습니다.</p>
+  <p>8. 설정 &gt;&gt; 암기카드 편집 &gt;&gt; 새카드 버튼을 눌러서 자기만의 암기카드를 생성할수가 있습니다.</p>
+  <p>9. 설정 &gt;&gt; 암기카드 편집 &gt;&gt; 백업 및 복원 버튼을 클릭해서 전체 카드 리스트를 백업 하고 복원하실수가 있습니다.</p>
+  <p>10. 설정 &gt;&gt; 암기카드 편집 &gt;&gt; 초기화 버튼을 누르면 전체 카드가 초기 상태로 돌아갑니다. 혹시 자기만의 카드를 이미 많이 만들었다면 초기화 전에 백업을 먼저 해두셔야 합니다. 잃어버린 데이터는 책임지지 않습니다.</p>
+</div>
+
+<div style=" margin-top: auto; padding: 12px 0;">
+    <a href="https://m.cafe.naver.com/recitationnotebook/17" style="color: #4ea1f3; text-decoration: none; cursor: pointer;">
+      웹설명서(cafe.naver.com/recitationnotebook)
+    </a>
+  </div>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<script src="fireworks.js"></script>
+<script src="quizData.js"></script>
+<script src="tooltip.js"></script>
+<script src="swipeHandler.js"></script>
+<script src="fontSizeControl.js"></script>
+<script>
+
+const menu = document.getElementById('menu');
+const questionBox = document.getElementById('question-box');
+const answerBox = document.getElementById('answer-box');
+const titleBox = document.getElementById('title-box');
+const bookmarkCheckbox = document.getElementById('bookmark-checkbox');
+const bookmarkIcon = document.getElementById('bookmark-icon');
+const ghostIcon = document.getElementById('ghost-icon');
+const randomIcon = document.getElementById('random-icon');
+const darkIcon = document.getElementById('dark-icon');
+const lightIcon = document.getElementById('light-icon');
+const content = document.getElementById('content');
+
+let currentCategory = null;
+let currentIndex = 0;
+let categories = Object.keys(quizData);
+let ghostMode = false;    // 답변 숨김 모드
+let randomMode = false;   // 랜덤 스와이프 모드
+let favoriteFilter = false; // 즐겨찾기 필터 모드
+let favorites = new Set();  // 즐겨찾기 문제 인덱스 저장, 여기서는 인덱스 번호 대신 고유키 사용 예정
+
+// 1. 메뉴 생성 및 선택 기능
+function createMenu() {
+  menu.innerHTML = '';
+  categories.forEach(cat => {
+    const div = document.createElement('div');
+    div.textContent = cat;
+    div.onclick = () => {
+      currentCategory = cat;
+      currentIndex = 0;
+
+  // 🔽 여기 추가!
+  gameMode = false;
+  gameIcon.classList.remove('active'); // 아이콘 상태 초기화
+  document.getElementById('game-buttons').style.display = 'none';
+  document.getElementById('bookmark-wrapper').style.display = 'flex';
+
+      ghostMode = false;
+      randomMode = false;
+      favoriteFilter = false;
+      updateIconsState();
+      bookmarkCheckbox.checked = false;
+      showMenu(false);
+      renderCard();
+      saveStatesToStorage();
+    };
+    menu.appendChild(div);
+  });
+
+  // 나가기 버튼 추가
+  const exitBtn = document.createElement('div');
+  exitBtn.textContent = '나가기';
+  exitBtn.style.color = '#ff4444';
+  exitBtn.style.fontWeight = 'bold';
+  exitBtn.onclick = () => {
+    showMenu(false);
+  };
+  menu.appendChild(exitBtn);
+}
+
+
+// 메뉴 보이기/숨기기 토글
+function toggleMenu() {
+  const isShown = menu.classList.contains('show');
+
+  if (isShown) {
+    menu.classList.remove('show');
+    document.removeEventListener('click', outsideMenuClickHandler);
+  } else {
+    menu.classList.add('show');
+    setTimeout(() => {
+      document.addEventListener('click', outsideMenuClickHandler);
+    }, 0);
+  }
+}
+function outsideMenuClickHandler(e) {
+  const hamburger = document.querySelector('.hamburger');
+  if (!menu.contains(e.target) && !hamburger.contains(e.target)) {
+    menu.classList.remove('show');
+    document.removeEventListener('click', outsideMenuClickHandler);
+  }
+}
+// 2. 카드 렌더링 함수
+function renderCard() {
+  if (!currentCategory) return;
+  const data = quizData[currentCategory];
+
+
+  // 즐겨찾기 필터가 켜져 있으면 즐겨찾기만 필터링
+  let filteredData = data;
+  if (favoriteFilter) {
+    filteredData = data.filter((item, idx) => favorites.has(getKey(currentCategory, idx)));
+    if(filteredData.length === 0){
+      questionBox.textContent = '즐겨찾기된 항목이 없습니다.';
+      answerBox.textContent = '';
+      titleBox.textContent = (currentCategory ? '🎯 ' + currentCategory : '');
+      return;
+    }
+  }
+
+if (randomMode) {
+  if (shufflePointer >= shuffledIndices.length) {
+    initShuffledIndices();  // 다시 셔플
+  }
+  currentIndex = shuffledIndices[shufflePointer];
+} else {
+  // 순차 인덱스 보정
+  if (currentIndex >= filteredData.length) currentIndex = 0;
+  else if (currentIndex < 0) currentIndex = filteredData.length - 1;
+}
+
+  const card = filteredData[currentIndex];
+  titleBox.textContent = (currentCategory ? '🎯 ' + currentCategory : '');
+  const realIndex = getRealIndex(currentIndex);
+  questionBox.textContent = (realIndex + 1) + '. ' + card.Q;
+  if (ghostMode) {
+    // 답변 숨김 처리
+    answerBox.classList.add('hidden');
+  } else {
+    answerBox.classList.remove('hidden');
+    answerBox.textContent = card.A;
+  }
+  // 체크박스 동기화
+  const key = getKey(currentCategory, getRealIndex(currentIndex));
+  bookmarkCheckbox.checked = favorites.has(key);
+
+// 링크걸기
+  linkifyEnglishWords("question-box");
+  linkifyEnglishWords("answer-box");
+  saveSessionState(); // 여기에 추가
+  // 복사 아이콘 삽입
+
+insertCopyIcon('question-box');
+insertCopyIcon('answer-box');
+}
+
+
+
+
+// 즐겨찾기 체크박스 클릭 처리
+bookmarkCheckbox.addEventListener('change', () => {
+  if (!currentCategory) return;
+  const realIndex = getRealIndex(currentIndex);
+  const key = getKey(currentCategory, realIndex);
+
+  if (bookmarkCheckbox.checked) {
+    favorites.add(key);
+  } else {
+    favorites.delete(key);
+
+    // 즐겨찾기 모드 중인데, 해당 카테고리의 즐겨찾기가 0개가 되면 필터 해제
+    const hasFavorites = Array.from(favorites).some(k => k.startsWith(currentCategory + '_'));
+    if (favoriteFilter && !hasFavorites) {
+      favoriteFilter = false;
+      showTooltip('즐겨찾기 항목이 없어 필터 모드가 해제되었습니다.');
+      updateIconsState();
+    }
+  }
+
+  saveStatesToStorage();
+  renderCard();
+});
+// 현재 보여지는 카드의 실제 인덱스 찾기 (필터링 때문에 달라짐)
+function getRealIndex(currentFilteredIndex) {
+  if (!favoriteFilter) return currentFilteredIndex;
+  const data = quizData[currentCategory];
+  // favoriteFilter = true라면 필터링된 인덱스 -> 원본 인덱스 변환 필요
+  const filteredIndices = [];
+  for(let i=0; i<data.length; i++) {
+    if(favorites.has(getKey(currentCategory, i))) filteredIndices.push(i);
+  }
+  return filteredIndices[currentFilteredIndex] ?? 0;
+}
+
+// 카테고리 + 인덱스 문자열 키 생성
+function getKey(category, index) {
+  return category + '_' + index;
+}
+
+// 3. 아이콘 상태 업데이트 (색상 활성화 반영)
+function updateIconsState() {
+  // 다크모드
+  if (document.body.classList.contains('dark')) {
+    darkIcon.style.display = 'none';
+    lightIcon.style.display = 'inline';
+  } else {
+    darkIcon.style.display = 'inline';
+    lightIcon.style.display = 'none';
+  }
+  // 즐겨찾기 아이콘 활성화 여부 (즐겨찾기 필터 켜짐)
+  if (favoriteFilter) bookmarkIcon.classList.add('active');
+  else bookmarkIcon.classList.remove('active');
+  // 유령 아이콘 활성화 여부 (답변 숨김)
+  if (ghostMode) ghostIcon.classList.add('active');
+  else ghostIcon.classList.remove('active');
+  // 랜덤 모드 아이콘 활성화 여부
+  if (randomMode) randomIcon.classList.add('active');
+  else randomIcon.classList.remove('active');
+}
+
+// 4. 다크모드 토글 함수
+function toggleDarkMode() {
+  document.body.classList.toggle('dark');
+  updateIconsState();
+  // 상태 저장
+  localStorage.setItem('darkMode', document.body.classList.contains('dark') ? '1' : '0');
+}
+
+// 5. 유령 모드 토글 (답변 숨김/보임)
+function toggleGhostMode() {
+  ghostMode = !ghostMode;
+  updateIconsState();
+  renderCard();
+  setTimeout(() => {
+    showTooltip(ghostMode ? '정답이 숨겨졌습니다.' : '정답이 표시됩니다.');
+  }, 10); // renderCard 후 툴팁 출력 타이밍을 보장
+}
+// 6. 랜덤 모드 토글 (스와이프 모드 전환)
+
+let shuffledIndices = [];   // 랜덤 순서 배열
+let shufflePointer = 0;     // 현재 인덱스 위치
+
+function toggleRandomMode() {
+  const cardCount = getFilteredLength();
+  if (cardCount <= 2) {
+    showTooltip('지금 카드의 숫자가 2개 이하라서 랜덤모드를 사용할 수 없습니다.');
+    return;
+  }
+
+  randomMode = !randomMode;
+  updateIconsState();
+
+  if (randomMode) {
+    initShuffledIndices(); // 랜덤 모드 켤 때 초기화
+    showTooltip('랜덤 모드가 활성화되었습니다.');
+  } else {
+    showTooltip('순차 모드가 활성화되었습니다.');
+  }
+}
+
+function initShuffledIndices() {
+  const count = getFilteredLength();
+  shuffledIndices = Array.from({ length: count }, (_, i) => i);
+
+  // Fisher-Yates Shuffle
+  for (let i = shuffledIndices.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledIndices[i], shuffledIndices[j]] = [shuffledIndices[j], shuffledIndices[i]];
+  }
+
+  shufflePointer = 0;
+}
+
+// 7. 즐겨찾기 필터 토글 (북마크 아이콘 클릭)
+function toggleBookmarkMode() {
+  if (!favoriteFilter) {
+    // 필터를 켜려고 할 때 즐겨찾기 항목이 아예 없으면 차단
+    if (favorites.size === 0) {
+      showTooltip('즐겨찾기 추가된 카드가 하나도 없습니다.');
+      return;
+    }
+
+    // 현재 카테고리에 해당하는 즐겨찾기 항목이 없으면 차단
+    const data = quizData[currentCategory];
+    const hasFavorites = data.some((item, idx) => favorites.has(getKey(currentCategory, idx)));
+    if (!hasFavorites) {
+      showTooltip('즐겨찾기 추가된 카드가 하나도 없습니다.');
+      return;
+    }
+
+    // 🎯 랜덤모드가 켜져 있는데 즐겨찾기 항목이 2개 이하인 경우 자동 해제
+    const filtered = data.filter((item, idx) => favorites.has(getKey(currentCategory, idx)));
+    if (randomMode && filtered.length <= 2) {
+      randomMode = false;
+      updateIconsState();
+      showTooltip('즐겨찾기 카드 수가 부족하여 랜덤모드가 비활성화되었습니다.');
+    }
+  }
+
+  favoriteFilter = !favoriteFilter;
+  updateIconsState();
+  showTooltip(favoriteFilter ? '즐겨찾기 추가된 카드만 노출됩니다.' : '전체 카드가 노출됩니다.');
+  currentIndex = 0;  // 필터 변경시 인덱스 초기화
+  renderCard();
+}
+
+
+
+// 필터링 적용 후 길이 반환
+function getFilteredLength() {
+  if (!currentCategory) return 0;
+  let data = quizData[currentCategory];
+  if (favoriteFilter) {
+    data = data.filter((item, idx) => favorites.has(getKey(currentCategory, idx)));
+  }
+  return data.length;
+}
+// 9. 상태 로컬 저장 / 복원
+function saveStatesToStorage() {
+  // 즐겨찾기 목록 저장(문자열로)
+  localStorage.setItem('favorites', JSON.stringify(Array.from(favorites)));
+
+  // 다크모드 저장 (이미 위 toggleDarkMode에서 저장 중)
+
+  // 현재 카테고리 저장
+  localStorage.setItem('currentCategory', currentCategory || '');
+
+  // 즐겨찾기 필터 저장
+  localStorage.setItem('favoriteFilter', favoriteFilter ? '1' : '0');
+
+
+}
+//저장된 상태를 복원하는 함수 
+function saveSessionState() {
+  localStorage.setItem('lastCategory', currentCategory);
+  localStorage.setItem('lastIndex', currentIndex);
+}
+function restoreSessionState() {
+  const savedCategory = localStorage.getItem('lastCategory');
+  const savedIndex = parseInt(localStorage.getItem('lastIndex'), 10);
+
+  if (savedCategory && quizData[savedCategory]) {
+    currentCategory = savedCategory;
+    currentIndex = isNaN(savedIndex) ? 0 : savedIndex;
+  }
+}
+
+// 즐겨찾기 복원
+function loadFavoritesFromStorage() {
+  const favs = localStorage.getItem('favorites');
+  if (favs) {
+    try {
+      const arr = JSON.parse(favs);
+      favorites = new Set(arr);
+    } catch {
+      favorites = new Set();
+    }
+  }
+}
+
+// 전체 상태 복원
+function loadStatesFromStorage() {
+  // 🔽 추가: 전체 카드 복원
+  const savedAll = localStorage.getItem('allQuizData');
+  if (savedAll) {
+    try {
+      const parsed = JSON.parse(savedAll);
+      Object.assign(quizData, parsed); // 기존 quizData 덮어쓰기
+      categories = Object.keys(quizData);
+    } catch(e) {
+      console.warn('quizData 복원 실패:', e);
+    }
+  }
+
+  // 기존 상태 복원 로직 계속...
+  const dark = localStorage.getItem('darkMode');
+  if (dark === '1') document.body.classList.add('dark');
+  else document.body.classList.remove('dark');
+
+  loadFavoritesFromStorage();
+
+  const savedCat = localStorage.getItem('currentCategory');
+  currentCategory = (savedCat && categories.includes(savedCat)) ? savedCat : categories[0];
+
+  favoriteFilter = false;
+  ghostMode = false;
+  randomMode = false;
+
+  restoreSessionState();  // ✅ 추가하세요!
+  updateIconsState();
+  renderCard();
+  bookmarkCheckbox.checked = favoriteFilter;
+}
+
+// 10. 아이콘 클릭 이벤트 연결
+darkIcon.onclick = () => {
+  toggleDarkMode();
+  saveStatesToStorage();
+};
+lightIcon.onclick = () => {
+  toggleDarkMode();
+  saveStatesToStorage();
+};
+
+bookmarkIcon.onclick = () => {
+  toggleBookmarkMode();
+  saveStatesToStorage();
+};
+
+randomIcon.onclick = () => {
+  toggleRandomMode();
+  saveStatesToStorage();
+};
+
+ghostIcon.onclick = () => {
+  if (gameMode) {
+    showTooltip("게임모드에서는 유령모드를 사용할 수 없습니다.");
+    return;
+  }
+
+  ghostMode = !ghostMode;
+  updateIconsState();
+
+  // 툴팁 먼저 띄움 (renderCard보다 먼저)
+  setTimeout(() => {
+    showTooltip(ghostMode ? "정답이 숨겨졌습니다." : "정답이 표시됩니다.");
+  }, 10);
+
+  renderCard();
+};
+// 11. 페이지 초기화
+loadStatesFromStorage();
+createMenu();
+
+
+// 메뉴 처음에 표시
+showMenu(false);
+
+// 메뉴 표시/숨기기 함수
+function showMenu(show) {
+  if (show) menu.classList.add('show');
+  else menu.classList.remove('show');
+}
+
+//글자 크기 조정
+
+//게임클릭
+const hintBtn = document.getElementById('hint-btn');
+const checkBtn = document.getElementById('check-btn');
+const gameIcon = document.getElementById('game-icon');
+let gameMode = false;
+
+// 게임 아이콘 클릭 이벤트
+gameIcon.onclick = () => {
+  gameMode = !gameMode;
+
+  if (gameMode) {
+    showTooltip("게임모드로 변경합니다.");
+    gameIcon.classList.add('active');
+
+    // ✅ 유령모드 자동 해제
+    if (ghostMode) {
+      ghostMode = false;
+      updateIconsState();  // 아이콘 상태 반영
+      setTimeout(() => {
+        showTooltip("게임모드로 전환되며 유령모드가 해제되었습니다.");
+      }, 10);  // 툴팁이 덮어씌워지지 않도록 약간 지연
+    }
+
+  } else {
+    showTooltip("게임모드를 해제합니다.");
+    gameIcon.classList.remove('active');
+
+    // 🟡 게임모드 해제 상태에서 유령모드가 꺼져 있으면, 유령모드 툴팁이 다음 클릭 시 잘 나오게 준비됨
+  }
+
+  const gameButtons = document.getElementById('game-buttons');
+  if (gameButtons) {
+    gameButtons.style.display = gameMode ? 'flex' : 'none';
+  }
+
+  // const bookmarkWrap = document.getElementById('bookmark-wrapper');
+  // if (bookmarkWrap) {
+  // bookmarkWrap.style.display = gameMode ? 'none' : 'flex';
+  // }
+
+  updateIconsState();  // 아이콘 상태 동기화
+  renderCard();  // 카드 다시 그림
+};
+
+
+// 정답 박스에서 인풋으로 바꿔줄 단어를 선택
+function convertAnswerToInputs(answer) {
+  const words = answer.split(/\s+/);
+  const indexes = [];
+
+  for (let i = 0; i < words.length; i++) {
+    const clean = words[i].replace(/[^\p{L}\p{N}]/gu, '');
+    if (clean.length > 1) indexes.push(i);
+  }
+
+  const selected = indexes.sort(() => 0.5 - Math.random()).slice(0, 3);
+
+  return words.map((word, idx) => {
+    if (selected.includes(idx)) {
+      const punctuation = word.match(/[.,!?]$/);
+      const cleanWord = word.replace(/[.,!?]/g, '');
+
+      return `
+        <span class="answer-wrapper">
+          <input type="text" class="answer-input" data-answer="${cleanWord}" autocomplete="off" />
+          <span class="hint-text"></span>
+        </span>
+        ${punctuation ? punctuation[0] : ''}
+      `;
+    } else {
+      return `<span class="answer-label">${word}</span>`;
+    }
+  }).join(' ');
+}
+// 힌트 보기 기능
+
+function getChoseong(text) {
+  const CHOSEONG_LIST = ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ',
+                        'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+  return Array.from(text).map(char => {
+    const code = char.charCodeAt(0);
+    if (code >= 0xAC00 && code <= 0xD7A3) {
+      const choseongIndex = Math.floor((code - 0xAC00) / 588);
+      return CHOSEONG_LIST[choseongIndex];
+    }
+    return char; // 한글 아니면 그대로
+  }).join('');
+}
+
+function applyHint() {
+  const inputs = document.querySelectorAll('.answer-input');
+  inputs.forEach(input => {
+    const answer = input.dataset.answer.trim();
+    const userInput = input.value.trim();
+
+    if (userInput === answer) {
+      // 정답이 이미 입력된 경우 placeholder 지움
+      input.placeholder = '';
+      return;
+    } else if (userInput !== "") {
+      // 오답이 입력된 경우 입력값 초기화
+      input.value = '';
+    }
+
+    // 힌트 생성 (한글 초성 또는 영어 첫 글자)
+    let hintText = '';
+    if (/^[\uAC00-\uD7A3]+$/.test(answer)) {
+      hintText = getChoseong(answer);
+    } else {
+      hintText = answer[0];
+    }
+
+    // 힌트를 placeholder 속성에 넣음
+    input.placeholder = hintText;
+  });
+}
+
+
+
+// input 포커스 시 힌트 숨기기 이벤트
+document.addEventListener('focusin', (e) => {
+  if (e.target.classList.contains('answer-input')) {
+    const hintSpan = e.target.parentElement.querySelector('.hint-text');
+    if (hintSpan) {
+      hintSpan.style.display = 'none';
+    }
+  }
+});
+
+
+// 정답 확인 기능
+
+function checkAnswer() {
+  let allCorrect = true;
+
+  document.querySelectorAll('.answer-input').forEach(input => {
+    const correct = input.dataset.answer;
+    if (input.value.trim() !== correct) {
+      allCorrect = false;
+      input.style.border = '1px dashed #e35c6a';
+    } else {
+      input.style.border = '1px dashed #56b89e';
+    }
+  });
+
+  if (allCorrect) {
+    launchSmallFireworks(); // ✨ 폭죽 시작
+    showTooltip('축하합니다. 정답입니다. 다음문제로 넘어갑니다.');
+    setTimeout(() => {
+      moveToNextCard();
+    }, 3000);
+  } else {
+    showTooltip('틀렸습니다.');
+  }
+}
+
+// 다음 문제로 이동
+function moveToNextCard() {
+  document.querySelectorAll('.answer-input').forEach(i => i.style.border = '');
+  if (randomMode) {
+    shufflePointer++;
+    if (shufflePointer >= shuffledIndices.length) initShuffledIndices();
+  } else {
+    currentIndex++;
+    if (currentIndex >= getFilteredLength()) currentIndex = 0;
+  }
+  renderCard();
+ saveSessionState(); // 여기에 추가
+}
+
+
+// renderCard 확장 (게임모드 대응)
+const originalRenderCard = renderCard;
+renderCard = function() {
+  originalRenderCard();
+
+  if (!currentCategory || !gameMode) {
+    return;
+  }
+
+  const data = quizData[currentCategory];
+  const realIndex = getRealIndex(currentIndex);
+  const card = favoriteFilter
+    ? data.filter((item, idx) => favorites.has(getKey(currentCategory, idx)))[currentIndex]
+    : data[realIndex];
+
+  const converted = convertAnswerToInputs(card.A);
+  answerBox.classList.remove('hidden');
+  answerBox.innerHTML = converted;
+
+};
+
+// 버튼 연결
+hintBtn.onclick = applyHint;
+checkBtn.onclick = checkAnswer;
+
+//세팅메뉴
+function toggleSettingsMenu() {
+  const menu = document.getElementById('settings-menu');
+  menu.classList.toggle('show');
+}
+
+function closeSettingsMenu() {
+  const menu = document.getElementById('settings-menu');
+  menu.classList.remove('show');
+}
+
+// 나가기 함수 예시 (필요시 내부 작업 후 메뉴 닫기)
+function exitApp() {
+  // 실제 나가기 동작 넣기 (예: 페이지 이동, 로그아웃 등)
+  console.log("나가기 동작 실행");
+
+  // 메뉴 닫기
+  closeSettingsMenu();
+}
+
+// 외부 클릭 시 메뉴 닫기
+document.addEventListener('click', function(event) {
+  const menu = document.getElementById('settings-menu');
+  const settingsIcon = document.querySelector('.settings-icon');
+  if (!menu.contains(event.target) && !settingsIcon.contains(event.target)) {
+    closeSettingsMenu();
+  }
+});
+
+
+
+//카드편집
+
+  // 저장키
+  const STORAGE_KEY = 'memoryCards';
+
+   // 팝업 열기
+  function openCardEditorPopup() {
+    document.getElementById('cardEditorPopup').style.display = 'block';
+    loadCardTitles();
+  }
+
+  // 팝업 닫기
+  function closeCardEditorPopup() {
+    document.getElementById('cardEditorPopup').style.display = 'none';
+  }
+
+  // 카드 제목 리스트를 메뉴에서 불러오는 로직 참고해서 불러오기
+  function loadCardTitles() {
+  const selector = document.getElementById('cardSelector');
+  selector.innerHTML = '';
+
+  const titles = Object.keys(quizData); // quizData에서 카테고리 목록 추출
+
+  if (titles.length === 0) {
+    const opt = document.createElement('option');
+    opt.value = '';
+    opt.textContent = '저장된 암기카드가 없습니다.';
+    opt.disabled = true;
+    opt.selected = true;
+    selector.appendChild(opt);
+    return;
+  }
+
+  titles.forEach(title => {
+    const opt = document.createElement('option');
+    opt.value = title;
+    opt.textContent = title;
+    selector.appendChild(opt);
+  });
+
+  // 첫 번째 항목 선택 및 내용 표시
+  selector.selectedIndex = 0;
+  onCardTitleChange();
+}
+
+  // 선택된 카드 제목 변경시 내용 표시
+function onCardTitleChange() {
+  const title = document.getElementById('cardSelector').value;
+
+  if (!title || !quizData[title]) {
+    document.getElementById('cardTitleInput').value = '';
+    document.getElementById('cardEditorTextarea').value = '';
+    return;
+  }
+
+  const data = quizData[title]; // [{Q,A}, ...]
+
+  document.getElementById('cardTitleInput').value = title;
+
+  // 질문과 답변을 "질문 // 답변" 형식의 한 줄로 만들기
+  const lines = data.map(item => `${item.Q} // ${item.A}`);
+
+  // 각 줄을 개행(\n)으로 연결해서 텍스트 영역에 넣기
+  document.getElementById('cardEditorTextarea').value = lines.join('\n');
+}
+
+
+
+  // 적용 버튼 클릭 (내용 저장)
+function applyCardChanges() {
+  const selector = document.getElementById('cardSelector');
+  const selectedValue = selector.value;
+  const titleInput = document.getElementById('cardTitleInput');
+  const textarea = document.getElementById('cardEditorTextarea');
+
+  const newTitle = titleInput.value.trim();
+  const rawText = textarea.value.trim();
+
+  if (!selectedValue || !rawText) {
+    alert('카테고리와 내용을 모두 입력해주세요.');
+    return;
+  }
+
+  // 내용 파싱
+  const lines = rawText.split('\n').map(line => line.trim()).filter(line => line.includes('//'));
+  const parsedCards = lines.map(line => {
+    const [Q, A] = line.split('//');
+    return { Q: Q.trim(), A: A.trim() };
+  });
+
+  // 새 제목이 기존 것과 다르면 이름 변경
+  const oldTitle = selectedValue;
+  if (oldTitle !== newTitle) {
+    // 새 제목 중복 체크
+    if (quizData[newTitle]) {
+      alert('같은 제목이 이미 존재합니다.');
+      return;
+    }
+    quizData[newTitle] = parsedCards;
+    delete quizData[oldTitle];
+
+    // 즐겨찾기 키도 변경
+    const newFavorites = new Set();
+   favorites.forEach(key => {
+  if (typeof key === 'string' && key.startsWith(oldTitle + '_')) {
+    const idx = key.split('_')[1];
+    newFavorites.add(newTitle + '_' + idx);
+  } else {
+    newFavorites.add(key);
+  }
+});
+    favorites = newFavorites;
+
+    if (currentCategory === oldTitle) currentCategory = newTitle;
+  } else {
+    // 기존 제목 그대로일 경우 데이터만 덮어쓰기
+    quizData[oldTitle] = parsedCards;
+  }
+
+  // 로컬 저장
+
+  localStorage.setItem('allQuizData', JSON.stringify(quizData));
+
+  saveStatesToStorage();
+
+  // 콤보박스 및 풀다운 메뉴 갱신
+
+  updateCardSelectorOptions();
+  createMenu();
+  renderCard();
+
+  // 콤보박스, 입력 필드 초기화 후 다시 불러오기
+  selector.value = newTitle;
+  onCardTitleChange();
+
+  showTooltip('변경사항이 적용되었습니다.');
+
+
+
+
+}
+
+
+//카드선텍 콤보박스 업데이트
+
+function updateCardSelectorOptions() {
+  const selector = document.getElementById('cardSelector');
+  selector.innerHTML = '';
+  categories = Object.keys(quizData);
+
+  categories.forEach(title => {
+    const opt = document.createElement('option');
+    opt.value = title;
+    opt.textContent = title;
+    selector.appendChild(opt);
+  });
+}
+
+  // 새로운 암기카드 만들기 버튼 클릭
+function prepareNewCard() {
+  const newTitle = prompt("새 암기카드 제목을 입력하세요:");
+  if (!newTitle) return;
+
+  if (quizData[newTitle]) {
+    alert("이미 존재하는 제목입니다.");
+    return;
+  }
+
+  quizData[newTitle] = [];
+  categories = Object.keys(quizData);
+
+  // 새 제목으로 셀렉터 갱신
+  const selector = document.getElementById('cardSelector');
+  const option = document.createElement('option');
+  option.value = newTitle;
+  option.textContent = newTitle;
+  selector.appendChild(option);
+  selector.value = newTitle;
+
+  // 텍스트 초기화
+  document.getElementById('cardEditorTextarea').value = '';
+  document.getElementById('cardTitleInput').value = newTitle;
+ const textarea = document.getElementById('cardEditorTextarea');
+
+  textarea.value =
+`문제1 // 정답1
+문제2 // 정답2
+문제3 // 정답3
+문제4 // 정답4
+문제5 // 정답5`;
+
+  // 즉시 저장
+  localStorage.setItem('allQuizData', JSON.stringify(quizData));
+}
+
+function deleteSelectedCard() {
+  const selector = document.getElementById('cardSelector');
+  let selectedCategory = selector.value;
+
+  if (!selectedCategory) {
+    alert('삭제할 카테고리를 선택해주세요.');
+    return;
+  }
+
+  if (!confirm(`'${selectedCategory}' 카테고리를 삭제하시겠습니까?`)) return;
+
+  // 1. 실제 카테고리 삭제 및 로컬 저장
+  delete quizData[selectedCategory];
+  categories = Object.keys(quizData);
+  localStorage.setItem('allQuizData', JSON.stringify(quizData));
+
+  // 2. 콤보박스 업데이트
+  loadCardTitles();
+
+  // 3. 선택된 카테고리 처리 및 팝업 내부 입력 초기화
+  if (categories.length === 0) {
+    // 새 카테고리 생성
+    const newCategory = "새 카드";
+    quizData[newCategory] = [{ Q: "문제", A: "정답" }];
+    categories.push(newCategory);
+    localStorage.setItem('allQuizData', JSON.stringify(quizData));
+
+    loadCardTitles();
+    selector.value = newCategory;
+    document.getElementById('cardTitleInput').value = newCategory;
+    document.getElementById('cardEditorTextarea').value = "문제 // 정답";
+
+    currentCategory = newCategory;
+  } else {
+    selector.value = categories[0];
+    document.getElementById('cardTitleInput').value = categories[0];
+
+    const entries = quizData[categories[0]];
+    document.getElementById('cardEditorTextarea').value = entries.map(e => `${e.Q} // ${e.A}`).join('\n');
+
+    currentCategory = categories[0];
+  }
+
+  currentIndex = 0; // 인덱스 초기화
+
+  // 4. 메뉴 및 메인 카드 화면 업데이트
+  
+  createMenu();
+  renderCard();
+
+  showTooltip('카드가 삭제되었습니다.');
+
+  // 5. 팝업창 닫기 및 다시 열기 (선택 사항)
+  closeCardEditorPopup();
+  setTimeout(() => {
+    openCardEditorPopup();
+  }, 100);
+
+}
+
+
+// 🔵 1. 초기화: quizData.js의 초기 데이터로 되돌림
+function resetToInitialData() {
+  if (!confirm("정말 초기 상태로 되돌리시겠습니까?")) return;
+
+  // quizData.js에서 가져온 원본 데이터 사용
+  localStorage.setItem('allQuizData', JSON.stringify(originalQuizData));
+
+  location.reload();
+}
+
+// ✅ 백업 진입 함수 (환경 구분 포함)
+// ✅ 백업 진입 함수 (웹뷰 여부에 따라 분기 처리)
+function backupQuizData() {
+  let data = localStorage.getItem('allQuizData');
+
+  if (!data) {
+    try {
+      localStorage.setItem('allQuizData', JSON.stringify(quizData));
+      console.log("로컬에 없던 데이터를 현재 상태로 저장했습니다.");
+
+      setTimeout(() => {
+        const saved = localStorage.getItem('allQuizData');
+        if (!saved) {
+          alert("백업할 데이터를 찾을 수 없습니다.");
+          return;
+        }
+
+        if (isWebView()) {
+          callAndroidBackup(saved);
+        } else {
+          downloadBackupFile(saved); // ✅ 웹용 백업 실행
+        }
+      }, 200);
+
+      return;
+    } catch (e) {
+      alert("로컬 저장 중 오류가 발생했습니다.");
+      return;
+    }
+  }
+
+  // ✅ 기존 데이터가 있는 경우
+  if (isWebView()) {
+    callAndroidBackup(data);
+  } else {
+    downloadBackupFile(data); // ✅ 웹용 백업 실행
+  }
+}
+
+// ✅ 웹뷰 판별 함수
+function isWebView() {
+  return typeof window.Android !== "undefined";
+}
+
+// ✅ Android 백업 함수
+function callAndroidBackup(data) {
+  if (window.Android && typeof window.Android.saveToFileWithPicker === 'function') {
+    window.Android.saveToFileWithPicker(data);
+  } else if (window.Android && typeof window.Android.saveToFile === 'function') {
+    if (confirm("폴더 선택 기능이 없어 기본 경로에 저장됩니다. 계속하시겠습니까?")) {
+      window.Android.saveToFile(data);
+    } else {
+      alert("백업이 취소되었습니다.");
+    }
+  } else {
+    alert("Android 백업 인터페이스가 연결되지 않았습니다.");
+  }
+}
+
+// ✅ 웹브라우저용 백업 함수
+function downloadBackupFile(data) {
+  const blob = new Blob([data], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "quiz_backup.json";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+
+
+}
+
+// ✅ 복구 진입 함수
+function restoreFromFile() {
+  if (isWebView()) {
+    if (typeof window.Android.selectFileForRestore === 'function') {
+      window.Android.selectFileForRestore();
+    } else {
+      alert("Android 복구 인터페이스가 연결되지 않았습니다.");
+    }
+  } else {
+    promptFileRestore(); // ✅ 웹 브라우저용 복구 실행
+  }
+}
+
+// ✅ Android에서 호출할 복구 함수
+function restoreFromAndroid(jsonText) {
+  try {
+    const parsed = JSON.parse(jsonText);
+    localStorage.setItem('allQuizData', JSON.stringify(parsed));
+    alert("복구 완료! 페이지를 새로고침합니다.");
+    location.reload();
+  } catch (e) {
+    alert("복구 실패: 잘못된 JSON 형식입니다.");
+  }
+}
+
+// ✅ 웹브라우저용 복구 함수: JSON 파일 선택 → 복원
+function promptFileRestore() {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "application/json";
+
+  input.addEventListener("change", (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      try {
+        const jsonText = e.target.result;
+        const parsed = JSON.parse(jsonText);
+        localStorage.setItem('allQuizData', JSON.stringify(parsed));
+        alert("복구 완료! 페이지를 새로고침합니다.");
+        location.reload();
+      } catch (error) {
+        alert("복구 실패: 올바르지 않은 JSON 파일입니다.");
+      }
+    };
+
+    reader.readAsText(file);
+  });
+
+  input.click();
+}
+
+
+function changePosition() {
+  if (!currentCategory) {
+    showTooltip('현재 선택된 카테고리가 없습니다.');
+    return;
+  }
+
+  const data = quizData[currentCategory];
+  if (!Array.isArray(data) || data.length === 0) {
+    showTooltip('현재 카테고리에 카드가 없습니다.');
+    return;
+  }
+
+  // 문제와 정답을 서로 바꾸기
+  data.forEach(item => {
+    const temp = item.Q;
+    item.Q = item.A;
+    item.A = temp;
+  });
+
+  // 변경사항 저장
+  localStorage.setItem('allQuizData', JSON.stringify(quizData));
+  saveStatesToStorage();
+
+  // UI 갱신
+  renderCard();
+  loadCardTitles(); // 카드 편집기 콤보박스 갱신
+  createMenu();     // 좌측 풀다운 메뉴 갱신
+
+  showTooltip('문제와 정답이 서로 바뀌었습니다.');
+}
+
+function openManualPopup() {
+  document.getElementById('manualPopup').style.display = 'flex';
+}
+  function refreshPage() {
+    location.reload();
+  }
+function closeManualPopup() {
+  document.getElementById('manualPopup').style.display = 'none';
+}
+
+  function adjustContentHeight() {
+    const topbar = document.getElementById('topbar'); // 상단바 ID
+    const content = document.querySelector('.content');
+
+    const topbarHeight = topbar ? topbar.offsetHeight : 0;
+    const windowHeight = window.innerHeight;
+
+    const contentHeight = windowHeight - topbarHeight;
+    content.style.height = contentHeight + 'px';
+  }
+
+  // 페이지 로드 시 실행
+  window.addEventListener('load', adjustContentHeight);
+  // 창 크기 변경 시에도 실행
+  window.addEventListener('resize', adjustContentHeight);
+
+
+//영어단어 링크
+
+function linkifyEnglishWords(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  let html = container.innerHTML;
+
+  // 괄호 안의 내용 제외용 span 추가
+  html = html.replace(/(\[[^\]]*\]|\([^\)]*\))/g, function(match) {
+    return `<span class="exclude-linkify">${match}</span>`;
+  });
+
+  const temp = document.createElement("div");
+  temp.innerHTML = html;
+
+ function processNode(node) {
+  if (node.nodeType === Node.TEXT_NODE) {
+    const text = node.nodeValue;
+
+const replaced = text.replace(/([a-zA-Z]{2,}|[\u3040-\u309F]+|[\u30A0-\u30FF]+|[\u4E00-\u9FFF]+)/gu, function (match) {
+  let url = null;
+
+  if (/^[a-zA-Z]{2,}$/.test(match)) {
+    url = `https://en.dict.naver.com/#/search?query=${encodeURIComponent(match)}`;
+  } else if (/^[\u3040-\u309F]+$/.test(match) || /^[\u30A0-\u30FF]+$/.test(match)) {
+    url = `https://ja.dict.naver.com/#/search?query=${encodeURIComponent(match)}`;
+  } else if (/^[\u4E00-\u9FFF]+$/.test(match)) {
+    url = `https://zh.dict.naver.com/#/search?query=${encodeURIComponent(match)}`;
+  }
+
+  return url ? `<a href="${url}" class="linked-word">${match}</a>` : match;
+});
+
+    if (replaced !== text) {
+      const span = document.createElement("span");
+      span.innerHTML = replaced;
+      node.replaceWith(span);
+    }
+  } else if (node.nodeType === Node.ELEMENT_NODE && !node.classList.contains("exclude-linkify")) {
+    for (let child of Array.from(node.childNodes)) {
+      processNode(child);
+    }
+  }
+}
+
+
+
+  processNode(temp);
+  container.innerHTML = temp.innerHTML;
+}
+
+window.addEventListener("DOMContentLoaded", function () {
+  restoreSessionState(); // 👉 저장된 상태 불러오기
+  renderCard();          // 👉 복원된 위치로 카드 보여주기
+
+  linkifyEnglishWords("question-box");
+  linkifyEnglishWords("answer-box");
+insertCopyIcon('question-box');
+insertCopyIcon('answer-box');
+});
+
+//복사 아이콘삽입
+function insertCopyIcon(boxId) {
+  const box = document.getElementById(boxId);
+  if (!box) return;
+
+  // 기존 아이콘 제거
+  const existingIcon = box.querySelector('.copy-icon');
+  if (existingIcon) existingIcon.remove();
+
+  // 복사 아이콘 생성
+  const icon = document.createElement('span');
+  icon.className = 'copy-icon';
+  icon.innerText = '🔊';
+  icon.style.cursor = 'pointer';
+  icon.style.marginLeft = '0.5em';
+  icon.style.fontSize = '0.7em';
+  icon.style.verticalAlign = 'middle';
+
+  // 클릭 시 복사 + 파파고 열기
+  icon.addEventListener('click', () => {
+    const clone = box.cloneNode(true);
+    const iconInClone = clone.querySelector('.copy-icon');
+    if (iconInClone) iconInClone.remove();
+
+    let textToCopy = clone.innerText.trim();
+
+    if (boxId === 'question-box') {
+      textToCopy = textToCopy.replace(/^\d+\.\s*/, '');
+    }
+
+    textToCopy = textToCopy.replace(/\([^)]*\)/g, '');
+    textToCopy = textToCopy.replace(/\[[^\]]*\]/g, '');
+    textToCopy = textToCopy.trim();
+
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      // 한글 포함 여부 검사
+      const hasKorean = /[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(textToCopy);
+
+      // source, target 언어 설정
+      let sourceLang = hasKorean ? 'ko' : 'auto';
+      let targetLang = hasKorean ? 'en' : 'ko';
+
+      const encodedText = encodeURIComponent(textToCopy);
+      const papagoUrl = `https://papago.naver.com/?sk=${sourceLang}&tk=${targetLang}&st=${encodedText}`;
+      window.open(papagoUrl, '_blank');
+    }).catch(err => {
+      console.error('클립보드 복사 실패:', err);
+    });
+  });
+
+  box.appendChild(icon);
+}
+
+
+</script>
+
+
+</body>
+</html>
