@@ -1512,14 +1512,26 @@ function insertCopyIcon(boxId) {
   const existingIcon = box.querySelector('.copy-icon');
   if (existingIcon) existingIcon.remove();
 
-  // 복사 아이콘 생성
+  // 복사 아이콘 생성 (더 깔끔한 스타일)
   const icon = document.createElement('span');
   icon.className = 'copy-icon';
-  icon.innerText = '🔗 ';
+  icon.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" 
+         viewBox="0 0 24 24" 
+         fill="none" 
+         stroke="currentColor" 
+         stroke-width="2" 
+         stroke-linecap="round" 
+         stroke-linejoin="round" 
+         style="width: 1em; height: 1em; vertical-align: middle;">
+      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+      <path d="M5 15H4a2 2 0 0 1-2-2V4
+               a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+    </svg>
+  `;
   icon.style.cursor = 'pointer';
-  icon.style.marginLeft = '0.5em';
-  icon.style.fontSize = '1em';
-  icon.style.verticalAlign = 'middle';
+  icon.style.marginLeft = '0.4em';
+  icon.style.color = '#666'; // 중간톤 그레이로 깔끔하게
 
   // 클릭 시 복사 동작
   icon.addEventListener('click', () => {
@@ -1529,7 +1541,7 @@ function insertCopyIcon(boxId) {
 
     let textToCopy = clone.innerText.trim();
 
-    // 숫자 패턴 (예: "1. 내용") 제거 (오직 question-box에만 적용)
+    // 숫자 패턴 제거 (오직 question-box에만 적용)
     if (boxId === 'question-box') {
       textToCopy = textToCopy.replace(/^\d+\.\s*/, '');
     }
@@ -1539,9 +1551,9 @@ function insertCopyIcon(boxId) {
     });
   });
 
-  // 아이콘 삽입
   box.appendChild(icon);
 }
+
 
 
 </script>
