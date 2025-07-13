@@ -1455,6 +1455,7 @@ const replaced = text.replace(/([a-zA-Z]{2,}|[\u3040-\u309F]+|[\u30A0-\u30FF]+|[
     if (replaced !== text) {
       const span = document.createElement("span");
       span.innerHTML = replaced;
+      span.style.display = "inline"; // ✅ 추가!
       node.replaceWith(span);
     }
   } else if (node.nodeType === Node.ELEMENT_NODE && !node.classList.contains("exclude-linkify")) {
@@ -1488,16 +1489,17 @@ function insertCopyIcon(boxId) {
   const existingIcon = box.querySelector('.copy-icon-wrapper');
   if (existingIcon) existingIcon.remove();
 
+  // 현재 테마에 따라 이모지 선택
+  const isDarkMode = document.body.classList.contains('dark');
+  const emoji = isDarkMode ? '🔊' : '📣';
+
   // 아이콘 wrapper 생성
   const wrapper = document.createElement('span');
   wrapper.className = 'copy-icon-wrapper';
-  wrapper.style.display = 'inline-flex';
-  wrapper.style.alignItems = 'center';
-  wrapper.style.marginLeft = '0.5em';
-
-  // ✅ 현재 테마에 따라 이모지 선택
-  const isDarkMode = document.body.classList.contains('dark');
-  const emoji = isDarkMode ? '🔊' : '📣';
+  wrapper.style.display = 'inline-block';
+  wrapper.style.verticalAlign = 'middle';
+  wrapper.style.marginLeft = '0.3em';
+  wrapper.style.whiteSpace = 'nowrap';
 
   // 복사 아이콘 생성
   const icon = document.createElement('span');
@@ -1505,6 +1507,9 @@ function insertCopyIcon(boxId) {
   icon.innerText = emoji;
   icon.style.cursor = 'pointer';
   icon.style.fontSize = '0.7em';
+  icon.style.lineHeight = '1';
+  icon.style.verticalAlign = 'middle';
+  icon.style.transform = 'translateY(-0.1em)';  // ✅ 핵심: 위치 보정
 
   // wrapper에 아이콘 넣기
   wrapper.appendChild(icon);
@@ -1538,6 +1543,7 @@ function insertCopyIcon(boxId) {
     });
   });
 
+  // 아이콘 삽입
   box.appendChild(wrapper);
 }
 
