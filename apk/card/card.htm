@@ -441,6 +441,7 @@ if (randomMode) {
 
 insertCopyIcon('question-box');
 insertCopyIcon('answer-box');
+ fixWebViewScrollBug(); // 카드 넘길 때마다 스크롤 버그 수정 적용
 }
 
 
@@ -721,6 +722,10 @@ ghostIcon.onclick = () => {
   renderCard();
 };
 // 11. 페이지 초기화
+
+
+
+
 loadStatesFromStorage();
 createMenu();
 
@@ -1546,6 +1551,35 @@ function insertCopyIcon(boxId) {
   // 아이콘 삽입
   box.appendChild(wrapper);
 }
+
+
+//높이조정
+function fixWebViewScrollBug() {
+  const content = document.getElementById('content');
+  if (!content) return;
+
+  // 가장 먼저 부모 요소까지 체크
+  let parent = content.parentElement;
+  while (parent) {
+    parent.style.overflow = 'visible'; // 부모의 overflow 제한 풀기
+    parent = parent.parentElement;
+  }
+
+  // content 영역에 스크롤 가능 설정
+  content.style.overflowY = 'auto';
+  content.style.overflowX = 'hidden'; // 가로 스크롤은 방지
+  content.style.webkitOverflowScrolling = 'touch'; // iOS용 스크롤 부드럽게
+  content.style.height = '100%'; // 필요 시 직접 px로 지정해도 됨
+  content.style.maxHeight = '100vh'; // 혹은 '100%'도 가능
+  content.style.position = 'relative'; // 스크롤 되게끔 위치 지정
+
+  // 강제 리플로우
+  void content.offsetHeight;
+
+  // 스크롤 테스트용 로그
+  console.log('스크롤 버그 수정 적용됨');
+}
+
 
 </script>
 

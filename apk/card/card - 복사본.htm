@@ -721,6 +721,10 @@ ghostIcon.onclick = () => {
   renderCard();
 };
 // 11. 페이지 초기화
+
+
+
+
 loadStatesFromStorage();
 createMenu();
 
@@ -1498,7 +1502,7 @@ function insertCopyIcon(boxId) {
   wrapper.className = 'copy-icon-wrapper';
   wrapper.style.display = 'inline-block';
   wrapper.style.verticalAlign = 'middle';
-  wrapper.style.marginLeft = '0.3em';
+  wrapper.style.margin = '0 0 0.15em 0.5em';
   wrapper.style.whiteSpace = 'nowrap';
 
   // 복사 아이콘 생성
@@ -1509,7 +1513,7 @@ function insertCopyIcon(boxId) {
   icon.style.fontSize = '0.7em';
   icon.style.lineHeight = '1';
   icon.style.verticalAlign = 'middle';
-  icon.style.transform = 'translateY(-0.1em)';  // ✅ 핵심: 위치 보정
+
 
   // wrapper에 아이콘 넣기
   wrapper.appendChild(icon);
