@@ -1495,10 +1495,14 @@ function insertCopyIcon(boxId) {
   wrapper.style.alignItems = 'center';
   wrapper.style.marginLeft = '0.5em';
 
+  // ✅ 현재 테마에 따라 이모지 선택
+  const isDarkMode = document.body.classList.contains('dark');
+  const emoji = isDarkMode ? '🔊' : '📣';
+
   // 복사 아이콘 생성
   const icon = document.createElement('span');
   icon.className = 'copy-icon';
-  icon.innerText = '📣';
+  icon.innerText = emoji;
   icon.style.cursor = 'pointer';
   icon.style.fontSize = '0.7em';
 
