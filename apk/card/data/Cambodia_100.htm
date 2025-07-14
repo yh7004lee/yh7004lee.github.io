@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>캄보디아 여행회화 100</title>
+    <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f8;
+      height: 100%;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 16px;
+      box-sizing: border-box;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .copy-btn {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 16px 24px;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      align-self: flex-start;
+      transition: background 0.3s ease;
+    }
+
+    .copy-btn:hover {
+      background-color: #45a049;
+    }
+
+    textarea {
+      width: 100%;
+      font-size: 16px;
+      line-height: 1.6;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      resize: none;
+      background: #fafafa;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        border-radius: 0;
+        padding: 12px;
+      }
+
+      .copy-btn {
+        width: 100%;
+        font-size: 20px;
+        padding: 18px;
+        border-radius: 10px;
+        text-align: center;
+      }
+
+      textarea {
+        font-size: 15px;
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <button class="copy-btn" onclick="copyText()">📋 복사하기</button>
+    <textarea id="quizText" readonly>
+Sua sdei. [쑤어 쓰다이] // 안녕하세요.
+Arkun. [아꾼] // 감사합니다.
+Som toh. [솜 또] // 죄송합니다. / 미안합니다.
+Bat. [밧] // 네 (남성)
+Chaa. [짜아] // 네 (여성)
+Ot te. [엇 떼] // 아니요.
+Som tos. [솜 토스] // 실례합니다.
+Khnom min yul te. [크놈 민 율 떼] // 이해하지 못했어요.
+Ta neak niyeay pheasa angklea ban te? [따 니액 니예이 피어싸 앙끌레아 반 떼?] // 영어 할 줄 아세요?
+Som niyeay yuut yuut. [솜 니예이 윳 윳] // 천천히 말해 주세요.
+Nih thlay punman? [니흐 틀라이 뿐만?] // 이거 얼마예요?
+Thlay nas! [틀라이 나스!] // 너무 비싸요!
+Tov khang na? [토브 캉 나?] // 어디로 가야 하나요?
+Khnhom chong nih. [크놈 총 니흐] // 이거 주세요.
+Min trer te. [민 트레어 떼] // 필요 없어요.
+Bantup toal tirk nov ey na? [반뚭 뚜알 뜨윽 노브 어이 나?] // 화장실 어디예요?
+Soum chuoy khnhom! [솜 쭈어이 크놈!] // 도와주세요!
+Khnhom vongveang. [크놈 봉붕벙] // 길을 잃었어요.
+Soum haoy polis! [솜 하오이 폴리쓰!] // 경찰 불러주세요!
+Khnhom khat tirk. [크놈 캇 뜨윽] // 목말라요.
+Khnhom khleang. [크놈 클레앙] // 배고파요.
+Khnhom chong angka. [크놈 총 앙까] // 식사하고 싶어요.
+Khnhom chong te salaap. [크놈 총 떼 살랍] // 잠자고 싶어요.
+Khnhom chong tev psah. [크놈 총 떼으 쁘싸] // 시장에 가고 싶어요.
+Psah nov ey na? [쁘싸 노브 어이 나?] // 시장이 어디에요?
+Khnhom chong ten khang. [크놈 총 텐 캉] // 기념품 사고 싶어요.
+Som yok menu mok. [솜 욕 메누 목] // 메뉴 주세요.
+Bay thom muoy. [바이 톰 무오이] // 밥 한 공기 주세요.
+Tirk kok. [뜨윽 꺽] // 얼음물 주세요.
+Min chong cheang. [민 총 쳥] // 매운 거 싫어요.
+Khnhom chong cheang. [크놈 총 쳥] // 매운 거 좋아요.
+Khnhom min si sach. [크놈 민 씨 삿] // 고기 안 먹어요.
+Khnhom chong si vejetarian. [크놈 총 씨 베제터리언] // 채식하고 싶어요.
+Mok nih chhnganh. [목 니흐 찡안] // 이거 맛있어요.
+Mok nih min chhnganh. [목 니흐 민 찡안] // 이거 맛없어요.
+Khnhom chong si mok nih. [크놈 총 씨 목 니흐] // 이거 먹고 싶어요.
+Khnhom chong bok ban. [크놈 총 복 반] // 계산해 주세요.
+Som ouy receipt. [솜 오이 리씻] // 영수증 주세요.
+Khnhom yok loy riel. [크놈 욕 로이 리엘] // 리엘로 계산할게요.
+Khnhom chong dau tok tok. [크놈 총 도우 떡 떡] // 툭툭 타고 싶어요.
+Soum ke taxi. [솜 께 택시] // 택시 불러 주세요.
+Ban chab chenh som! [반 찹 쳉 솜!] // 멈춰 주세요!
+Khnhom chong tev hotel. [크놈 총 떼으 호텔] // 호텔에 가고 싶어요.
+Hotel nov ey na? [호텔 노브 어이 나?] // 호텔 어디에요?
+Khnhom chong dak bon tuk. [크놈 총 닥 본 뜩] // 방 예약하고 싶어요.
+Som dak bon tuk pi neak. [솜 닥 본 뜩 삐 니액] // 2인용 방 주세요.
+Tuk chhnganh? [뜩 찡안?] // 방 괜찮나요?
+Khnhom chong p’nhu. [크놈 총 쯔프누] // 쉬고 싶어요.
+Soum chenh pi hotel. [솜 쳉 삐 호텔] // 호텔에서 나갈게요.
+Khnhom chong mok Cambodia. [크놈 총 목 캄보디아] // 캄보디아에 오고 싶어요.
+Soum ouy visa. [솜 오이 비자] // 비자 주세요.
+Khnhom chong ban sim card. [크놈 총 반 심 카드] // 심 카드 사고 싶어요.
+Sim card nov ey na? [심 카드 노브 어이 나?] // 심 카드 어디서 사요?
+Wi-Fi mean te? [와이파이 미안 떼?] // 와이파이 있어요?
+Password jea ey? [패스워드 쯔어 어이?] // 비밀번호 뭐예요?
+Khnhom chong ban map. [크놈 총 반 맵] // 지도 주세요.
+Soum ouy time table. [솜 오이 타임 테이블] // 시간표 주세요.
+Nov mongrey ey na? [노브 몽레이 어이 나?] // 버스 정류장이 어디예요?
+Chomreabsuor. [쭘리압쑤어] // (격식 있는 인사) 안녕하세요.
+Khnhom jea neak chan. [크놈 쩌 니액 찬] // 저는 관광객이에요.
+Som neak chuoy yeung. [솜 니액 쭈어이 으영] // 우리 좀 도와주세요.
+Ban jea neak Khmer? [반 쩌 니액 크마에?] // 당신은 캄보디아인이에요?
+Neak mouk pi na? [니액 목 삐 나?] // 어디서 오셨어요?
+Khnhom mok pi Korea. [크놈 목 삐 코리아] // 한국에서 왔어요.
+Neak mean chum riep leak? [니액 미안 춤리엡 리엑?] // 연락처 있어요?
+Khnhom mean khosal. [크놈 미안 커살] // 여권 있어요.
+Khosal ban bat. [커살 반 밧] // 여권을 잃어버렸어요.
+Khnhom chong tev ti phteah khmaoch. [크놈 총 떼으 띠 프떼아 크마오치] // 박물관 가고 싶어요.
+Khnhom chong si nom pang. [크놈 총 씨 놈빵] // 빵 먹고 싶어요.
+Soum chenh nov ti nih. [솜 쳉 노브 띠 니흐] // 여기서 내려 주세요.
+Soum tveu kloun aeng. [솜 트버 글룬 앵] // 알아서 하세요.
+Aoy khnhom muoy chanh. [오이 크놈 무오이 짠] // 메뉴 추천해주세요.
+Neak mean ban top te? [니액 미안 반 톱 떼?] // 잔돈 있어요?
+Soksaby te? [속싸바이 떼?] // 잘 지내요?
+Khnhom soksaby. [크놈 속싸바이] // 잘 지내요.
+Khnhom chong tev Angkor Wat. [크놈 총 떼으 앙코르왓] // 앙코르와트에 가고 싶어요.
+Angkor Wat nov ey na? [앙코르왓 노브 어이 나?] // 앙코르왓은 어디에요?
+Tirk tngai nov ey na? [뜨윽 트응아이 노브 어이 나?] // 하루 여행지 어디에요?
+Khnhom chong photo. [크놈 총 포토] // 사진 찍고 싶어요.
+Soum chob photo ban te? [솜 좁 포토 반 떼?] // 사진 찍어도 되나요?
+Som chob. [솜 좁] // 멈춰주세요.
+Soum ouy chhnam leap. [솜 오이 찬남 리엡] // 새해 복 많이 받으세요.
+Soum ouy sok. [솜 오이 속] // 건강하세요.
+Khnhom morkinh. [크놈 모르킨] // 피곤해요.
+Khnhom chong kamlang. [크놈 총 깜랑] // 힘들어요.
+Soum ouy khluon aeng chhob cheat. [솜 오이 클룬 앵 촙 쳇] // 조심하세요.
+Choum reap lear. [쭘리업 리어] // 안녕히 가세요.
+Choub khnea chhaep chhaep! [촙 크니어 챕 챕!] // 또 만나요!
+    </textarea>
+  </div>
+
+  <script>
+    function copyText() {
+      const textArea = document.getElementById("quizText");
+      textArea.select();
+      textArea.setSelectionRange(0, 999999); // For mobile devices
+      document.execCommand("copy");
+      alert("내용이 복사되었습니다!");
+    }
+    function adjustHeight() {
+      const vh = window.innerHeight;
+      const container = document.querySelector('.container');
+      const btn = document.querySelector('.copy-btn');
+      const textarea = document.getElementById('quizText');
+
+      const padding = 40;
+      const btnHeight = btn.offsetHeight + 16;
+      const newHeight = vh - container.offsetTop - btnHeight - padding;
+
+      textarea.style.height = `${newHeight}px`;
+    }
+
+    window.addEventListener("load", adjustHeight);
+    window.addEventListener("resize", adjustHeight);
+  </script>
+
+</body>
+</html>
