@@ -131,6 +131,8 @@
     <div onclick="changePosition()">문제 정답 위치이동</div>
     <div onclick="openCardEditorPopup()">암기카드 편집</div>
     <div onclick="window.location.href='https://m.cafe.naver.com/ca-fe/web/cafes/31515265/menus/2'">암기카드 가져오기</div>
+    <div onclick="window.location.href='https://m.cafe.naver.com/ca-fe/web/cafes/31515265/menus/4'">오류신고 기능제안</div>
+    <div onclick="window.location.href='card01.htm'">베타 테스트</div>
     <div onclick="refreshPage()">페이지 새로고침</div>
     <div onclick="openManualPopup()">설명서</div>
     <div onclick="exitApp(); closeSettingsMenu();" style="color: rgb(255, 68, 68); font-weight: 600;">나가기</div>
@@ -429,6 +431,11 @@ if (randomMode) {
     answerBox.classList.remove('hidden');
     answerBox.textContent = card.A;
   }
+
+const content = document.getElementById('content');
+
+
+
   // 체크박스 동기화
   const key = getKey(currentCategory, getRealIndex(currentIndex));
   bookmarkCheckbox.checked = favorites.has(key);
@@ -441,7 +448,12 @@ if (randomMode) {
 
 insertCopyIcon('question-box');
 insertCopyIcon('answer-box');
- fixWebViewScrollBug(); // 카드 넘길 때마다 스크롤 버그 수정 적용
+
+  if (content) {
+    content.style.overflowY = 'hidden';
+    void content.offsetHeight; // 강제 리플로우
+    content.style.overflowY = 'auto';
+  }
 }
 
 
@@ -1503,7 +1515,7 @@ function insertCopyIcon(boxId) {
   wrapper.className = 'copy-icon-wrapper';
   wrapper.style.display = 'inline-block';
   wrapper.style.verticalAlign = 'middle';
-  wrapper.style.margin = '0 0 0.15em 0.5em';
+  wrapper.style.margin = '0 0 0.18em 0.5em';
   wrapper.style.whiteSpace = 'nowrap';
 
   // 복사 아이콘 생성
@@ -1551,35 +1563,6 @@ function insertCopyIcon(boxId) {
   // 아이콘 삽입
   box.appendChild(wrapper);
 }
-
-
-//높이조정
-function fixWebViewScrollBug() {
-  const content = document.getElementById('content');
-  if (!content) return;
-
-  // 가장 먼저 부모 요소까지 체크
-  let parent = content.parentElement;
-  while (parent) {
-    parent.style.overflow = 'visible'; // 부모의 overflow 제한 풀기
-    parent = parent.parentElement;
-  }
-
-  // content 영역에 스크롤 가능 설정
-  content.style.overflowY = 'auto';
-  content.style.overflowX = 'hidden'; // 가로 스크롤은 방지
-  content.style.webkitOverflowScrolling = 'touch'; // iOS용 스크롤 부드럽게
-  content.style.height = '100%'; // 필요 시 직접 px로 지정해도 됨
-  content.style.maxHeight = '100vh'; // 혹은 '100%'도 가능
-  content.style.position = 'relative'; // 스크롤 되게끔 위치 지정
-
-  // 강제 리플로우
-  void content.offsetHeight;
-
-  // 스크롤 테스트용 로그
-  console.log('스크롤 버그 수정 적용됨');
-}
-
 
 </script>
 

@@ -5,32 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>퀴즈 카드</title>
  <link rel="stylesheet" href="quiz-style.css" />
-<style>
-  .copy-icon {
-    cursor: pointer;
-    margin-left: 8px;
-    font-size: 14px;
-    user-select: none;
-  }
 
-  .tooltip {
-    display: inline-block;
-    background: black;
-    color: white;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-size: 12px;
-    position: absolute;
-    z-index: 10;
-    transform: translate(-50%, -150%);
-    white-space: nowrap;
-    visibility: hidden;
-  }
-
-  .copy-icon:hover .tooltip {
-    visibility: visible;
-  }
-</style>
 </head>
 <body>
 
@@ -156,6 +131,8 @@
     <div onclick="changePosition()">문제 정답 위치이동</div>
     <div onclick="openCardEditorPopup()">암기카드 편집</div>
     <div onclick="window.location.href='https://m.cafe.naver.com/ca-fe/web/cafes/31515265/menus/2'">암기카드 가져오기</div>
+    <div onclick="window.location.href='https://m.cafe.naver.com/ca-fe/web/cafes/31515265/menus/4'">오류신고 기능제안</div>
+    <div onclick="window.location.href='card01.htm'">베타 테스트</div>
     <div onclick="refreshPage()">페이지 새로고침</div>
     <div onclick="openManualPopup()">설명서</div>
     <div onclick="exitApp(); closeSettingsMenu();" style="color: rgb(255, 68, 68); font-weight: 600;">나가기</div>
@@ -454,6 +431,11 @@ if (randomMode) {
     answerBox.classList.remove('hidden');
     answerBox.textContent = card.A;
   }
+
+const content = document.getElementById('content');
+
+
+
   // 체크박스 동기화
   const key = getKey(currentCategory, getRealIndex(currentIndex));
   bookmarkCheckbox.checked = favorites.has(key);
@@ -466,6 +448,12 @@ if (randomMode) {
 
 insertCopyIcon('question-box');
 insertCopyIcon('answer-box');
+
+  if (content) {
+    content.style.overflowY = 'hidden';
+    void content.offsetHeight; // 강제 리플로우
+    content.style.overflowY = 'auto';
+  }
 }
 
 
@@ -588,13 +576,12 @@ function initShuffledIndices() {
 // 7. 즐겨찾기 필터 토글 (북마크 아이콘 클릭)
 function toggleBookmarkMode() {
   if (!favoriteFilter) {
-    // 필터를 켜려고 할 때 즐겨찾기 항목이 아예 없으면 차단
+    // 즐겨찾기 모드 켜기 전 처리
     if (favorites.size === 0) {
       showTooltip('즐겨찾기 추가된 카드가 하나도 없습니다.');
       return;
     }
 
-    // 현재 카테고리에 해당하는 즐겨찾기 항목이 없으면 차단
     const data = quizData[currentCategory];
     const hasFavorites = data.some((item, idx) => favorites.has(getKey(currentCategory, idx)));
     if (!hasFavorites) {
@@ -602,19 +589,19 @@ function toggleBookmarkMode() {
       return;
     }
 
-    // 🎯 랜덤모드가 켜져 있는데 즐겨찾기 항목이 2개 이하인 경우 자동 해제
-    const filtered = data.filter((item, idx) => favorites.has(getKey(currentCategory, idx)));
-    if (randomMode && filtered.length <= 2) {
-      randomMode = false;
-      updateIconsState();
-      showTooltip('즐겨찾기 카드 수가 부족하여 랜덤모드가 비활성화되었습니다.');
-    }
+    // 즐겨찾기 모드 진입 시 항상 첫 번째 즐겨찾기로
+    favoriteFilter = true;
+    currentIndex = 0;  // 즐겨찾기 목록 중 첫 번째로 이동
+
+  } else {
+    // 🎯 즐겨찾기 모드 해제 시, 현재 카드의 전체 인덱스를 구해서 복원
+    const realIndex = getRealIndex(currentIndex); // 전체 인덱스를 구함
+    favoriteFilter = false;
+    currentIndex = realIndex; // 전체 카드에서 그 인덱스로 복원
   }
 
-  favoriteFilter = !favoriteFilter;
   updateIconsState();
   showTooltip(favoriteFilter ? '즐겨찾기 추가된 카드만 노출됩니다.' : '전체 카드가 노출됩니다.');
-  currentIndex = 0;  // 필터 변경시 인덱스 초기화
   renderCard();
 }
 
@@ -648,14 +635,18 @@ function saveStatesToStorage() {
 function saveSessionState() {
   localStorage.setItem('lastCategory', currentCategory);
   localStorage.setItem('lastIndex', currentIndex);
+  localStorage.setItem('lastFavoriteFilter', favoriteFilter ? '1' : '0'); // ✅ 추가
 }
 function restoreSessionState() {
   const savedCategory = localStorage.getItem('lastCategory');
   const savedIndex = parseInt(localStorage.getItem('lastIndex'), 10);
+  const savedFilter = localStorage.getItem('lastFavoriteFilter'); // ✅ 추가
 
   if (savedCategory && quizData[savedCategory]) {
     currentCategory = savedCategory;
     currentIndex = isNaN(savedIndex) ? 0 : savedIndex;
+    // 🔽 이 줄을 반드시 추가해 주세요
+    favoriteFilter = savedFilter === '1';
   }
 }
 
@@ -743,6 +734,10 @@ ghostIcon.onclick = () => {
   renderCard();
 };
 // 11. 페이지 초기화
+
+
+
+
 loadStatesFromStorage();
 createMenu();
 
@@ -1477,6 +1472,7 @@ const replaced = text.replace(/([a-zA-Z]{2,}|[\u3040-\u309F]+|[\u30A0-\u30FF]+|[
     if (replaced !== text) {
       const span = document.createElement("span");
       span.innerHTML = replaced;
+      span.style.display = "inline"; // ✅ 추가!
       node.replaceWith(span);
     }
   } else if (node.nodeType === Node.ELEMENT_NODE && !node.classList.contains("exclude-linkify")) {
@@ -1502,47 +1498,71 @@ insertCopyIcon('question-box');
 insertCopyIcon('answer-box');
 });
 
-//복사 아이콘삽입
-//복사 아이콘삽입
 function insertCopyIcon(boxId) {
   const box = document.getElementById(boxId);
   if (!box) return;
 
   // 기존 아이콘 제거
-  const existingIcon = box.querySelector('.copy-icon');
+  const existingIcon = box.querySelector('.copy-icon-wrapper');
   if (existingIcon) existingIcon.remove();
+
+  // 현재 테마에 따라 이모지 선택
+  const isDarkMode = document.body.classList.contains('dark');
+  const emoji = isDarkMode ? '🔊' : '📣';
+
+  // 아이콘 wrapper 생성
+  const wrapper = document.createElement('span');
+  wrapper.className = 'copy-icon-wrapper';
+  wrapper.style.display = 'inline-block';
+  wrapper.style.verticalAlign = 'middle';
+  wrapper.style.margin = '0 0 0.18em 0.5em';
+  wrapper.style.whiteSpace = 'nowrap';
 
   // 복사 아이콘 생성
   const icon = document.createElement('span');
   icon.className = 'copy-icon';
-  icon.innerText = '🔗';
+  icon.innerText = emoji;
   icon.style.cursor = 'pointer';
-  icon.style.marginLeft = '0.5em';
   icon.style.fontSize = '0.7em';
+  icon.style.lineHeight = '1';
   icon.style.verticalAlign = 'middle';
 
-  // 클릭 시 복사 동작
+
+  // wrapper에 아이콘 넣기
+  wrapper.appendChild(icon);
+
+  // 클릭 시 복사 + 파파고 열기
   icon.addEventListener('click', () => {
     const clone = box.cloneNode(true);
-    const iconInClone = clone.querySelector('.copy-icon');
+    const iconInClone = clone.querySelector('.copy-icon-wrapper');
     if (iconInClone) iconInClone.remove();
 
     let textToCopy = clone.innerText.trim();
 
-    // 숫자 패턴 (예: "1. 내용") 제거 (오직 question-box에만 적용)
     if (boxId === 'question-box') {
       textToCopy = textToCopy.replace(/^\d+\.\s*/, '');
     }
 
+    textToCopy = textToCopy.replace(/\([^)]*\)/g, '');
+    textToCopy = textToCopy.replace(/\[[^\]]*\]/g, '');
+    textToCopy = textToCopy.trim();
+
     navigator.clipboard.writeText(textToCopy).then(() => {
-  
+      const hasKorean = /[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(textToCopy);
+      const sourceLang = hasKorean ? 'ko' : 'auto';
+      const targetLang = hasKorean ? 'en' : 'ko';
+
+      const encodedText = encodeURIComponent(textToCopy);
+      const papagoUrl = `https://papago.naver.com/?sk=${sourceLang}&tk=${targetLang}&st=${encodedText}`;
+      window.location.href = papagoUrl;
+    }).catch(err => {
+      console.error('클립보드 복사 실패:', err);
     });
   });
 
   // 아이콘 삽입
-  box.appendChild(icon);
+  box.appendChild(wrapper);
 }
-
 
 </script>
 
