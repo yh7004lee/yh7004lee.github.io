@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>생활영어회화 100 [동사]</title>
+    <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f8;
+      height: 100%;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 16px;
+      box-sizing: border-box;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .copy-btn {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 16px 24px;
+      font-size: 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      align-self: flex-start;
+      transition: background 0.3s ease;
+    }
+
+    .copy-btn:hover {
+      background-color: #45a049;
+    }
+
+    textarea {
+      width: 100%;
+      font-size: 16px;
+      line-height: 1.6;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      resize: none;
+      background: #fafafa;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        border-radius: 0;
+        padding: 12px;
+      }
+
+      .copy-btn {
+        width: 100%;
+        font-size: 20px;
+        padding: 18px;
+        border-radius: 10px;
+        text-align: center;
+      }
+
+      textarea {
+        font-size: 15px;
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <button class="copy-btn" onclick="copyText()">📋 복사하기</button>
+    <textarea id="quizText" readonly>
+I went to the store. // 나 가게에 갔었어.
+She cooked dinner last night. // 그녀는 어젯밤에 저녁을 만들었어.
+We watched that movie already. // 우리 그 영화 봤어.
+He forgot his wallet. // 그는 지갑을 깜빡했어.
+They didn’t answer the phone. // 그들은 전화를 받지 않았어.
+I lost my keys yesterday. // 어제 열쇠를 잃어버렸어.
+She called me this morning. // 오늘 아침에 그녀가 전화했어.
+We stayed at home. // 우리는 집에 있었어.
+He told me the truth. // 그는 사실을 말했어.
+I met her at the station. // 나는 역에서 그녀를 만났어.
+I’m eating lunch. // 나 점심 먹는 중이야.
+She’s working right now. // 그녀는 지금 일하는 중이야.
+They’re watching TV. // 그들은 TV 보는 중이야.
+We’re studying for the test. // 우리는 시험 공부 중이야.
+He’s sleeping. // 그는 자는 중이야.
+I’m waiting for the bus. // 나 버스를 기다리는 중이야.
+She’s talking to her friend. // 그녀는 친구와 이야기 중이야.
+We’re making a cake. // 우리는 케이크를 만드는 중이야.
+They’re cleaning the house. // 그들은 집 청소 중이야.
+I’m listening to music. // 나 음악 듣는 중이야.
+I go to school every day. // 나는 매일 학교에 가.
+She likes coffee. // 그녀는 커피를 좋아해.
+We play tennis on weekends. // 우리는 주말마다 테니스를 쳐.
+He drives to work. // 그는 차로 출근해.
+They live in Seoul. // 그들은 서울에 살아.
+I study English every night. // 나는 매일 밤 영어 공부해.
+She works at a bank. // 그녀는 은행에서 일해.
+We eat dinner at 7. // 우리는 7시에 저녁 먹어.
+He walks his dog every morning. // 그는 매일 아침 강아지를 산책시켜.
+They start work at 9. // 그들은 9시에 일을 시작해.
+I’ll call you later. // 나 나중에 전화할게.
+She’s going to visit her mom. // 그녀는 엄마를 방문할 예정이야.
+We’ll meet tomorrow. // 우리 내일 만나자.
+He’s going to study abroad. // 그는 유학 갈 예정이야.
+They’ll arrive soon. // 그들은 곧 도착할 거야.
+I’m going to take a break. // 나 좀 쉴 거야.
+She’ll help you. // 그녀가 도와줄 거야.
+We’re going to eat out tonight. // 오늘 저녁 외식할 거야.
+They’ll be here at 5. // 그들은 5시에 도착할 거야.
+I’ll send the file. // 내가 파일 보낼게.
+I’ve seen that movie. // 나 그 영화 본 적 있어.
+She has just arrived. // 그녀 방금 도착했어.
+We’ve lived here for 5 years. // 우리는 여기서 5년째 살아왔어.
+He has finished his homework. // 그는 숙제를 끝냈어.
+They’ve already eaten. // 그들은 이미 식사했어.
+I’ve never tried sushi. // 나는 초밥을 한 번도 먹어본 적 없어.
+She has been to Japan. // 그녀는 일본에 가본 적 있어.
+We’ve met before. // 우리 예전에 만난 적 있어.
+He has lost his phone. // 그는 핸드폰을 잃어버렸어.
+They’ve gone home. // 그들은 집에 갔어.
+Can I help you? // 도와드릴까요?
+Do you have time? // 시간 있어요?
+I don’t know. // 잘 모르겠어요.
+Let’s go! // 가자!
+Are you okay? // 괜찮아요?
+I have no idea. // 전혀 모르겠어요.
+It looks good. // 좋아 보여요.
+I’m not sure. // 잘 모르겠어요.
+That sounds great! // 좋은 생각이에요!
+What do you think? // 어떻게 생각하세요?
+I bought a new phone. // 새 핸드폰 샀어.
+She didn’t come yesterday. // 그녀는 어제 안 왔어.
+We watched the news. // 우리는 뉴스를 봤어.
+He arrived late. // 그는 늦게 도착했어.
+They had a party. // 그들은 파티를 했어.
+I’m reading a book now. // 나 지금 책 읽는 중이야.
+She’s cleaning her room. // 그녀는 방 청소 중이야.
+We’re waiting for dinner. // 우리는 저녁 기다리는 중이야.
+He’s making coffee. // 그는 커피를 만드는 중이야.
+They’re fixing the car. // 그들은 차를 고치는 중이야.
+I usually drink tea. // 나는 보통 차를 마셔.
+She speaks English well. // 그녀는 영어를 잘해.
+We walk after dinner. // 우리는 저녁 먹고 산책해.
+He reads every night. // 그는 매일 밤 책을 읽어.
+They play games on the weekend. // 그들은 주말에 게임해.
+I’ll see you tomorrow. // 내일 봐요.
+She’s going to be late. // 그녀는 늦을 거야.
+We’ll help you move. // 우리가 이사 도와줄게.
+He’s going to call soon. // 그는 곧 전화할 거야.
+They’ll join the meeting. // 그들은 회의에 참여할 거야.
+I’ve finished my work. // 나는 일을 끝냈어.
+She’s just left. // 그녀는 방금 떠났어.
+We’ve been friends for years. // 우리는 오래된 친구야.
+He has broken his phone. // 그는 핸드폰을 망가뜨렸어.
+They’ve already gone. // 그들은 이미 갔어.
+I cleaned the room. // 나 방 청소했어.
+She made pancakes. // 그녀는 팬케이크를 만들었어.
+We visited grandma. // 우리는 할머니 댁에 갔어.
+He watched a drama. // 그는 드라마를 봤어.
+They closed the store. // 그들은 가게를 닫았어.
+I’m going home now. // 나 지금 집에 가는 중이야.
+She’s taking a shower. // 그녀는 샤워 중이야.
+We’re having lunch. // 우리는 점심 먹는 중이야.
+He’s reading the news. // 그는 뉴스를 읽는 중이야.
+They’re looking for a taxi. // 그들은 택시를 찾고 있어.
+
+    </textarea>
+  </div>
+
+  <script>
+    function copyText() {
+      const textArea = document.getElementById("quizText");
+      textArea.select();
+      textArea.setSelectionRange(0, 999999); // For mobile devices
+      document.execCommand("copy");
+      alert("내용이 복사되었습니다!");
+    }
+    function adjustHeight() {
+      const vh = window.innerHeight;
+      const container = document.querySelector('.container');
+      const btn = document.querySelector('.copy-btn');
+      const textarea = document.getElementById('quizText');
+
+      const padding = 40;
+      const btnHeight = btn.offsetHeight + 16;
+      const newHeight = vh - container.offsetTop - btnHeight - padding;
+
+      textarea.style.height = `${newHeight}px`;
+    }
+
+    window.addEventListener("load", adjustHeight);
+    window.addEventListener("resize", adjustHeight);
+  </script>
+
+</body>
+</html>
